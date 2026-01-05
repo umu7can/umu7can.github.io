@@ -1,2 +1,175 @@
-<h1>Merhaba ben Umut.</h1>
-<p>evet öyle</p>
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ucanyildiz's playground </title>
+    <meta name="description" content="kişisel oyun alanı">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                techblue: '#00f2ff',
+                techpurple: '#a855f7',
+                darkbg: '#0f172a',
+              },
+              fontFamily: {
+                sans: ['Inter', 'sans-serif'],
+              }
+            }
+          }
+        }
+    </script>
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* parcaciklarin arkada kalmasi */
+        #tsparticles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: #0f172a; /* darkbg rengi */
+        }
+        /* parlaamk */
+        .glow-text {
+            text-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff;
+        }
+    </style>
+</head>
+<body class="bg-darkbg text-gray-200 font-sans antialiased leading-relaxed overflow-x-hidden">
+
+    <div id="tsparticles"></div>
+
+    <div class="relative z-10">
+
+        <nav class="flex justify-between items-center py-6 px-8 md:px-20 bg-darkbg/80 backdrop-blur-md fixed w-full top-0 z-50 border-b border-white/10">
+            <div class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-techblue to-techpurple tracking-wider">
+                UCANYILDIZ.ME
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-semibold">
+                <a href="#home" class="hover:text-techblue transition duration-300">ANA SAYFA</a>
+                <a href="#about" class="hover:text-techblue transition duration-300">HAKKIMDA</a>
+                <a href="#projects" class="hover:text-techblue transition duration-300">PROJELER</a>
+            </div>
+        </nav>
+
+        <section id="home" class="min-h-screen flex items-center justify-center text-center px-4 pt-20">
+            <div class="max-w-3xl">
+                <h2 data-aos="fade-down" class="text-techblue font-mono text-xl mb-4">Merhaba, ben Umut Can.</h2>
+                <h1 data-aos="zoom-in" data-aos-delay="300" class="text-5xl md:text-7xl font-extrabold mb-6">
+                    Geleceği Kodluyorum.
+                    <span class="block text-3xl md:text-4xl mt-4 text-gray-400 font-medium">Yazılım & Teknoloji Tutkunu</span>
+                </h1>
+                <p data-aos="fade-up" data-aos-delay="600" class="text-gray-400 text-lg md:text-xl mb-10 max-w-xl mx-auto">
+                    Güncel teknolojiler ve yenilikçi çözümler üzerine çalışıyorum. Burası benim dijital oyun alanım.
+                </p>
+                <div data-aos="fade-up" data-aos-delay="900">
+                    <a href="#about" class="px-8 py-4 bg-gradient-to-r from-techblue to-techpurple rounded-full text-darkbg font-bold text-lg hover:scale-105 transition transform duration-300 shadow-[0_0_20px_rgba(0,242,255,0.5)]">
+                        Beni Keşfet
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-32 px-8 md:px-20">
+            <div class="container mx-auto flex flex-col md:flex-row items-center gap-16">
+                <div class="md:w-1/2" data-aos="fade-right">
+                    <div class="p-1 bg-gradient-to-br from-techblue via-purple-500 to-pink-500 rounded-2xl rotate-[-3deg] hover:rotate-0 transition duration-500">
+                        <div class="bg-darkbg p-8 rounded-2xl border border-white/10 font-mono text-sm text-green-400 leading-8 shadow-2xl">
+                            <p><span class="text-pink-400">const</span> developer = {</p>
+                            <p class="pl-4">name: <span class="text-yellow-300">'Umut Can'</span>,</p>
+                            <p class="pl-4">role: <span class="text-yellow-300">'Student / Developer'</span>,</p>
+                            <p class="pl-4">skills: [<span class="text-yellow-300">'YOOOĞK'</span>, <span class="text-yellow-300">'YOOOOĞK'</span>, <span class="text-yellow-300">'CS2-2K HOURS'</span>, <span class="text-yellow-300">'FIFA'</span>],</p>
+                            <p class="pl-4">passion: <span class="text-yellow-300">'Learning new tech'</span></p>
+                            <p>};</p>
+                            <p class="mt-4 text-gray-500">// Sürekli öğrenme modunda...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2" data-aos="fade-left">
+                    <h3 class="text-techblue font-mono mb-2">01. HAKKIMDA</h3>
+                    <h2 class="text-4xl font-bold mb-6">Teknoloji ile Hikayem</h2>
+                    <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                        doğdum, büyüyorum ve öleceğim.
+                    </p>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        Amacım, karmaşık problemleri basit ve etkili kodlarla çözmek. Şu anda front-end teknolojileri ve test süreçleri üzerine odaklanmış durumdayım. (yersen, gemini yazdı)
+                    </p>
+                    <ul class="grid grid-cols-2 gap-4 font-mono text-sm">
+                        <li class="flex items-center"><span class="text-techblue mr-2">▹</span> JavaScript (ES6+)</li>
+                        <li class="flex items-center"><span class="text-techblue mr-2">▹</span> HTML & CSS3</li>
+                        <li class="flex items-center"><span class="text-techblue mr-2">▹</span> Git & GitHub</li>
+                        <li class="flex items-center"><span class="text-techblue mr-2">▹</span> Test Otomasyonu</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center py-8 text-gray-500 text-sm border-t border-white/10 bg-darkbg">
+            <p>© 2024 <span class="text-techblue">ucanyildiz.me</span> | Gemini ile geliştirildi.</p>
+        </footer>
+
+    </div> <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.0.6/tsparticles.slim.bundle.min.js"></script>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // AOS Başlatma (Animasyonları tetikler)
+        AOS.init({
+            duration: 1000, // Animasyon süresi (ms)
+            once: true,     // Sadece bir kere çalışsın, tekrar yukarı çıkınca bozulmasın
+        });
+
+        // tsparticles Başlatma (Arka plan ayarları)
+        tsParticles.load("tsparticles", {
+            background: { color: { value: "transparent" } }, // Arka planı şeffaf yap, CSS hallediyor
+            fpsLimit: 60,
+            interactivity: {
+                events: {
+                    onClick: { enable: true, mode: "push" }, // Tıklayınca yeni parçacık ekle
+                    onHover: { enable: true, mode: "repulse" }, // Mouse gelince kaçışsınlar
+                    resize: true
+                },
+                modes: {
+                    push: { quantity: 4 },
+                    repulse: { distance: 100, duration: 0.4 }
+                }
+            },
+            particles: {
+                color: { value: "#00f2ff" }, // Parçacık rengi (techblue)
+                links: {
+                    color: "#a855f7", // Bağlantı çizgisi rengi (techpurple)
+                    distance: 150,
+                    enable: true,
+                    opacity: 0.3,
+                    width: 1
+                },
+                move: {
+                    direction: "none",
+                    enable: true,
+                    outModes: { default: "bounce" },
+                    random: false,
+                    speed: 1.5, // Hareket hızı
+                    straight: false
+                },
+                number: {
+                    density: { enable: true, area: 800 },
+                    value: 80 // Parçacık sayısı
+                },
+                opacity: { value: 0.5 },
+                shape: { type: "circle" },
+                size: { value: { min: 1, max: 3 } }
+            },
+            detectRetina: true
+        });
+    </script>
+</body>
+</html>
