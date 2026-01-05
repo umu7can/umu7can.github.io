@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ucanyildiz's playground</title>
-    <meta name="description" content="kişisel oyun alanı">
+    <meta name="description" content="ucanyildiz's playground">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -18,9 +18,18 @@
               },
               fontFamily: {
                 sans: ['Inter', 'sans-serif'],
+                mono: ['Fira Code', 'monospace'],
               },
               animation: {
-                'bounce-slow': 'bounce 3s infinite',
+                'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+              },
+              keyframes: {
+                shake: {
+                  '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                  '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                  '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                  '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                }
               }
             }
           }
@@ -28,26 +37,54 @@
     </script>
 
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Fira+Code&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <style>
         #tsparticles { position: fixed; width: 100%; height: 100%; z-index: -1; background-color: #0f172a; }
         
-        /* Maymun Animasyonları */
+        /* Maymun Stilleri */
         .monkey-container {
             position: absolute;
-            transition: all 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Zıplama efekti */
+            transition: left 1.5s ease, top 1.5s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             z-index: 20;
             cursor: pointer;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        .branch {
+        
+        .branch { position: absolute; font-size: 2rem; z-index: 10; opacity: 0.6; }
+
+        /* Konuşma Balonu */
+        .speech-bubble {
+            background: #fff;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
             position: absolute;
-            font-size: 2rem;
-            z-index: 10;
-            opacity: 0.7;
+            top: -40px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+        }
+
         .monkey-name-tag {
             background: rgba(0, 0, 0, 0.7);
             color: #00f2ff;
@@ -55,105 +92,138 @@
             border-radius: 4px;
             font-size: 0.8rem;
             white-space: nowrap;
-            display: block;
-            margin-bottom: -5px;
+            margin-bottom: 2px;
+        }
+
+        /* Site Patlama Efekti (Broken) */
+        .broken-layout {
+            filter: blur(4px) grayscale(100%);
+            transform: rotate(2deg) scale(0.95);
+            pointer-events: none; /* Tıklamayı engelle */
+            transition: all 1s ease;
+            opacity: 0.3;
         }
     </style>
 </head>
 <body class="bg-darkbg text-gray-200 font-sans antialiased leading-relaxed overflow-x-hidden">
 
-    <div id="tsparticles"></div>
+    <div id="hospitalModal" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center bg-red-900/90 backdrop-blur-sm p-4">
+        <div class="bg-white text-black p-8 rounded-lg shadow-2xl max-w-md w-full border-t-8 border-red-600 transform scale-100 animate-bounce">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-red-600">🚑 ACİL DURUM</h2>
+                <i class="fas fa-hospital-symbol text-4xl text-red-500"></i>
+            </div>
+            
+            <div class="font-mono text-sm space-y-3 bg-gray-100 p-4 rounded border border-gray-300">
+                <p><strong>HASTA ADI:</strong> <span id="patientName" class="uppercase">---</span></p>
+                <p><strong>DURUM:</strong> KRİTİK</p>
+                <p><strong>TEŞHİS:</strong> <span class="text-red-600 font-bold">AŞIRI DOZ MUZ (Banana Overdose)</span></p>
+                <p><strong>NOT:</strong> Hasta patlama sınırına ulaştı. Midesi yıkandı, şu an dinleniyor.</p>
+            </div>
 
-    <div class="fixed bottom-5 left-5 z-50 bg-black/50 backdrop-blur-md p-3 rounded-full border border-techblue/30 flex items-center gap-3 transition hover:bg-black/80">
-        <button id="playBtn" onclick="toggleMusic()" class="w-10 h-10 bg-techblue rounded-full text-darkbg flex items-center justify-center hover:scale-110 transition">
-            <i class="fas fa-play"></i>
-        </button>
-        <div class="hidden md:block pr-2">
-            <p class="text-xs text-gray-400">Arka Plan Müziği</p>
-            <p id="musicStatus" class="text-xs font-bold text-techblue">Duraklatıldı</p>
+            <div class="mt-8 text-center">
+                <p class="mb-4 text-gray-600 text-sm">Siteyi normale döndürmek için:</p>
+                <button onclick="location.reload()" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded shadow-lg transition transform hover:scale-105">
+                    SİSTEMİ YENİDEN BAŞLAT
+                </button>
+            </div>
         </div>
-        <audio id="bgMusic" loop>
-            <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112778.mp3" type="audio/mpeg">
-        </audio>
     </div>
 
-    <div id="jungle-area" class="absolute top-0 left-0 w-full h-screen overflow-hidden pointer-events-none">
-        <div id="monkey" class="monkey-container pointer-events-auto" onclick="askName()">
-            <span id="monkeyNameDisplay" class="monkey-name-tag">İsimsiz</span>
-            <div class="text-4xl">🐒</div>
+    <div id="main-site-wrapper" class="transition-all duration-500">
+        
+        <div id="tsparticles"></div>
+
+        <div class="fixed bottom-5 left-5 z-50 bg-black/50 backdrop-blur-md p-3 rounded-full border border-techblue/30 flex items-center gap-3 transition hover:bg-black/80">
+            <button id="playBtn" onclick="toggleMusic()" class="w-10 h-10 bg-techblue rounded-full text-darkbg flex items-center justify-center hover:scale-110 transition">
+                <i class="fas fa-play"></i>
+            </button>
+            <div class="hidden md:block pr-2">
+                <p class="text-xs text-gray-400">Lo-Fi Radio</p>
+                <p id="musicStatus" class="text-xs font-bold text-techblue">Duraklatıldı</p>
+            </div>
+            <audio id="bgMusic" loop>
+                <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112778.mp3" type="audio/mpeg">
+            </audio>
         </div>
-    </div>
 
-    <div class="relative z-10">
-        <nav class="flex justify-between items-center py-6 px-8 md:px-20 bg-darkbg/80 backdrop-blur-md fixed w-full top-0 z-50 border-b border-white/10">
-            <div class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-techblue to-techpurple tracking-wider">
-                UCANYILDIZ.ME
+        <div id="jungle-area" class="absolute top-0 left-0 w-full h-screen overflow-hidden pointer-events-none">
+            <div id="monkey" class="monkey-container pointer-events-auto" onclick="askName()">
+                <div id="monkeyBubble" class="speech-bubble">Merhaba!</div>
+                <span id="monkeyNameDisplay" class="monkey-name-tag">İsimsiz</span>
+                <div class="text-4xl select-none">🐒</div>
             </div>
-            <div class="hidden md:flex space-x-8 text-sm font-semibold">
-                <a href="#home" class="hover:text-techblue transition duration-300">ANA SAYFA</a>
-                <a href="#about" class="hover:text-techblue transition duration-300">HAKKIMDA</a>
-            </div>
-        </nav>
+        </div>
 
-        <section id="home" class="min-h-screen flex items-center justify-center text-center px-4 pt-20">
-            <div class="max-w-3xl">
-                <h2 data-aos="fade-down" class="text-techblue font-mono text-xl mb-4">Merhaba, ben Umut Can.</h2>
-                <h1 data-aos="zoom-in" data-aos-delay="300" class="text-5xl md:text-7xl font-extrabold mb-6">
-                    Geleceği Kodluyorum.
-                </h1>
-                <p data-aos="fade-up" data-aos-delay="600" class="text-gray-400 text-lg md:text-xl mb-10 max-w-xl mx-auto">
-                    Modern web teknolojileri, test mühendisliği ve yenilikçi çözümler. Ayrıca sitemde gezinen bir maymun var!
-                </p>
-                <div data-aos="fade-up" data-aos-delay="900" class="flex justify-center gap-4">
-                    <a href="#about" class="px-8 py-4 bg-gradient-to-r from-techblue to-techpurple rounded-full text-darkbg font-bold text-lg hover:scale-105 transition transform duration-300">
-                        Beni Keşfet
-                    </a>
-                    <button onclick="askName()" class="px-8 py-4 border border-techblue rounded-full text-techblue font-bold hover:bg-techblue/10 transition">
-                        Maymuna İsim Ver
-                    </button>
+        <div class="relative z-10">
+            <nav class="flex justify-between items-center py-6 px-8 md:px-20 bg-darkbg/80 backdrop-blur-md fixed w-full top-0 z-50 border-b border-white/10">
+                <div class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-techblue to-techpurple tracking-wider">
+                    UCANYILDIZ.ME
                 </div>
-            </div>
-        </section>
+                <div class="hidden md:flex space-x-8 text-sm font-semibold">
+                    <a href="#home" class="hover:text-techblue transition duration-300">ANA SAYFA</a>
+                    <a href="#about" class="hover:text-techblue transition duration-300">HAKKIMDA</a>
+                </div>
+            </nav>
 
-        <section id="about" class="py-32 px-8 md:px-20 bg-darkbg">
-            <div class="container mx-auto flex flex-col md:flex-row items-center gap-16">
-                <div class="md:w-1/2" data-aos="fade-right">
-                    <div class="p-1 bg-gradient-to-br from-techblue via-purple-500 to-pink-500 rounded-2xl rotate-[-3deg] hover:rotate-0 transition duration-500">
-                        <div class="bg-darkbg p-8 rounded-2xl border border-white/10 font-mono text-sm text-green-400 leading-8 shadow-2xl">
-                            <p><span class="text-pink-400">const</span> developer = {</p>
-                            <p class="pl-4">name: <span class="text-yellow-300">'Umut Can'</span>,</p>
-                            <p class="pl-4">pet: <span class="text-yellow-300" id="codePetName">'Monkey'</span>,</p>
-                            <p class="pl-4">music: <span class="text-yellow-300">'Lo-Fi'</span></p>
-                            <p>};</p>
-                        </div>
+            <section id="home" class="min-h-screen flex items-center justify-center text-center px-4 pt-20">
+                <div class="max-w-3xl">
+                    <h2 data-aos="fade-down" class="text-techblue font-mono text-xl mb-4">Merhaba, ben Umut Can.</h2>
+                    <h1 data-aos="zoom-in" data-aos-delay="300" class="text-5xl md:text-7xl font-extrabold mb-6">
+                        Geleceği Kodluyorum.
+                    </h1>
+                    
+                    <div data-aos="fade-up" data-aos-delay="900" class="flex flex-wrap justify-center gap-4 mt-8">
+                        <a href="#about" class="px-8 py-3 bg-gradient-to-r from-techblue to-techpurple rounded-full text-darkbg font-bold hover:scale-105 transition shadow-[0_0_15px_rgba(0,242,255,0.4)]">
+                            Beni Keşfet
+                        </a>
+                        <button onclick="askName()" class="px-6 py-3 border border-gray-500 rounded-full text-gray-300 font-semibold hover:border-techblue hover:text-techblue transition flex items-center gap-2">
+                            <i class="fas fa-pen"></i> İsim Ver
+                        </button>
+                        <button onclick="feedMonkey()" class="px-6 py-3 bg-yellow-400 rounded-full text-black font-bold hover:bg-yellow-300 hover:scale-110 transition flex items-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.5)]">
+                            <i class="fas fa-carrot" style="transform: rotate(45deg);"></i> Muz Ver!
+                        </button>
                     </div>
                 </div>
-                <div class="md:w-1/2" data-aos="fade-left">
-                    <h3 class="text-techblue font-mono mb-2">01. HAKKIMDA</h3>
-                    <h2 class="text-4xl font-bold mb-6">Teknoloji & Eğlence</h2>
-                    <p class="text-gray-400 text-lg mb-6 leading-relaxed">
-                        Yazılım geliştirirken sadece koda değil, kullanıcı deneyimine de önem veririm. Bu sitede olduğu gibi, standart yapıların dışına çıkmayı ve teknolojiyi eğlenceli hale getirmeyi seviyorum.
-                    </p>
+            </section>
+
+            <section id="about" class="py-32 px-8 md:px-20 bg-darkbg">
+                <div class="container mx-auto flex flex-col md:flex-row items-center gap-16">
+                    <div class="md:w-1/2" data-aos="fade-right">
+                        <div class="p-1 bg-gradient-to-br from-techblue via-purple-500 to-pink-500 rounded-2xl rotate-[-3deg] hover:rotate-0 transition duration-500">
+                            <div class="bg-darkbg p-8 rounded-2xl border border-white/10 font-mono text-sm text-green-400 leading-8 shadow-2xl">
+                                <p><span class="text-pink-400">const</span> developer = {</p>
+                                <p class="pl-4">name: <span class="text-yellow-300">'Umut Can'</span>,</p>
+                                <p class="pl-4">pet: <span class="text-yellow-300" id="codePetName">'Monkey'</span>,</p>
+                                <p class="pl-4">status: <span class="text-green-400" id="devStatus">'Coding...'</span></p>
+                                <p>};</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2" data-aos="fade-left">
+                        <h3 class="text-techblue font-mono mb-2">01. HAKKIMDA</h3>
+                        <h2 class="text-4xl font-bold mb-6">İnteraktif Web Dünyası</h2>
+                        <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                            Buradaki maymunu beslerken dikkatli ol. Her şeyin fazlası zarardır, dijital muzların bile!
+                            Kullanıcı etkileşimlerini (DOM events) ve durum yönetimini (State management) bu şekilde test ediyoruz.
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <footer class="text-center py-8 text-gray-500 text-sm border-t border-white/10">
-            <p>© 2024 ucanyildiz.me</p>
-        </footer>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.0.6/tsparticles.slim.bundle.min.js"></script>
+            <footer class="text-center py-8 text-gray-500 text-sm border-t border-white/10">
+                <p>© 2024 ucanyildiz.me</p>
+            </footer>
+        </div>
+    </div> <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.0.6/tsparticles.slim.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
-        // === 1. MÜZİK ÇALAR MANTIĞI ===
+        // === MÜZİK ÇALAR ===
         const audio = document.getElementById("bgMusic");
         const playBtn = document.getElementById("playBtn");
         const statusText = document.getElementById("musicStatus");
         let isPlaying = false;
-
-        // Ses seviyesini ayarla (%40)
         audio.volume = 0.4;
 
         function toggleMusic() {
@@ -163,7 +233,7 @@
                 statusText.innerText = "Duraklatıldı";
                 statusText.classList.remove("animate-pulse");
             } else {
-                audio.play().catch(error => console.log("Otomatik oynatma engellendi, kullanıcı etkileşimi şart."));
+                audio.play().catch(e => console.log("Otomatik oynatma engeli."));
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                 statusText.innerText = "Çalıyor...";
                 statusText.classList.add("animate-pulse");
@@ -171,69 +241,138 @@
             isPlaying = !isPlaying;
         }
 
-        // === 2. MAYMUN VE DALLAR MANTIĞI ===
+        // === MAYMUN VE OYUN MANTIĞI ===
+        const monkey = document.getElementById('monkey');
+        const bubble = document.getElementById('monkeyBubble');
+        const siteWrapper = document.getElementById('main-site-wrapper');
+        const hospitalModal = document.getElementById('hospitalModal');
+        const patientNameDisplay = document.getElementById('patientName');
+        const devStatus = document.getElementById('devStatus');
         
-        // Dallar için rastgele koordinatlar (Yüzde cinsinden: left, top)
-        // Ekranın çok kenarlarına gitmesin diye %10 ile %90 arası değerler
+        let currentScale = 1.0;
+        const maxScale = 3.0;
+        let isCritical = false; // Patlama sınırında mı?
+        let bubbleTimer;
+
+        const dialogues = ["Leziz! 🍌", "Daha yok mu?", "Büyüyorum!", "Potasyum!", "Devleşiyorum!"];
+
+        function feedMonkey() {
+            // EĞER KRİTİK DURUMDAYSA VE YİNE DE BESLENİRSE -> PATLAT
+            if (isCritical) {
+                triggerExplosion();
+                return;
+            }
+
+            // Normal Büyüme
+            if (currentScale < maxScale) {
+                currentScale += 0.3; // Daha hızlı büyüsün
+                if (currentScale >= maxScale) {
+                    currentScale = maxScale;
+                    // Kritik aşamaya geldi
+                    isCritical = true;
+                    speak("PATLAYACAĞIM ARTIK! 🤬");
+                    monkey.classList.add('animate-pulse'); // Uyarı olarak yanıp sön
+                } else {
+                    speak(dialogues[Math.floor(Math.random() * dialogues.length)]);
+                }
+            }
+            updateMonkeyTransform();
+        }
+
+        function triggerExplosion() {
+            // 1. Maymun Çığlığı (Yazı ile)
+            speak("GÜM!!! 💥");
+            
+            // 2. Siteyi Sallama Efekti
+            document.body.classList.add('animate-shake');
+            
+            // 3. 1 Saniye sonra her şeyi yık
+            setTimeout(() => {
+                // Siteyi bulanıklaştır ve yamult
+                siteWrapper.classList.add('broken-layout');
+                
+                // Maymunu yok et
+                monkey.style.display = 'none';
+
+                // Hakkımdaki durumu güncelle
+                devStatus.innerText = "'FATAL ERROR'";
+                devStatus.classList.remove('text-green-400');
+                devStatus.classList.add('text-red-500');
+
+                // 4. Hastane Ekranını Göster
+                setTimeout(() => {
+                    const currentMonkeyName = localStorage.getItem('monkeyName') || "İsimsiz";
+                    patientNameDisplay.innerText = currentMonkeyName;
+                    hospitalModal.classList.remove('hidden');
+                    hospitalModal.classList.add('flex'); // Flex ile göster
+                }, 1000);
+
+            }, 800);
+        }
+
+        function speak(text) {
+            bubble.innerText = text;
+            bubble.style.opacity = '1';
+            clearTimeout(bubbleTimer);
+            bubbleTimer = setTimeout(() => { bubble.style.opacity = '0'; }, 2000);
+        }
+
+        // === GEZİNME MANTIĞI ===
         const branches = [
             { left: 10, top: 15 }, { left: 80, top: 20 },
             { left: 20, top: 40 }, { left: 70, top: 50 },
             { left: 50, top: 10 }, { left: 15, top: 70 },
             { left: 85, top: 75 }, { left: 40, top: 80 }
         ];
+        let currentPos = { left: 50, top: 50 }; 
 
+        function jumpMonkey() {
+            if(isCritical && Math.random() > 0.7) return; // Çok şişmanlayınca bazen atlayamasın
+            
+            const randomBranch = branches[Math.floor(Math.random() * branches.length)];
+            currentPos = randomBranch;
+            updateMonkeyTransform();
+        }
+
+        function updateMonkeyTransform() {
+            monkey.style.left = currentPos.left + '%';
+            monkey.style.top = (currentPos.top - 2) + '%';
+            monkey.style.transform = `scale(${currentScale})`;
+        }
+
+        // === BAŞLANGIÇ AYARLARI ===
         const jungleArea = document.getElementById('jungle-area');
-        const monkey = document.getElementById('monkey');
-        const nameDisplay = document.getElementById('monkeyNameDisplay');
-        const codePetName = document.getElementById('codePetName');
-
-        // Dalları ekrana yerleştir
         branches.forEach(pos => {
             const branch = document.createElement('div');
             branch.classList.add('branch');
-            branch.innerHTML = '🌿'; // Dal emojisi
+            branch.innerHTML = '🌿';
             branch.style.left = pos.left + '%';
             branch.style.top = pos.top + '%';
             jungleArea.appendChild(branch);
         });
 
-        // Maymunun zıplama fonksiyonu
-        function jumpMonkey() {
-            // Rastgele bir dal seç
-            const randomBranch = branches[Math.floor(Math.random() * branches.length)];
-            
-            // Maymunu o konuma taşı (css transition ile kayarak gider)
-            // Maymunun tam dalın üstüne oturması için ufak bir offset (-20px)
-            monkey.style.left = randomBranch.left + '%';
-            monkey.style.top = (randomBranch.top - 2) + '%'; 
-        }
+        setTimeout(jumpMonkey, 500);
+        setInterval(jumpMonkey, 2500);
 
-        // İlk zıplama ve döngü
-        setTimeout(jumpMonkey, 500); // Sayfa açıldıktan yarım saniye sonra başla
-        setInterval(jumpMonkey, 2500); // Her 2.5 saniyede bir zıpla
-
-        // === 3. İSİM VERME (LocalStorage) ===
-        
-        // Kayıtlı isim var mı kontrol et
+        // İsim Ayarları
+        const nameDisplay = document.getElementById('monkeyNameDisplay');
+        const codePetName = document.getElementById('codePetName');
         const savedName = localStorage.getItem('monkeyName');
-        if (savedName) {
-            updateName(savedName);
-        }
+        if (savedName) updateName(savedName);
 
         function askName() {
             const newName = prompt("Maymunun yeni adı ne olsun?", nameDisplay.innerText);
             if (newName && newName.trim() !== "") {
-                localStorage.setItem('monkeyName', newName); // Tarayıcıya kaydet
+                localStorage.setItem('monkeyName', newName);
                 updateName(newName);
             }
         }
-
         function updateName(name) {
             nameDisplay.innerText = name;
-            codePetName.innerText = `'${name}'`; // Hakkımda kısmındaki kod bloğunu da güncelle
+            codePetName.innerText = `'${name}'`;
         }
 
-        // === 4. DİĞER KÜTÜPHANELER ===
+        // Kütüphane Yüklemeleri
         AOS.init({ duration: 1000, once: true });
         tsParticles.load("tsparticles", {
             background: { color: { value: "transparent" } },
