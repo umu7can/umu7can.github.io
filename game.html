@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Banana Inc. | Tycoon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                darkbg: '#0f172a',
+                panel: '#1e293b',
+                techgreen: '#10b981',
+                techblue: '#00f2ff',
+                techred: '#f43f5e',
+                gold: '#fbbf24'
+              },
+              fontFamily: {
+                sans: ['Inter', 'sans-serif'],
+                mono: ['Fira Code', 'monospace'],
+              }
+            }
+          }
+        }
+    </script>
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; overflow: hidden; }
+        .btn-action {
+            transition: all 0.1s;
+        }
+        .btn-action:active {
+            transform: scale(0.95);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="flex flex-col h-screen font-sans">
+
+    <nav class="flex justify-between items-center py-4 px-6 bg-panel border-b border-gray-700 shadow-lg shrink-0">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-gray-400 hover:text-white transition"><i class="fas fa-arrow-left"></i> Ana Sayfa</a>
+            <span class="text-xl font-bold text-techblue tracking-wider">CYBER BANANA INC.</span>
+        </div>
+        <div class="flex gap-6 font-mono text-sm">
+            <div class="flex flex-col items-end">
+                <span class="text-gray-400 text-xs">ŞİRKET KASASI</span>
+                <span id="displayMoney" class="text-gold font-bold text-xl">0 ₺</span>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="text-gray-400 text-xs">HEDEF (MOTOR)</span>
+                <span id="displayRocket" class="text-techred font-bold text-xl">0 / 10</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex flex-1 overflow-hidden">
+        
+        <div class="w-1/3 p-6 border-r border-gray-700 flex flex-col items-center justify-center bg-darkbg relative">
+            
+            <div class="absolute top-4 left-4 right-4">
+                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                    <span>Depo Doluluğu</span>
+                    <span id="storageText">0 / 100</span>
+                </div>
+                <div class="w-full bg-gray-700 h-2 rounded-full overflow-hidden">
+                    <div id="storageBar" class="bg-techgreen h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <div class="relative group cursor-pointer btn-action" onclick="clickBanana()">
+                    <div class="absolute inset-0 bg-yellow-400 blur-2xl opacity-20 group-hover:opacity-40 transition rounded-full"></div>
+                    <div class="text-9xl relative z-10 transition transform group-hover:scale-110">🍌</div>
+                </div>
+                <p class="mt-6 text-gray-400 text-sm">Muz toplamak için tıkla</p>
+                <p class="font-mono text-2xl font-bold mt-2 text-yellow-400" id="displayBanana">0 Muz</p>
+            </div>
+
+            <button onclick="sellBananas()" class="mt-8 px-8 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded shadow-lg w-full max-w-xs transition flex justify-center items-center gap-2">
+                <i class="fas fa-dollar-sign"></i> TÜMÜNÜ SAT
+            </button>
+            <p class="text-xs text-gray-500 mt-2">Birim Fiyat: <span id="bananaPrice">1</span> ₺</p>
+        </div>
+
+        <div class="w-1/3 p-6 border-r border-gray-700 bg-panel overflow-y-auto">
+            <h2 class="text-techblue font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-industry"></i> ÜRETİM HATLARI
+            </h2>
+            
+            <div id="machineContainer" class="space-y-4">
+                <div class="bg-darkbg p-4 rounded border border-gray-600 hover:border-techblue transition">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-yellow-300">Stajyer Maymun</h3>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-white" id="countStajyer">0 Adet</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-3">Otomatik muz toplar. (1/sn)</p>
+                    <button onclick="buyMachine('stajyer')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-4">
+                        <span>SATIN AL</span>
+                        <span class="text-gold" id="costStajyer">15 ₺</span>
+                    </button>
+                </div>
+
+                <div class="bg-darkbg p-4 rounded border border-gray-600 hover:border-purple-500 transition opacity-50" id="unlockFactory">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-purple-400">Muz İşleme Tesisi</h3>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-white" id="countFactory">0 Adet</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-3">5 Muz'u eritip 1 <span class="text-purple-300">Muz Çeliği</span> yapar.</p>
+                    <div class="flex justify-between text-xs text-gray-500 mb-2 font-mono">
+                        <span>Girdi: -5 Muz/sn</span>
+                        <span>Çıktı: +1 Çelik/sn</span>
+                    </div>
+                    <button onclick="buyMachine('factory')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-4">
+                        <span>KURULUM YAP</span>
+                        <span class="text-gold" id="costFactory">250 ₺</span>
+                    </button>
+                </div>
+
+                 <div class="bg-darkbg p-4 rounded border border-gray-600 hover:border-green-500 transition mt-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-green-400">Depo Genişletme</h3>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-white" id="storageLevel">Seviye 1</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-3">Stok kapasitesini artırır (+100).</p>
+                    <button onclick="upgradeStorage()" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-4">
+                        <span>GENİŞLET</span>
+                        <span class="text-gold" id="costStorage">100 ₺</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-1/3 p-6 bg-darkbg overflow-y-auto flex flex-col">
+            
+            <div class="bg-panel p-4 rounded mb-6 border border-gray-600">
+                <h2 class="text-gray-300 font-bold text-sm mb-3">📦 İŞLENMİŞ ENVANTER</h2>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-purple-900/50 rounded flex items-center justify-center text-xl">🧬</div>
+                        <div>
+                            <p class="text-xs text-gray-400">Muz Çeliği</p>
+                            <p class="font-mono font-bold text-purple-400" id="displaySteel">0</p>
+                        </div>
+                    </div>
+                    <button onclick="sellSteel()" class="px-3 py-1 bg-red-900/50 hover:bg-red-800 text-red-200 text-xs rounded border border-red-800">
+                        SAT (50₺)
+                    </button>
+                </div>
+            </div>
+
+            <h2 class="text-techred font-bold mb-4 flex items-center gap-2 border-t border-gray-700 pt-6">
+                <i class="fas fa-hammer"></i> MONTAJ HATTI
+            </h2>
+
+            <div class="bg-black/40 p-6 rounded-lg border border-red-900/50 text-center">
+                <div class="text-5xl mb-4 animate-pulse">🚀</div>
+                <h3 class="text-xl font-bold text-white mb-2">Warp Motoru</h3>
+                <p class="text-sm text-gray-400 mb-6">Galaksi seyahati için gerekli parça.</p>
+                
+                <div class="bg-gray-800 p-3 rounded text-left text-xs font-mono mb-4 space-y-2">
+                    <div class="flex justify-between">
+                        <span>Gerekli Para:</span>
+                        <span class="text-gold">1.000 ₺</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Gerekli Çelik:</span>
+                        <span class="text-purple-400">50 Adet</span>
+                    </div>
+                </div>
+
+                <button onclick="craftRocket()" id="craftBtn" class="w-full py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-bold rounded shadow-[0_0_15px_rgba(239,68,68,0.4)] disabled:opacity-50 disabled:cursor-not-allowed">
+                    MOTOR ÜRET
+                </button>
+            </div>
+
+            <div class="mt-auto pt-6 text-center">
+                <p class="text-xs text-gray-500">
+                    Proje Durumu: <span id="progressPercent" class="text-white">0%</span> Tamamlandı
+                </p>
+                <div class="w-full bg-gray-800 h-1 mt-2 rounded-full">
+                    <div id="progressBar" class="bg-techred h-full w-0"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="winModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm">
+        <div class="bg-panel p-10 rounded-xl border-2 border-techgreen text-center max-w-lg">
+            <h1 class="text-4xl font-bold text-techgreen mb-4">GÖREV TAMAMLANDI!</h1>
+            <p class="text-gray-300 mb-6">Tebrikler Endüstri Mühendisi! Üretim hattını mükemmel optimize ettin ve galaksiye açılmaya hazırsın.</p>
+            <div class="text-6xl mb-8">🌌🚀🪐</div>
+            <div class="flex gap-4 justify-center">
+                <button onclick="location.reload()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white">Sıfırla</button>
+                <a href="index.html" class="px-6 py-2 bg-techblue hover:bg-blue-400 text-black font-bold rounded">Ana Sayfaya Dön</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === OYUN VERİLERİ (STATE) ===
+        const game = {
+            money: 0,
+            banana: 0,
+            steel: 0,
+            rocketParts: 0,
+            
+            // Limitler
+            storageCap: 100,
+            
+            // Birimler
+            stajyer: 0, // Adet
+            factory: 0, // Adet
+            
+            // Fiyatlar
+            costs: {
+                stajyer: 15,
+                factory: 250,
+                storage: 100,
+                rocketPrice: 1000,
+                rocketSteel: 50
+            }
+        };
+
+        // === TEMEL FONKSİYONLAR ===
+
+        function updateUI() {
+            // Değerleri Yazdır
+            document.getElementById('displayMoney').innerText = Math.floor(game.money).toLocaleString() + ' ₺';
+            document.getElementById('displayBanana').innerText = Math.floor(game.banana).toLocaleString() + ' Muz';
+            document.getElementById('displaySteel').innerText = game.steel;
+            document.getElementById('displayRocket').innerText = game.rocketParts + ' / 10';
+
+            // Depo Barı
+            const storagePercent = (game.banana / game.storageCap) * 100;
+            document.getElementById('storageBar').style.width = storagePercent + '%';
+            document.getElementById('storageBar').className = `h-full transition-all duration-300 ${storagePercent >= 100 ? 'bg-red-500' : 'bg-techgreen'}`;
+            document.getElementById('storageText').innerText = `${Math.floor(game.banana)} / ${game.storageCap}`;
+
+            // Buton ve Etiket Güncellemeleri
+            document.getElementById('countStajyer').innerText = game.stajyer + " Adet";
+            document.getElementById('costStajyer').innerText = Math.floor(game.costs.stajyer * Math.pow(1.1, game.stajyer)) + " ₺";
+            
+            document.getElementById('countFactory').innerText = game.factory + " Adet";
+            document.getElementById('costFactory').innerText = Math.floor(game.costs.factory * Math.pow(1.2, game.factory)) + " ₺";
+
+            document.getElementById('storageLevel').innerText = "Kapasite: " + game.storageCap;
+            document.getElementById('costStorage').innerText = game.costs.storage + " ₺";
+
+            // Fabrika Görünürlüğü (Zorluk Dengesi - İlk başta gizli değil ama opak)
+            const factoryDiv = document.getElementById('unlockFactory');
+            if (game.money > 100 || game.factory > 0) {
+                factoryDiv.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                factoryDiv.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            // Craft Butonu Kontrolü
+            const craftBtn = document.getElementById('craftBtn');
+            if (game.money >= game.costs.rocketPrice && game.steel >= game.costs.rocketSteel) {
+                craftBtn.disabled = false;
+                craftBtn.classList.remove('opacity-50');
+            } else {
+                craftBtn.disabled = true;
+                craftBtn.classList.add('opacity-50');
+            }
+
+            // Progress Bar
+            const progress = (game.rocketParts / 10) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercent').innerText = progress + '%';
+        }
+
+        // --- AKSİYONLAR ---
+
+        function clickBanana() {
+            if (game.banana < game.storageCap) {
+                game.banana++;
+                updateUI();
+            } else {
+                // Depo dolu efekti (titreme)
+                const bar = document.getElementById('storageBar');
+                bar.classList.add('animate-pulse');
+                setTimeout(() => bar.classList.remove('animate-pulse'), 200);
+            }
+        }
+
+        function sellBananas() {
+            if (game.banana > 0) {
+                // Toptan satışta depo boşalır
+                game.money += game.banana * 1; // Tanesi 1 TL
+                game.banana = 0;
+                updateUI();
+            }
+        }
+
+        function sellSteel() {
+            if (game.steel > 0) {
+                game.money += 50; // Tanesi 50 TL (İşlenmiş ürün değerli)
+                game.steel--;
+                updateUI();
+            }
+        }
+
+        function buyMachine(type) {
+            let cost = 0;
+            if (type === 'stajyer') {
+                cost = Math.floor(game.costs.stajyer * Math.pow(1.1, game.stajyer));
+                if (game.money >= cost) {
+                    game.money -= cost;
+                    game.stajyer++;
+                }
+            } else if (type === 'factory') {
+                cost = Math.floor(game.costs.factory * Math.pow(1.2, game.factory));
+                if (game.money >= cost) {
+                    game.money -= cost;
+                    game.factory++;
+                }
+            }
+            updateUI();
+        }
+
+        function upgradeStorage() {
+            if (game.money >= game.costs.storage) {
+                game.money -= game.costs.storage;
+                game.storageCap *= 2; // Kapasiteyi ikiye katla
+                game.costs.storage *= 2.5; // Fiyatı artır
+                updateUI();
+            }
+        }
+
+        function craftRocket() {
+            if (game.money >= game.costs.rocketPrice && game.steel >= game.costs.rocketSteel) {
+                game.money -= game.costs.rocketPrice;
+                game.steel -= game.costs.rocketSteel;
+                game.rocketParts++;
+                
+                checkWin();
+                updateUI();
+            }
+        }
+
+        function checkWin() {
+            if (game.rocketParts >= 10) {
+                document.getElementById('winModal').classList.remove('hidden');
+                document.getElementById('winModal').classList.add('flex');
+            }
+        }
+
+        // === OTOMASYON DÖNGÜSÜ (GAME LOOP) ===
+        setInterval(() => {
+            // 1. Stajyerler Muz Toplar
+            if (game.stajyer > 0) {
+                // Depo dolu değilse topla
+                let amount = game.stajyer;
+                if (game.banana + amount <= game.storageCap) {
+                    game.banana += amount;
+                } else {
+                    game.banana = game.storageCap; // Maxa eşitle
+                }
+            }
+
+            // 2. Fabrikalar Muz İşler (5 Muz -> 1 Çelik)
+            if (game.factory > 0) {
+                // Yeterli hammadde var mı?
+                const consumption = game.factory * 5; // Her fabrika 5 muz yer
+                if (game.banana >= consumption) {
+                    game.banana -= consumption;
+                    game.steel += game.factory; // 1 Çelik üretir
+                }
+            }
+
+            updateUI();
+        }, 1000); // Her 1 saniyede bir çalışır
+
+        // Başlangıç
+        updateUI();
+
+    </script>
+</body>
+</html>
