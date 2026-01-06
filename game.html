@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Banana Inc. | V10.1 FIX</title>
+    <title>Cyber Banana Inc. | V11.3 UI HARDCODE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
@@ -33,10 +33,12 @@
                   'float-up': 'floatUp 1s ease-out forwards',
                   'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                   'pop-in': 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                  'flash-red': 'flashRed 1s infinite'
               },
               keyframes: {
                   floatUp: { '0%': { transform: 'translateY(0) scale(1)', opacity: '1' }, '100%': { transform: 'translateY(-50px) scale(1.5)', opacity: '0' } },
-                  popIn: { '0%': { transform: 'scale(0.5)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } }
+                  popIn: { '0%': { transform: 'scale(0.5)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+                  flashRed: { '0%, 100%': { backgroundColor: '#ef4444' }, '50%': { backgroundColor: '#7f1d1d' } }
               }
             }
           }
@@ -52,61 +54,20 @@
         .rage-mode { background-color: #2a0a0a !important; border-color: #ef4444 !important; }
         .blink-text { animation: blinker 1.5s linear infinite; }
         @keyframes blinker { 50% { opacity: 0.5; } }
+        .full-storage-anim { animation: flashRed 1s infinite; border: 2px solid white; }
         .price-up { color: #10b981; } .price-down { color: #f43f5e; }
-
-        /* --- RULET DÜZELTMESİ --- */
-        .roulette-wheel {
-            width: 200px; height: 200px; border-radius: 50%;
-            /* DİKKAT: 0-180 KIRMIZI (SAĞ), 180-360 SİYAH (SOL) */
-            background: conic-gradient(
-                #ef4444 0deg 180deg, 
-                #1f2937 180deg 360deg
-            );
-            border: 8px solid #fbbf24;
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
-            transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); /* Yumuşak duruş */
-            position: relative;
-            transform: rotate(0deg); /* Başlangıç */
-        }
-        .wheel-arrow {
-            width: 0; height: 0; 
-            border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 20px solid white;
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 10;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-        }
-
-        /* --- ZAR DÜZELTMESİ --- */
+        
+        /* 3D STYLES */
         .perspective-1000 { perspective: 1000px; }
-        .dice-container { 
-            width: 100px; height: 100px; position: relative; 
-            transform-style: preserve-3d; 
-            transition: transform 1.5s ease-out; /* JavaScript ile kontrol edilecek */
-        }
-        .dice-face {
-            position: absolute; width: 100px; height: 100px;
-            background: linear-gradient(145deg, #ffffff, #e6e6e6);
-            border: 1px solid #999; border-radius: 12px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 0; /* Noktalar için */
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
-        }
-        /* Zar Noktaları (Görsel İyileştirme) */
+        .roulette-wheel { width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(#ef4444 0deg 180deg, #1f2937 180deg 360deg); border: 8px solid #fbbf24; box-shadow: 0 0 30px rgba(251, 191, 36, 0.3); transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; }
+        .roulette-wheel::after { content: ''; position: absolute; top: 50%; left: 50%; width: 20px; height: 20px; background: white; border-radius: 50%; transform: translate(-50%, -50%); border: 4px solid #fbbf24; }
+        .wheel-arrow { width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 20px solid white; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .dice-container { width: 100px; height: 100px; position: relative; transform-style: preserve-3d; transition: transform 1.5s ease-out; }
+        .dice-face { position: absolute; width: 100px; height: 100px; background: linear-gradient(145deg, #ffffff, #e6e6e6); border: 1px solid #999; border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 15px rgba(0,0,0,0.1); }
         .dot { width: 18px; height: 18px; background: #333; border-radius: 50%; position: absolute; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
-        
-        .front  { transform: rotateY(0deg) translateZ(50px); }   /* 1 */
-        .back   { transform: rotateY(180deg) translateZ(50px); } /* 6 */
-        .right  { transform: rotateY(90deg) translateZ(50px); }  /* 3 */
-        .left   { transform: rotateY(-90deg) translateZ(50px); } /* 4 */
-        .top    { transform: rotateX(90deg) translateZ(50px); }  /* 5 */
-        .bottom { transform: rotateX(-90deg) translateZ(50px); } /* 2 */
-        
-        /* Zar Nokta Pozisyonları */
-        .front .dot:nth-child(1) { top: 41px; left: 41px; background: #ef4444; } /* 1 (Kırmızı) */
-        
-        .back .dot:nth-child(1) { top: 15px; left: 15px; } .back .dot:nth-child(2) { top: 15px; right: 15px; }
-        .back .dot:nth-child(3) { top: 41px; left: 15px; } .back .dot:nth-child(4) { top: 41px; right: 15px; }
-        .back .dot:nth-child(5) { bottom: 15px; left: 15px; } .back .dot:nth-child(6) { bottom: 15px; right: 15px; }
-
+        .front { transform: rotateY(0deg) translateZ(50px); } .back { transform: rotateY(180deg) translateZ(50px); } .right { transform: rotateY(90deg) translateZ(50px); } .left { transform: rotateY(-90deg) translateZ(50px); } .top { transform: rotateX(90deg) translateZ(50px); } .bottom { transform: rotateX(-90deg) translateZ(50px); }
+        .front .dot:nth-child(1) { top: 41px; left: 41px; background: #ef4444; }
+        .back .dot:nth-child(1) { top: 15px; left: 15px; } .back .dot:nth-child(2) { top: 15px; right: 15px; } .back .dot:nth-child(3) { top: 41px; left: 15px; } .back .dot:nth-child(4) { top: 41px; right: 15px; } .back .dot:nth-child(5) { bottom: 15px; left: 15px; } .back .dot:nth-child(6) { bottom: 15px; right: 15px; }
         .right .dot:nth-child(1) { top: 15px; right: 15px; } .right .dot:nth-child(2) { top: 41px; left: 41px; } .right .dot:nth-child(3) { bottom: 15px; left: 15px; }
         .left .dot:nth-child(1) { top: 15px; left: 15px; } .left .dot:nth-child(2) { top: 15px; right: 15px; } .left .dot:nth-child(3) { bottom: 15px; left: 15px; } .left .dot:nth-child(4) { bottom: 15px; right: 15px; }
         .top .dot:nth-child(1) { top: 15px; left: 15px; } .top .dot:nth-child(2) { top: 15px; right: 15px; } .top .dot:nth-child(3) { top: 41px; left: 41px; } .top .dot:nth-child(4) { bottom: 15px; left: 15px; } .top .dot:nth-child(5) { bottom: 15px; right: 15px; }
@@ -120,10 +81,7 @@
     <div id="newsToast" class="fixed top-0 left-1/2 transform -translate-x-1/2 z-[100] hidden pointer-events-none w-full max-w-lg">
         <div class="bg-gray-800 border-l-4 shadow-2xl rounded-b-lg p-4 flex items-start gap-4" id="toastCard">
             <div class="text-3xl" id="toastIcon">⚠️</div>
-            <div>
-                <h4 class="font-bold text-sm tracking-wide mb-1" id="toastTitle">SİSTEM</h4>
-                <p class="text-xs text-gray-300 font-mono" id="toastBody">...</p>
-            </div>
+            <div><h4 class="font-bold text-sm tracking-wide mb-1" id="toastTitle">SİSTEM</h4><p class="text-xs text-gray-300 font-mono" id="toastBody">...</p></div>
         </div>
     </div>
 
@@ -131,57 +89,27 @@
         <div class="w-full max-w-4xl h-[90vh] bg-gradient-to-b from-gray-900 to-casino rounded-2xl border-4 border-gold shadow-[0_0_50px_rgba(251,191,36,0.2)] flex flex-col relative overflow-hidden">
             <button onclick="toggleCasino()" class="absolute top-4 right-4 text-gray-400 hover:text-white z-50 text-2xl hover:scale-110 transition"><i class="fas fa-times"></i></button>
             <div class="p-6 border-b border-purple-700 bg-black/30 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="text-4xl animate-bounce">🎰</div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200">SERVET'İN YERALTI MASASI</h1>
-                        <p class="text-xs text-purple-300 tracking-widest font-mono">EST. 2026 • HIGH STAKES</p>
-                    </div>
-                </div>
-                <div class="bg-gray-900 px-4 py-2 rounded border border-gold shadow-lg">
-                    <p class="text-[10px] text-gray-400">BAKİYE</p>
-                    <p class="text-xl font-bold text-gold font-mono" id="casinoBalance">0,00 ₺</p>
-                </div>
+                <div class="flex items-center gap-3"><div class="text-4xl animate-bounce">🎰</div><div><h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200">SERVET'İN YERALTI MASASI</h1></div></div>
+                <div class="bg-gray-900 px-4 py-2 rounded border border-gold shadow-lg"><p class="text-[10px] text-gray-400">BAKİYE</p><p class="text-xl font-bold text-gold font-mono" id="casinoBalance">0,00 ₺</p></div>
             </div>
             <div class="flex-1 flex overflow-hidden">
                 <div class="w-1/4 bg-black/40 border-r border-purple-800 p-4 space-y-2">
-                    <button onclick="switchCasinoGame('roulette')" class="w-full py-4 px-4 rounded bg-purple-900/50 hover:bg-purple-700 border border-purple-500 text-left transition flex items-center gap-3 group active:scale-95"><span class="text-2xl group-hover:rotate-180 transition duration-500">🎡</span><div><p class="font-bold text-white text-sm group-hover:text-gold">Rulet</p><p class="text-[10px] text-gray-400">2x Kazanç • %50 Şans</p></div></button>
-                    <button onclick="switchCasinoGame('dice')" class="w-full py-4 px-4 rounded bg-purple-900/50 hover:bg-purple-700 border border-purple-500 text-left transition flex items-center gap-3 group active:scale-95"><span class="text-2xl group-hover:rotate-12 transition">🎲</span><div><p class="font-bold text-white text-sm group-hover:text-gold">Riskli Zar</p><p class="text-[10px] text-gray-400">5x Kazanç • %20 Şans</p></div></button>
+                    <button onclick="switchCasinoGame('roulette')" class="w-full py-4 px-4 rounded bg-purple-900/50 hover:bg-purple-700 border border-purple-500 text-left transition flex items-center gap-3 group active:scale-95"><span class="text-2xl">🎡</span><div><p class="font-bold text-white text-sm group-hover:text-gold">Rulet</p><p class="text-[10px] text-gray-400">2x Kazanç • %50 Şans</p></div></button>
+                    <button onclick="switchCasinoGame('dice')" class="w-full py-4 px-4 rounded bg-purple-900/50 hover:bg-purple-700 border border-purple-500 text-left transition flex items-center gap-3 group active:scale-95"><span class="text-2xl">🎲</span><div><p class="font-bold text-white text-sm group-hover:text-gold">Riskli Zar</p><p class="text-[10px] text-gray-400">5x Kazanç • %20 Şans</p></div></button>
                 </div>
                 <div class="w-3/4 p-8 flex flex-col items-center justify-center relative bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
                     <div id="gameRoulette" class="flex flex-col items-center justify-center w-full h-full">
-                        <div class="relative mb-10">
-                            <div class="wheel-arrow"></div>
-                            <div id="wheel" class="roulette-wheel"></div>
-                        </div>
+                        <div class="relative mb-10"><div class="wheel-arrow"></div><div id="wheel" class="roulette-wheel"></div></div>
                         <div class="bg-gray-900/90 p-6 rounded-xl border-2 border-purple-500/50 w-2/3 shadow-2xl backdrop-blur-sm">
                             <div class="flex gap-2 mb-4"><input type="number" id="betRoulette" placeholder="Bahis Miktarı" class="flex-1 bg-gray-800 border border-purple-500/50 rounded px-4 py-3 text-center text-white focus:border-gold outline-none font-mono text-lg"></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <button onclick="spinRoulette('red')" id="btnRed" class="py-4 bg-gradient-to-br from-red-600 to-red-900 hover:from-red-500 hover:to-red-800 border border-red-500 rounded-lg font-bold text-white transition shadow-[0_0_15px_rgba(220,38,38,0.4)] active:scale-95">KIRMIZI (🔴)</button>
-                                <button onclick="spinRoulette('black')" id="btnBlack" class="py-4 bg-gradient-to-br from-gray-700 to-gray-900 hover:from-gray-600 hover:to-gray-800 border border-gray-500 rounded-lg font-bold text-white transition shadow-[0_0_15px_rgba(75,85,99,0.4)] active:scale-95">SİYAH (⚫)</button>
-                            </div>
+                            <div class="grid grid-cols-2 gap-4"><button onclick="spinRoulette('red')" id="btnRed" class="py-4 bg-red-900 border border-red-500 rounded-lg font-bold text-white">KIRMIZI (🔴)</button><button onclick="spinRoulette('black')" id="btnBlack" class="py-4 bg-gray-800 border border-gray-500 rounded-lg font-bold text-white">SİYAH (⚫)</button></div>
                         </div>
                     </div>
                     <div id="gameDice" class="hidden flex-col items-center justify-center w-full h-full">
-                        <div class="perspective-1000 mb-20">
-                            <div id="dice" class="dice-container">
-                                <div class="dice-face front"><div class="dot"></div></div>
-                                <div class="dice-face back"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                                <div class="dice-face right"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                                <div class="dice-face left"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                                <div class="dice-face top"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                                <div class="dice-face bottom"><div class="dot"></div><div class="dot"></div></div>
-                            </div>
-                        </div>
+                        <div class="perspective-1000 mb-20"><div id="dice" class="dice-container"><div class="dice-face front"><div class="dot"></div></div><div class="dice-face back"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="dice-face right"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="dice-face left"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="dice-face top"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="dice-face bottom"><div class="dot"></div><div class="dot"></div></div></div></div>
                         <div class="bg-gray-900/90 p-6 rounded-xl border-2 border-purple-500/50 w-2/3 shadow-2xl backdrop-blur-sm">
-                            <p class="text-center text-gray-400 text-xs mb-3 font-mono">1-5 ARASI BİR SAYI SEÇ. ZAR O GELİRSE PARANI 5'E KATLA!</p>
-                            <div class="flex gap-2 mb-4">
-                                <input type="number" id="betDice" placeholder="Bahis Miktarı" class="flex-1 bg-gray-800 border border-purple-500/50 rounded px-4 py-3 text-center text-white focus:border-gold outline-none font-mono text-lg">
-                                <select id="pickDice" class="bg-gray-800 border border-purple-500/50 rounded px-4 text-white outline-none font-bold text-lg text-center w-24 focus:border-gold">
-                                    <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-                                </select>
-                            </div>
-                            <button onclick="rollTheDice()" id="btnRoll" class="w-full py-4 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 border border-purple-400 rounded-lg font-bold text-white transition shadow-[0_0_20px_rgba(147,51,234,0.5)] active:scale-95 text-lg tracking-widest">ZARI AT (🎲)</button>
+                            <div class="flex gap-2 mb-4"><input type="number" id="betDice" placeholder="Bahis" class="flex-1 bg-gray-800 border border-purple-500/50 rounded px-4 py-3 text-center text-white focus:border-gold outline-none font-mono text-lg"><select id="pickDice" class="bg-gray-800 border border-purple-500/50 rounded px-4 text-white outline-none font-bold text-lg text-center w-24 focus:border-gold"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+                            <button onclick="rollTheDice()" id="btnRoll" class="w-full py-4 bg-purple-700 border border-purple-400 rounded-lg font-bold text-white">ZARI AT (🎲)</button>
                         </div>
                     </div>
                     <div id="casinoResult" class="absolute bottom-12 text-3xl font-black text-white hidden text-center drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">KAZANDIN!</div>
@@ -193,7 +121,7 @@
     <nav class="flex justify-between items-center py-3 px-6 bg-panel border-b border-gray-700 shadow-lg shrink-0 z-20">
         <div class="flex items-center gap-4">
             <a href="index.html" class="text-gray-400 hover:text-white transition flex items-center gap-2"><i class="fas fa-arrow-left"></i> <span class="hidden md:inline">Çıkış</span></a>
-            <span class="text-lg font-bold text-techblue tracking-wider">CYBER BANANA <span class="ml-2 text-[10px] text-white bg-green-600 px-1.5 py-0.5 rounded font-mono">V10.1 FIX</span></span>
+            <span class="text-lg font-bold text-techblue tracking-wider">CYBER BANANA <span class="ml-2 text-[10px] text-white bg-green-700 px-1.5 py-0.5 rounded font-mono">V11.3 UI HARDCODE</span></span>
             <button onclick="hardReset()" class="text-xs bg-red-900 hover:bg-red-700 text-white px-3 py-1 rounded border border-red-500 transition ml-4"><i class="fas fa-bomb"></i> SIFIRLA</button>
             <button onclick="toggleCasino()" class="text-xs bg-purple-900 hover:bg-purple-700 text-white px-4 py-1 rounded border border-purple-500 transition ml-2 shadow-[0_0_10px_rgba(168,85,247,0.5)] animate-pulse-fast font-bold tracking-widest flex items-center gap-2"><i class="fas fa-dice"></i> CASINO</button>
         </div>
@@ -207,28 +135,130 @@
         <div class="w-1/3 p-6 border-r border-gray-700 flex flex-col items-center bg-darkbg relative transition-colors" id="panelStajyer">
             <div class="w-full bg-gray-800 border border-gray-600 rounded-lg p-3 mb-4 flex justify-between items-center shadow-lg"><div class="flex flex-col"><span class="text-[10px] text-gray-400">MUZ BORSASI (CANLI)</span><div class="flex items-center gap-2"><span id="marketPriceDisplay" class="text-2xl font-bold font-mono text-white">1.00 ₺</span><span id="marketTrendIcon" class="text-lg">➖</span></div></div><div class="text-right"><span class="text-[9px] text-gray-500 block">Değişim: 5sn</span><span id="marketTrendText" class="text-[10px] font-bold text-gray-400">%0.0</span></div></div>
             <div id="iconStajyer" class="absolute top-2 right-2 text-2xl hidden animate-bounce z-10"></div>
-            <div class="w-full mb-4"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Muz Deposu</span><span id="storageText">0 / 200</span></div><div class="w-full bg-gray-700 h-4 rounded-full overflow-hidden border border-gray-600 relative"><div id="storageBar" class="bg-yellow-400 h-full w-0 transition-all duration-300"></div><div id="storagePercentText" class="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-black opacity-60">0%</div></div></div>
-            <div class="flex-1 flex flex-col items-center justify-center"><div class="relative group cursor-pointer btn-action" onclick="clickBanana(event)"><div class="absolute inset-0 bg-yellow-400 blur-3xl opacity-10 group-hover:opacity-30 transition rounded-full"></div><div class="text-9xl relative z-10 transition transform group-hover:scale-110 drop-shadow-2xl">🍌</div></div><p class="font-mono text-3xl font-bold mt-6 text-yellow-400" id="displayBanana">0</p><p class="text-gray-500 text-xs mt-1">Stoktaki Muz</p></div>
+            
+            <div class="w-full mb-4">
+                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>Muz Deposu</span><span id="storageText">0 / 200</span></div>
+                <div class="w-full bg-gray-700 h-4 rounded-full overflow-hidden border border-gray-600 relative">
+                    <div id="storageBar" class="bg-yellow-400 h-full w-0 transition-all duration-300"></div>
+                    <div id="storagePercentText" class="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-black opacity-60">0%</div>
+                </div>
+                <div id="storageFullWarning" class="hidden text-center text-[10px] font-bold text-red-500 animate-pulse mt-1">⚠️ DEPO DOLU! MUZLARI SAT!</div>
+            </div>
+
+            <div class="flex-1 flex flex-col items-center justify-center">
+                <div class="relative group cursor-pointer btn-action" onclick="clickBanana(event)"><div class="absolute inset-0 bg-yellow-400 blur-3xl opacity-10 group-hover:opacity-30 transition rounded-full"></div><div class="text-9xl relative z-10 transition transform group-hover:scale-110 drop-shadow-2xl">🍌</div></div>
+                <p class="font-mono text-3xl font-bold mt-6 text-yellow-400" id="displayBanana">0</p>
+                <div class="flex items-center gap-2 mt-1">
+                    <p class="text-gray-500 text-xs">Stoktaki Muz</p>
+                    <span id="netBananaRate" class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-400">0/sn</span>
+                </div>
+            </div>
             <div class="w-full mt-auto space-y-2"><div class="flex gap-2"><input type="number" id="manualSellInput" placeholder="Miktar" class="bg-gray-800 border border-gray-600 text-white text-xs rounded px-3 py-2 w-1/3 text-center focus:border-gold outline-none"><button onclick="sellBananas('amount')" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold rounded border border-gray-500 transition">GİRİLENİ SAT</button></div><button onclick="sellBananas('all')" class="w-full py-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg shadow-lg flex justify-between items-center px-6 transition group active:scale-95" id="btnSellAll"><span class="flex items-center gap-2"><i class="fas fa-sack-dollar"></i> HEPSİNİ SAT</span><span class="text-green-200 text-xs group-hover:text-white" id="sellBtnPriceInfo">Kur: 1.00₺</span></button></div>
         </div>
+        
         <div class="w-1/3 p-4 border-r border-gray-700 bg-panel overflow-y-auto">
             <h2 class="text-techblue font-bold text-sm mb-4 sticky top-0 bg-panel py-2 z-10 border-b border-gray-700 flex items-center gap-2"><i class="fas fa-industry"></i> ÜRETİM HATLARI</h2>
-            <div class="space-y-4 pb-10" id="productionList"></div>
+            
+            <div class="space-y-4 pb-10" id="productionList">
+                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-yellow-500 transition relative">
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-bold text-yellow-200 text-sm">Stajyer Maymun</h3>
+                        <span class="text-xs font-bold bg-yellow-500 text-black px-2 py-0.5 rounded shadow-sm" id="countStajyer">0</span>
+                    </div>
+                    <p class="text-[10px] text-gray-400 mb-2">Hız: <span id="rateStajyer" class="text-white">1.0</span> Muz/sn <span id="stajyerStatus" class="ml-2 font-bold text-red-500 hidden animate-pulse">⚠️ DEPO DOLU</span></p>
+                    <button onclick="buyMachine('stajyer')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3 border border-gray-600 hover:border-gold transition">
+                        <span>İŞE AL</span><span class="text-gold" id="costStajyer">20 ₺</span>
+                    </button>
+                </div>
+                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-purple-500 transition opacity-50 relative" id="unlockFactory">
+                    <div id="iconFactory" class="absolute bottom-2 left-2 text-xl hidden animate-pulse z-10"></div>
+                    <div class="absolute top-3 right-3 flex items-center gap-2">
+                        <span id="factoryWarning" class="text-[9px] text-red-500 font-bold hidden animate-pulse mr-2">KAYNAK YOK</span>
+                        <span class="text-[10px] text-gray-400 font-mono" id="statusFactory">KAPALI</span>
+                        <button onclick="toggleMachine('factory')" id="btnToggleFactory" class="w-8 h-4 bg-gray-600 rounded-full relative transition-colors duration-300">
+                            <div class="w-4 h-4 bg-white rounded-full absolute top-0 left-0"></div>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center mb-1 pr-16">
+                        <h3 class="font-bold text-purple-300 text-sm">Dökümhane</h3>
+                        <span class="text-xs font-bold bg-purple-600 text-white px-2 py-0.5 rounded shadow-sm" id="countFactory">0</span>
+                    </div>
+                    <div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded w-fit">
+                        <span class="text-red-400" id="consumeFactory">-10 Muz</span>
+                        <i class="fas fa-arrow-right text-gray-600"></i>
+                        <span class="text-purple-300">+1 Çelik</span>
+                    </div>
+                    <button onclick="buyMachine('factory')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3">
+                        <span>İNŞA ET</span><span class="text-gold" id="costFactory">500 ₺</span>
+                    </button>
+                </div>
+                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-techtoxic transition opacity-50 relative" id="unlockLab">
+                    <div id="iconLab" class="absolute bottom-2 left-2 text-xl hidden animate-pulse z-10"></div>
+                    <div class="absolute top-3 right-3 flex items-center gap-2">
+                        <span id="labWarning" class="text-[9px] text-red-500 font-bold hidden animate-pulse mr-2">KAYNAK YOK</span>
+                        <span class="text-[10px] text-gray-400 font-mono" id="statusLab">KAPALI</span>
+                        <button onclick="toggleMachine('lab')" id="btnToggleLab" class="w-8 h-4 bg-gray-600 rounded-full relative transition-colors duration-300">
+                            <div class="w-4 h-4 bg-white rounded-full absolute top-0 left-0"></div>
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center mb-1 pr-16">
+                        <h3 class="font-bold text-techtoxic text-sm">Laboratuvar</h3>
+                        <span class="text-xs font-bold bg-lime-600 text-black px-2 py-0.5 rounded shadow-sm" id="countLab">0</span>
+                    </div>
+                    <div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded w-fit">
+                        <span class="text-red-400" id="consumeLab">-25 Muz</span>
+                        <i class="fas fa-arrow-right text-gray-600"></i>
+                        <span class="text-techtoxic">+1 İzotop</span>
+                    </div>
+                    <button onclick="buyMachine('lab')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3">
+                        <span>KUR</span><span class="text-gold" id="costLab">2.500 ₺</span>
+                    </button>
+                </div>
+            </div>
+
             <h2 class="text-gold font-bold text-sm mb-4 border-b border-gray-700 pb-2 flex items-center gap-2 mt-8"><i class="fas fa-users"></i> YÖNETİM KADROSU</h2>
-            <div class="space-y-3 pb-8" id="staffContainer"></div>
+            <div class="space-y-3 pb-8" id="staffContainer">
+                <div id="card-emre" class="bg-panel p-3 rounded border border-gray-600 transition flex justify-between items-center">
+                    <div><h4 id="name-emre" class="font-bold text-sm text-white">Emre Öztürk</h4><p class="text-[10px] text-gray-400">Güvenlik Şefi</p><p id="desc-emre" class="text-[10px] text-gray-500 mt-1 italic">Stajyer hızını %30 artırır.</p></div>
+                    <button id="btn-emre" onclick="hireStaff('emre')" class="px-3 py-2 bg-gray-700 hover:bg-gold hover:text-black text-gold text-[10px] font-bold rounded border border-gray-500 flex flex-col items-end min-w-[80px]"><span>İŞE AL</span><span class="opacity-70 text-[9px]">2.000₺ + 25 Çelik</span></button>
+                    <span id="badge-emre" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i></span>
+                </div>
+                <div id="card-dogi" class="bg-panel p-3 rounded border border-gray-600 transition flex justify-between items-center">
+                    <div><h4 id="name-dogi" class="font-bold text-sm text-white">Doğukan (Dogi)</h4><p class="text-[10px] text-gray-400">Baş Mühendis</p><p id="desc-dogi" class="text-[10px] text-gray-500 mt-1 italic">Fabrika tüketimini %20 azaltır.</p></div>
+                    <button id="btn-dogi" onclick="hireStaff('dogi')" class="px-3 py-2 bg-gray-700 hover:bg-gold hover:text-black text-gold text-[10px] font-bold rounded border border-gray-500 flex flex-col items-end min-w-[80px]"><span>İŞE AL</span><span class="opacity-70 text-[9px]">5.000₺ + 50 Çelik</span></button>
+                    <span id="badge-dogi" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i></span>
+                </div>
+                <div id="card-mert" class="bg-panel p-3 rounded border border-gray-600 transition flex justify-between items-center">
+                    <div><h4 id="name-mert" class="font-bold text-sm text-white">Mert Uçar</h4><p class="text-[10px] text-gray-400">Bakım Şefi</p><p id="desc-mert" class="text-[10px] text-gray-500 mt-1 italic">Roket maliyetini %20 düşürür.</p></div>
+                    <button id="btn-mert" onclick="hireStaff('mert')" class="px-3 py-2 bg-gray-700 hover:bg-gold hover:text-black text-gold text-[10px] font-bold rounded border border-gray-500 flex flex-col items-end min-w-[80px]"><span>İŞE AL</span><span class="opacity-70 text-[9px]">10.000₺ + 100 Çelik</span></button>
+                    <span id="badge-mert" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i></span>
+                </div>
+                <div id="card-mehmet" class="bg-panel p-3 rounded border border-gray-600 transition flex justify-between items-center">
+                    <div><h4 id="name-mehmet" class="font-bold text-sm text-white">Mehmet Seçer</h4><p class="text-[10px] text-gray-400">Nükleer Direktör</p><p id="desc-mehmet" class="text-[10px] text-gray-500 mt-1 italic">Laboratuvar hızını %25 artırır.</p></div>
+                    <button id="btn-mehmet" onclick="hireStaff('mehmet')" class="px-3 py-2 bg-gray-700 hover:bg-gold hover:text-black text-gold text-[10px] font-bold rounded border border-gray-500 flex flex-col items-end min-w-[80px]"><span>İŞE AL</span><span class="opacity-70 text-[9px]">15.000₺ + 25 İzotop</span></button>
+                    <span id="badge-mehmet" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i></span>
+                </div>
+                <div id="card-servet" class="bg-panel p-3 rounded border border-gray-600 transition flex justify-between items-center">
+                    <div><h4 id="name-servet" class="font-bold text-sm text-white">Servet Kasimoğlu</h4><p class="text-[10px] text-gray-400">İhracat Müdürü</p><p id="desc-servet" class="text-[10px] text-gray-500 mt-1 italic">Satış gelirlerini %20 artırır.</p></div>
+                    <button id="btn-servet" onclick="hireStaff('servet')" class="px-3 py-2 bg-gray-700 hover:bg-gold hover:text-black text-gold text-[10px] font-bold rounded border border-gray-500 flex flex-col items-end min-w-[80px]"><span>İŞE AL</span><span class="opacity-70 text-[9px]">25.000₺</span></button>
+                    <span id="badge-servet" class="hidden text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i></span>
+                </div>
+            </div>
+            
             <div id="bossSection" class="mt-8 border-t-2 border-red-900 pt-4 opacity-50 filter grayscale transition hover:grayscale-0 hover:opacity-100"><div class="bg-black border border-red-800 p-4 rounded-lg relative overflow-hidden group"><div class="flex justify-between items-center relative z-10"><div><h3 class="font-bold text-red-500 text-lg">FURKAN SAKIZ</h3><p class="text-[10px] text-red-300">Kaos Lordu</p></div><div class="text-3xl">👹</div></div><p class="text-xs text-gray-400 mt-2 mb-3 italic" id="furkanDesc">"Sistemi kökünden değiştirir."</p><div class="space-y-1 text-[10px] font-mono text-gray-500 mb-3"><p>1.000.000 ₺</p><p>2.000 Çelik</p><p>500 İzotop</p></div><button onclick="hireBoss()" id="btnHireBoss" class="w-full py-2 bg-red-900 hover:bg-red-700 text-white font-bold rounded text-xs transition border border-red-600">SÖZLEŞME İMZALA</button></div></div>
         </div>
+        
         <div class="w-1/3 p-4 bg-darkbg overflow-y-auto flex flex-col border-l border-gray-800">
             <h2 class="text-gray-400 font-bold text-sm mb-4 flex items-center gap-2"><i class="fas fa-box-open"></i> DEPO & LOGİSTİK</h2>
             <div class="grid grid-cols-1 gap-4 mb-8"><div class="bg-panel p-3 rounded border border-gray-700"><div class="flex justify-between items-center mb-2"><div class="flex items-center gap-2"><div class="w-6 h-6 bg-purple-900/30 rounded flex items-center justify-center text-sm">⚙️</div><div><p class="text-[10px] text-gray-400">Muz Çeliği</p><p class="font-mono font-bold text-purple-300 text-sm" id="displaySteel">0</p></div></div><span class="text-[10px] text-green-400 bg-green-900/20 px-1 rounded" id="priceSteel">75 ₺</span></div><div class="flex gap-2"><input type="number" id="inputSteel" placeholder="Miktar" class="w-16 bg-darkbg border border-gray-600 rounded px-2 text-xs text-center text-white focus:border-techblue outline-none" min="1"><button onclick="sellItem('steel')" class="flex-1 px-2 py-1 bg-gray-700 hover:bg-green-700 text-gray-300 hover:text-white text-[10px] rounded border border-gray-600 transition">SATIŞ</button></div></div><div class="bg-panel p-3 rounded border border-gray-700"><div class="flex justify-between items-center mb-2"><div class="flex items-center gap-2"><div class="w-6 h-6 bg-lime-900/30 rounded flex items-center justify-center text-sm">🧪</div><div><p class="text-[10px] text-gray-400">Potasyum İzotopu</p><p class="font-mono font-bold text-techtoxic text-sm" id="displayIsotope">0</p></div></div><span class="text-[10px] text-green-400 bg-green-900/20 px-1 rounded" id="priceIsotope">250 ₺</span></div><div class="flex gap-2"><input type="number" id="inputIsotope" placeholder="Miktar" class="w-16 bg-darkbg border border-gray-600 rounded px-2 text-xs text-center text-white focus:border-techblue outline-none" min="1"><button onclick="sellItem('isotope')" class="flex-1 px-2 py-1 bg-gray-700 hover:bg-green-700 text-gray-300 hover:text-white text-[10px] rounded border border-gray-600 transition">SATIŞ</button></div></div></div>
             <button onclick="upgradeStorage()" class="w-full mb-8 py-2 bg-gray-700 hover:bg-blue-600 rounded text-xs font-mono flex justify-between px-3 text-gray-300 hover:text-white transition"><span>📦 Depo Genişlet (<span id="storageLevel">Lvl 1</span>)</span><span class="text-gold" id="costStorage">150 ₺</span></button>
             <div class="mt-auto bg-gray-900/50 p-4 rounded-xl border border-techred/30 relative overflow-hidden"><div class="absolute top-0 right-0 p-2 opacity-10 text-6xl">🚀</div><h3 class="text-techred font-bold text-sm mb-4">WARP MOTORU MONTAJI</h3><div class="space-y-2 mb-4 text-xs font-mono"><div class="flex justify-between border-b border-gray-800 pb-1"><span class="text-gray-400">Nakit:</span><span id="reqMoney" class="text-gold">5.000 ₺</span></div><div class="flex justify-between border-b border-gray-800 pb-1"><span class="text-gray-400">Muz Çeliği:</span><span id="reqSteel" class="text-purple-300">100 Adet</span></div><div class="flex justify-between border-b border-gray-800 pb-1"><span class="text-gray-400">İzotop:</span><span id="reqIsotope" class="text-techtoxic">20 Adet</span></div></div><button onclick="craftRocket()" id="craftBtn" class="w-full py-3 bg-gradient-to-r from-red-700 to-orange-700 text-white font-bold rounded shadow-lg disabled:opacity-20 disabled:cursor-not-allowed transition text-sm">MOTORU ÜRET</button></div>
-            <div class="text-center mt-4 text-xs text-gray-600">Cyber Banana Inc. V10.1 <span class="text-green-600 ml-2" id="saveStatus"></span></div>
+            <div class="text-center mt-4 text-xs text-gray-600">Cyber Banana Inc. V11.3 <span class="text-green-600 ml-2" id="saveStatus"></span></div>
         </div>
     </div>
 
-    <div id="updateModal" class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in"><div class="bg-panel w-full max-w-md p-6 rounded-lg border border-green-500 relative"><div class="flex justify-between items-start mb-4 border-b border-gray-700 pb-2"><div><h2 class="text-xl font-bold text-green-400">HATA GİDERİLDİ</h2><span class="text-xs text-black bg-green-500 px-1 rounded font-mono">PATCH V10.1</span></div><button onclick="toggleUpdates()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button></div><div class="space-y-3 text-sm font-mono text-gray-300 max-h-[60vh] overflow-y-auto pr-2"><div class="bg-black/30 p-2 rounded border-l-2 border-green-500"><p class="text-green-500 font-bold text-xs mb-1">RULET & ZAR FIX</p><p class="text-xs">Artık görsel ile sonuç %100 eşleşiyor. Zar yüzeyleri düzeltildi.</p></div></div><button onclick="toggleUpdates()" class="w-full mt-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded transition">HARİKA</button></div></div>
-    <div id="winModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/95 backdrop-blur-md"><div class="bg-panel p-8 rounded-xl border-2 border-gold text-center max-w-lg shadow-2xl"><h1 class="text-3xl font-bold text-gold mb-2">GALAKSİ FATİHİ! 👑</h1><p class="text-gray-300 mb-6 text-sm">Büyük patron sensin! Şirketiniz muz endüstrisini domine etti.</p><button onclick="hardReset()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-sm">Şirketi Sıfırla</button></div></div>
+    <div id="updateModal" class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in"><div class="bg-panel w-full max-w-md p-6 rounded-lg border border-green-500 relative"><div class="flex justify-between items-start mb-4 border-b border-gray-700 pb-2"><div><h2 class="text-xl font-bold text-green-400">ARAYÜZ ONARILDI</h2><span class="text-xs text-black bg-green-500 px-1 rounded font-mono">PATCH V11.3</span></div><button onclick="toggleUpdates()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button></div><div class="space-y-3 text-sm font-mono text-gray-300 max-h-[60vh] overflow-y-auto pr-2"><div class="bg-black/30 p-2 rounded border-l-2 border-green-500"><p class="text-green-500 font-bold text-xs mb-1">HARDCODE UI</p><p class="text-xs">Yönetim kadrosu ve üretim hatları artık statik olarak kodlandı. Menülerin gelmeme ihtimali ortadan kalktı.</p></div></div><button onclick="toggleUpdates()" class="w-full mt-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded transition">DEVAM ET</button></div></div>
+    <div id="winModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/95 backdrop-blur-md"><div class="bg-panel p-8 rounded-xl border-2 border-gold text-center max-w-lg shadow-2xl"><h1 class="text-3xl font-bold text-gold mb-2">GALAKSİ FATİHİ! 👑</h1><p class="text-gray-300 mb-6 text-sm">Büyük patron sensin!</p><button onclick="hardReset()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-sm">Sıfırla</button></div></div>
 
     <script>
         const defaultState = { money: 0, banana: 0, steel: 0, isotope: 0, rocketParts: 0, storageCap: 200, units: { stajyer: 0, factory: 0, lab: 0 }, active: { factory: true, lab: true }, multipliers: { stajyer: 1, factory: 1, lab: 1 }, staff: { emre: false, dogi: false, mert: false, mehmet: false, servet: false, furkan: false }, costs: { stajyer: 20, factory: 500, lab: 2500, storage: 150, rocketMoney: 5000, rocketSteel: 100, rocketIsotope: 20 }, marketPrice: 1.00 };
@@ -236,124 +266,20 @@
         const staffData = { emre: { name: "Emre Öztürk", role: "Güvenlik Şefi", desc: "Stajyer hızını %30 artırır.", costText: "2.000₺ + 25 Çelik", money: 2000, steel: 25, isotope: 0 }, dogi: { name: "Doğukan (Dogi)", role: "Baş Mühendis", desc: "Fabrika tüketimini %20 azaltır.", costText: "5.000₺ + 50 Çelik", money: 5000, steel: 50, isotope: 0 }, mert: { name: "Mert Uçar", role: "Bakım Şefi", desc: "Roket maliyetini %20 düşürür.", costText: "10.000₺ + 100 Çelik", money: 10000, steel: 100, isotope: 0 }, mehmet: { name: "Mehmet Seçer", role: "Nükleer Direktör", desc: "Laboratuvar hızını %25 artırır.", costText: "15.000₺ + 25 İzotop", money: 15000, steel: 0, isotope: 25 }, servet: { name: "Servet Kasimoğlu", role: "İhracat Müdürü", desc: "Satış gelirlerini %20 artırır.", costText: "25.000₺", money: 25000, steel: 0, isotope: 0 } };
         const dialoguePool = { emre: ["İstikamet depo! Marş marş!", "GOSTAK GOSTAK YÜRÜ YÜRÜ! 🥁"], dogi: ["Spagetti koda dönmüş!", "Bana bir tornavida verin."], mehmet: ["Plütonyum yedik, bize bir şey olmaz.", "Laboratuvar patlarsa Ümit hocaya kızın."], servet: ["Hatay'dan özel 'mal' geldi...", "Polonya'da piyasa sıcak."], mert: ["Yağ yakıyor bu makine.", "Kaportada göçük var ama hallederiz."], furkan: ["YETERSİZ...", "BU SİSTEMİ YIKACAĞIM."] };
 
-        let isSpinning = false;
-        function toggleCasino() { const el = document.getElementById('casinoOverlay'); if(el.classList.contains('hidden')){el.classList.remove('hidden');el.classList.add('flex');}else{el.classList.add('hidden');el.classList.remove('flex');} updateCasinoUI(); }
-        function switchCasinoGame(g){ document.getElementById('gameRoulette').classList.add('hidden'); document.getElementById('gameDice').classList.add('hidden'); document.getElementById('casinoResult').classList.add('hidden'); if(g==='roulette')document.getElementById('gameRoulette').classList.remove('hidden'); if(g==='dice'){document.getElementById('gameDice').classList.remove('hidden');document.getElementById('gameDice').classList.add('flex');} }
-
-        // --- RULET LOGIC (DÜZELTİLDİ) ---
-        function spinRoulette(choice) {
-            if(isSpinning) return;
-            const input = document.getElementById('betRoulette');
-            const amount = parseFloat(input.value);
-            if(isNaN(amount) || amount <= 0 || amount > game.money) { showToast({title:"HATA", text:"Geçersiz bahis.", type:'bad'}); return; }
-
-            game.money -= amount; safeUpdateUI(); updateCasinoUI();
-            isSpinning = true;
-            document.getElementById('casinoResult').classList.add('hidden');
-
-            const wheel = document.getElementById('wheel');
-            // 1. Rastgele bir durma açısı belirle (0 - 360)
-            const randomOffset = Math.floor(Math.random() * 360);
-            const totalSpin = 3600 + randomOffset; // 10 tam tur + offset
-            
-            wheel.style.transform = `rotate(${totalSpin}deg)`;
-
-            // 2. MATEMATİKSEL KAZANANI BELİRLE
-            // Çarkın CSS'i: 0-180 Kırmızı, 180-360 Siyah.
-            // Ok (Pointer) En Üstte (0 derece).
-            // Çark saat yönünde döner. 
-            // "Okun altında kalan renk" = (360 - (Dönüş % 360)) % 360
-            const actualDegreeAtTop = (360 - (totalSpin % 360)) % 360;
-            
-            // Eğer üstteki açı 0-180 arasındaysa -> Kırmızı (CSS'e göre)
-            // Eğer üstteki açı 180-360 arasındaysa -> Siyah
-            const winningColor = actualDegreeAtTop < 180 ? 'red' : 'black';
-
-            setTimeout(() => {
-                isSpinning = false;
-                // Dönüşü sıfırla ama aynı yerde kalsın (Görsel devamlılık)
-                wheel.style.transition = "none";
-                wheel.style.transform = `rotate(${randomOffset}deg)`;
-                setTimeout(() => wheel.style.transition = "transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)", 50);
-
-                const win = (choice === winningColor);
-                if(win) {
-                    game.money += amount * 2;
-                    showResultText(`${winningColor.toUpperCase()} GELDİ! KAZANDIN!`, "text-green-400");
-                    if(game.staff.servet) showDialogue('servet', "Temiz para patron!");
-                } else {
-                    showResultText(`${winningColor.toUpperCase()} GELDİ... KAYBETTİN`, "text-red-500");
-                    if(game.staff.servet) showDialogue('servet', "Tüh be...");
-                }
-                safeUpdateUI(); updateCasinoUI();
-            }, 4000);
-        }
-
-        // --- ZAR LOGIC (DÜZELTİLDİ) ---
-        function rollTheDice() {
-            if(isSpinning) return;
-            const input = document.getElementById('betDice');
-            const pick = parseInt(document.getElementById('pickDice').value);
-            const amount = parseFloat(input.value);
-            
-            if(isNaN(amount) || amount <= 0 || amount > game.money) { showToast({title:"HATA", text:"Geçersiz bahis.", type:'bad'}); return; }
-
-            game.money -= amount; safeUpdateUI(); updateCasinoUI();
-            isSpinning = true;
-            document.getElementById('casinoResult').classList.add('hidden');
-
-            const dice = document.getElementById('dice');
-            
-            // 1. Sonucu ÖNCEDEN belirle
-            const result = Math.floor(Math.random() * 6) + 1; // 1-6
-
-            // 2. Bu sonucun görsel rotasyonunu haritala
-            // Front(1): 0,0 | Back(6): 180,0 | Bottom(2): -90,0 | Top(5): 90,0 | Right(3): 0,-90 | Left(4): 0,90
-            const rotations = {
-                1: { x: 0, y: 0 },
-                6: { x: 180, y: 0 },
-                2: { x: -90, y: 0 }, // Bottom (Altta 2 var)
-                5: { x: 90, y: 0 },  // Top (Üstte 5 var)
-                3: { x: 0, y: -90 }, // Right (Sağda 3 var)
-                4: { x: 0, y: 90 }   // Left (Solda 4 var)
-            };
-
-            // 3. Rastgele ekstra turlar ekle (Spin efekti)
-            const extraSpins = 5; // En az 5 tam tur
-            const targetX = rotations[result].x + (extraSpins * 360); 
-            const targetY = rotations[result].y + (extraSpins * 360);
-
-            // 4. Döndür
-            dice.style.transform = `rotateX(${targetX}deg) rotateY(${targetY}deg)`;
-
-            setTimeout(() => {
-                isSpinning = false;
-                // Transition'ı sıfırla ki bir sonraki atışta yine dönebilsin
-                dice.style.transition = 'none';
-                dice.style.transform = `rotateX(${rotations[result].x}deg) rotateY(${rotations[result].y}deg)`;
-                setTimeout(() => dice.style.transition = 'transform 1.5s ease-out', 50);
-
-                if(result === pick) {
-                    game.money += amount * 5;
-                    showResultText(`ZAR: ${result} - KAZANDIN! (5x)`, "text-green-400");
-                    if(game.staff.servet) showDialogue('servet', "Oha! 5 katı mı? Patron büyüksün!");
-                } else {
-                    showResultText(`ZAR: ${result} - KAYBETTİN`, "text-red-500");
-                }
-                safeUpdateUI(); updateCasinoUI();
-            }, 1500);
-        }
-
-        function showResultText(t, c) { const e = document.getElementById('casinoResult'); e.innerText = t; e.className = `absolute bottom-12 text-3xl font-black animate-pop-in text-center drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] ${c}`; e.classList.remove('hidden'); }
-        function updateCasinoUI() { const b = document.getElementById('casinoBalance'); if(b) b.innerText = game.money.toLocaleString('tr-TR', {minimumFractionDigits:2}) + " ₺"; }
-
-        // --- CORE FUNCTIONS (Copy of Previous Logic) ---
+        // CASINO & CORE FUNCTIONS (Same logic)
+        let isSpinning=false;
+        function toggleCasino(){const el=document.getElementById('casinoOverlay');if(el.classList.contains('hidden')){el.classList.remove('hidden');el.classList.add('flex');}else{el.classList.add('hidden');el.classList.remove('flex');}updateCasinoUI();}
+        function switchCasinoGame(g){document.getElementById('gameRoulette').classList.add('hidden');document.getElementById('gameDice').classList.add('hidden');document.getElementById('casinoResult').classList.add('hidden');if(g==='roulette')document.getElementById('gameRoulette').classList.remove('hidden');if(g==='dice'){document.getElementById('gameDice').classList.remove('hidden');document.getElementById('gameDice').classList.add('flex');}}
+        function spinRoulette(c){if(isSpinning)return;const i=document.getElementById('betRoulette');const a=parseFloat(i.value);if(isNaN(a)||a<=0||a>game.money){showToast({title:"HATA",text:"Geçersiz bahis.",type:'bad'});return;}game.money-=a;safeUpdateUI();updateCasinoUI();isSpinning=true;document.getElementById('casinoResult').classList.add('hidden');const w=document.getElementById('wheel');const ro=Math.floor(Math.random()*360);const ts=3600+ro;w.style.transform=`rotate(${ts}deg)`;const ad=(360-(ts%360))%360;const wc=ad<180?'red':'black';setTimeout(()=>{isSpinning=false;w.style.transition="none";w.style.transform=`rotate(${ro}deg)`;setTimeout(()=>w.style.transition="transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)",50);const win=(c===wc);if(win){game.money+=a*2;showResultText(`${wc.toUpperCase()} GELDİ! KAZANDIN!`,"text-green-400");if(game.staff.servet)showDialogue('servet',"Temiz para patron!");}else{showResultText(`${wc.toUpperCase()} GELDİ... KAYBETTİN`,"text-red-500");if(game.staff.servet)showDialogue('servet',"Tüh be...");}safeUpdateUI();updateCasinoUI();},4000);}
+        function rollTheDice(){if(isSpinning)return;const i=document.getElementById('betDice');const p=parseInt(document.getElementById('pickDice').value);const a=parseFloat(i.value);if(isNaN(a)||a<=0||a>game.money){showToast({title:"HATA",text:"Geçersiz bahis.",type:'bad'});return;}game.money-=a;safeUpdateUI();updateCasinoUI();isSpinning=true;document.getElementById('casinoResult').classList.add('hidden');const d=document.getElementById('dice');const r=Math.floor(Math.random()*6)+1;const rm={1:{x:0,y:0},6:{x:180,y:0},2:{x:-90,y:0},5:{x:90,y:0},3:{x:0,y:-90},4:{x:0,y:90}};const tx=rm[r].x+1800;const ty=rm[r].y+1800;d.style.transform=`rotateX(${tx}deg) rotateY(${ty}deg)`;setTimeout(()=>{isSpinning=false;d.style.transition='none';d.style.transform=`rotateX(${rm[r].x}deg) rotateY(${rm[r].y}deg)`;setTimeout(()=>d.style.transition='transform 1.5s ease-out',50);if(r===p){game.money+=a*5;showResultText(`ZAR: ${r} - KAZANDIN! (5x)`,"text-green-400");if(game.staff.servet)showDialogue('servet',"Patron büyüksün!");}else{showResultText(`ZAR: ${r} - KAYBETTİN`,"text-red-500");}safeUpdateUI();updateCasinoUI();},1500);}
+        function showResultText(t,c){const e=document.getElementById('casinoResult');e.innerText=t;e.className=`absolute bottom-12 text-3xl font-black animate-pop-in text-center drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] ${c}`;e.classList.remove('hidden');}
+        function updateCasinoUI(){const b=document.getElementById('casinoBalance');if(b)b.innerText=game.money.toLocaleString('tr-TR',{minimumFractionDigits:2})+" ₺";}
         function updateMarket(){const c=(Math.random()-.5)*.4;let n=game.marketPrice+c;if(n<.1)n=.1;if(n>5)n=5;const tr=n>game.marketPrice?'up':'down';game.marketPrice=n;if(game.staff.servet){if(n>3)showDialogue('servet',"FİYAT UÇTU! 📈");if(n<.5)showDialogue('servet',"Piyasa çakıldı! 📉");}safeUpdateUI(tr);} setInterval(updateMarket,5000);
         function hardReset(){localStorage.clear();location.reload();}
-        function clickBanana(e){if(game.banana<game.storageCap){let am=1;if(game.staff.furkan)am=10;else if(game.staff.emre)am=1.3;game.banana+=am;if(game.banana>game.storageCap)game.banana=game.storageCap;createFloatingText(e.clientX,e.clientY,`+${Math.floor(am)}`,'text-yellow-300');safeUpdateUI();}}
+        function clickBanana(e){if(game.banana<game.storageCap){let am=1;if(game.staff.furkan)am=10;else if(game.staff.emre)am=1.3;game.banana+=am;if(game.banana>game.storageCap)game.banana=game.storageCap;createFloatingText(e.clientX,e.clientY,`+${Math.floor(am)}`,'text-yellow-300');safeUpdateUI();}else{const b=document.getElementById('storageBar');if(b&&b.parentElement){b.parentElement.classList.add('animate-shake');setTimeout(()=>b.parentElement.classList.remove('animate-shake'),500);}}}
         function createFloatingText(x,y,t,c){const d=document.createElement('div');d.className=`absolute text-2xl font-bold ${c} animate-float-up pointer-events-none z-50`;d.style.left=`${x}px`;d.style.top=`${y}px`;d.innerText=t;document.getElementById('clickEffectsContainer').appendChild(d);setTimeout(()=>d.remove(),1000);}
-        function hireStaff(key){const d=staffData[key];if(game.money>=d.money&&game.steel>=d.steel&&game.isotope>=d.isotope){game.money-=d.money;game.steel-=d.steel;game.isotope-=d.isotope;game.staff[key]=true;renderStaff();safeUpdateUI();try{showToast({title:"YENİ PERSONEL",text:`${d.name} alındı!`,type:'good'});showDialogue(key,"Selam patron!");}catch(e){}}else{showToast({title:"YETERSİZ",text:"Kaynak yok.",type:'bad'});}}
-        function hireBoss(){if(game.money>=1e6&&game.steel>=2000&&game.isotope>=500){game.money-=1e6;game.steel-=2000;game.isotope-=500;game.staff.furkan=true;activateRageMode();renderStaff();safeUpdateUI();}else{showToast({title:"YETERSİZ",text:"Güç yetersiz.",type:'bad'});}}
+        function hireStaff(key){const d=staffData[key];if(game.money>=d.money&&game.steel>=d.steel&&game.isotope>=d.isotope){game.money-=d.money;game.steel-=d.steel;game.isotope-=d.isotope;game.staff[key]=true;updateStaffVisuals();safeUpdateUI();try{showToast({title:"YENİ PERSONEL",text:`${d.name} alındı!`,type:'good'});showDialogue(key,"Selam patron!");}catch(e){}}else{showToast({title:"YETERSİZ",text:"Kaynak yok.",type:'bad'});}}
+        function hireBoss(){if(game.money>=1e6&&game.steel>=2000&&game.isotope>=500){game.money-=1e6;game.steel-=2000;game.isotope-=500;game.staff.furkan=true;activateRageMode();updateStaffVisuals();safeUpdateUI();}else{showToast({title:"YETERSİZ",text:"Güç yetersiz.",type:'bad'});}}
         function activateRageMode(){document.body.classList.add('rage-mode');showToast({title:"KAOS",text:"RAGE MODE!",type:'epic'});showDialogue('furkan',"SON BAŞLADI...");}
         function sellBananas(m){let mult=game.staff.servet?1.2:1;let r=game.marketPrice*mult;let am=0;if(m==='all')am=game.banana;else{const v=parseInt(document.getElementById('manualSellInput').value);if(v>0)am=Math.min(v,Math.floor(game.banana));}if(am>0){game.money+=am*r;game.banana-=am;createFloatingText(window.innerWidth/3,window.innerHeight/2,`+${(am*r).toFixed(2)}₺`,'text-green-400');safeUpdateUI();}else{if(m==='amount')showToast({title:"HATA",text:"Yetersiz muz.",type:'bad'});}}
         function sellItem(t){let am=1;let mult=game.staff.servet?1.2:1;if(t==='steel'){const v=parseInt(document.getElementById('inputSteel').value);if(v>0)am=v;if(game.steel>=am){game.steel-=am;game.money+=75*mult*am;}else{game.money+=game.steel*75*mult;game.steel=0;}}if(t==='isotope'){const v=parseInt(document.getElementById('inputIsotope').value);if(v>0)am=v;if(game.isotope>=am){game.isotope-=am;game.money+=250*mult*am;}else{game.money+=game.isotope*250*mult;game.isotope=0;}}safeUpdateUI();}
@@ -362,13 +288,227 @@
         function craftRocket(){let c=game.staff.mert?4000:5000;let s=game.staff.mert?80:100;if(game.money>=c&&game.steel>=s&&game.isotope>=20){game.money-=c;game.steel-=s;game.isotope-=20;game.rocketParts++;if(game.rocketParts>=10)document.getElementById('winModal').classList.remove('hidden');safeUpdateUI();}}
         function toggleMachine(t){game.active[t]=!game.active[t];safeUpdateUI();}
         function showToast(e){const c=document.getElementById('toastCard');const t=document.getElementById('newsToast');if(!c||!t)return;document.getElementById('toastTitle').innerText=e.title;document.getElementById('toastBody').innerText=e.text;t.classList.remove('hidden','toast-animate');void t.offsetWidth;t.classList.add('toast-animate');setTimeout(()=>t.classList.add('hidden'),5000);}
-        function safeUpdateUI(tr=null){try{if(isNaN(game.banana))game.banana=0;if(isNaN(game.money))game.money=0;document.getElementById('displayMoney').innerText=game.money.toLocaleString('tr-TR',{minimumFractionDigits:2})+" ₺";document.getElementById('displayBanana').innerText=Math.floor(game.banana).toLocaleString();document.getElementById('displaySteel').innerText=game.steel;document.getElementById('displayIsotope').innerText=game.isotope;document.getElementById('displayRocket').innerText=game.rocketParts+" / 10";document.getElementById('marketPriceDisplay').innerText=game.marketPrice.toFixed(2)+" ₺";const pb=document.getElementById('progressBar');if(pb)pb.style.width=(game.rocketParts*10)+'%';const sp=Math.floor((game.banana/game.storageCap)*100);const sb=document.getElementById('storageBar');if(sb){sb.style.width=sp+'%';sb.className=`h-full transition-all duration-300 ${sp>=100?'bg-red-500':'bg-yellow-400'}`;}document.getElementById('storageText').innerText=`${Math.floor(game.banana)} / ${game.storageCap}`;document.getElementById('storagePercentText').innerText=sp+'%';document.getElementById('costStajyer').innerText=Math.floor(game.costs.stajyer*Math.pow(1.25,game.units.stajyer)).toLocaleString()+" ₺";document.getElementById('countStajyer').innerText=game.units.stajyer;document.getElementById('costFactory').innerText=Math.floor(game.costs.factory*Math.pow(1.2,game.units.factory)).toLocaleString()+" ₺";document.getElementById('countFactory').innerText=game.units.factory;document.getElementById('costLab').innerText=Math.floor(game.costs.lab*Math.pow(1.3,game.units.lab)).toLocaleString()+" ₺";document.getElementById('countLab').innerText=game.units.lab;document.getElementById('costStorage').innerText=game.costs.storage.toLocaleString()+" ₺";let sm=game.staff.servet?1.2:1;let fp=game.marketPrice*sm;document.getElementById('sellBtnPriceInfo').innerText=`Kur: ${fp.toFixed(2)}₺`;}catch(e){console.log(e);}}
-        function showDialogue(k,m){if(k!=='system'&&!game.staff[k])return;let t=m;if(!t&&dialoguePool[k])t=dialoguePool[k][Math.floor(Math.random()*dialoguePool[k].length)];if(!t)return;const c=document.getElementById('chatContainer');const e=document.createElement('div');e.className="bg-gray-900/90 border-l-4 border-gray-500 p-3 rounded shadow-lg text-xs font-mono animate-pop-in animate-fade-out";e.innerHTML=`<span class="font-bold text-white">${k.toUpperCase()}:</span> <span class="text-gray-300">${t}</span>`;c.appendChild(e);setTimeout(()=>e.remove(),4500);}
-        function toggleUpdates(){const m=document.getElementById('updateModal');if(m.classList.contains('hidden')){m.classList.remove('hidden');m.classList.add('flex');}else{m.classList.add('hidden');m.classList.remove('flex');}}
+        function safeUpdateUI(tr=null){
+            try{
+                if(isNaN(game.banana))game.banana=0;if(isNaN(game.money))game.money=0;
+                document.getElementById('displayMoney').innerText=game.money.toLocaleString('tr-TR',{minimumFractionDigits:2})+" ₺";
+                document.getElementById('displayBanana').innerText=Math.floor(game.banana).toLocaleString();
+                document.getElementById('displaySteel').innerText=game.steel;document.getElementById('displayIsotope').innerText=game.isotope;
+                document.getElementById('displayRocket').innerText=game.rocketParts+" / 10";
+                
+                const stajStatus = document.getElementById('stajyerStatus');
+                if(stajStatus) { if(game.banana >= game.storageCap && game.units.stajyer > 0) stajStatus.classList.remove('hidden'); else stajStatus.classList.add('hidden'); }
+
+                const facWarn = document.getElementById('factoryWarning');
+                const labWarn = document.getElementById('labWarning');
+                let facCon = game.staff.dogi ? 8 : 10;
+                let labCon = game.staff.dogi ? 20 : 25;
+
+                if(facWarn) { if(game.active.factory && game.units.factory > 0 && game.banana < facCon*game.units.factory) facWarn.classList.remove('hidden'); else facWarn.classList.add('hidden'); }
+                if(labWarn) { if(game.active.lab && game.units.lab > 0 && game.banana < labCon*game.units.lab) labWarn.classList.remove('hidden'); else labWarn.classList.add('hidden'); }
+
+                let prod = 0; if(game.units.stajyer>0) { let b=(game.units.stajyer)*(game.multipliers.stajyer||1); if(b<1)b=1; if(game.staff.emre)b*=1.3; if(game.staff.furkan)b*=10; prod+=b; }
+                let cons = 0; 
+                if(game.active.factory && game.units.factory > 0) cons += (game.staff.dogi?8:10)*game.units.factory;
+                if(game.active.lab && game.units.lab > 0) cons += (game.staff.dogi?20:25)*game.units.lab;
+                let net = prod - cons;
+                const netEl = document.getElementById('netBananaRate');
+                if(netEl) { netEl.innerText = (net >= 0 ? "+" : "") + net.toFixed(1) + "/sn"; netEl.className = `text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 ${net >= 0 ? 'text-green-400' : 'text-red-500 animate-pulse'}`; }
+
+                document.getElementById('marketPriceDisplay').innerText=game.marketPrice.toFixed(2)+" ₺";
+                const pb=document.getElementById('progressBar');if(pb)pb.style.width=(game.rocketParts*10)+'%';
+                const sp=Math.floor((game.banana/game.storageCap)*100);
+                const sb=document.getElementById('storageBar');const warn=document.getElementById('storageFullWarning');
+                if(sb){sb.style.width=sp+'%';if(sp>=100){sb.className='h-full bg-red-600 full-storage-anim';if(warn)warn.classList.remove('hidden');}else{sb.className='h-full bg-yellow-400 transition-all duration-300';if(warn)warn.classList.add('hidden');}}
+                document.getElementById('storageText').innerText=`${Math.floor(game.banana)} / ${game.storageCap}`;document.getElementById('storagePercentText').innerText=sp+'%';
+                let stajyerSpd=(1*(game.multipliers.stajyer||1));if(game.staff.emre)stajyerSpd*=1.3;if(game.staff.furkan)stajyerSpd*=10;const rateEl=document.getElementById('rateStajyer');if(rateEl)rateEl.innerText=stajyerSpd.toFixed(1);
+                const facEl=document.getElementById('consumeFactory');if(facEl)facEl.innerText=`-${facCon} Muz`;const labEl=document.getElementById('consumeLab');if(labEl)labEl.innerText=`-${labCon} Muz`;
+                let sm=game.staff.servet?1.2:1;let fp=game.marketPrice*sm;document.getElementById('sellBtnPriceInfo').innerText=`Kur: ${fp.toFixed(2)}₺`;
+                let rocketCost=game.staff.mert?4000:5000;let rocketSteel=game.staff.mert?80:100;document.getElementById('reqMoney').innerText=rocketCost.toLocaleString()+" ₺";document.getElementById('reqSteel').innerText=rocketSteel+" Adet";
+                document.getElementById('costStajyer').innerText=Math.floor(game.costs.stajyer*Math.pow(1.25,game.units.stajyer)).toLocaleString()+" ₺";document.getElementById('countStajyer').innerText=game.units.stajyer;document.getElementById('costFactory').innerText=Math.floor(game.costs.factory*Math.pow(1.2,game.units.factory)).toLocaleString()+" ₺";document.getElementById('countFactory').innerText=game.units.factory;document.getElementById('costLab').innerText=Math.floor(game.costs.lab*Math.pow(1.3,game.units.lab)).toLocaleString()+" ₺";document.getElementById('countLab').innerText=game.units.lab;document.getElementById('costStorage').innerText=game.costs.storage.toLocaleString()+" ₺";document.getElementById('storageLevel').innerText="Lvl "+Math.log2(game.storageCap/100);
+                const canCraft=game.money>=rocketCost&&game.steel>=rocketSteel&&game.isotope>=20;document.getElementById('craftBtn').disabled=!canCraft;colorizeReq('reqMoney',game.money,rocketCost);colorizeReq('reqSteel',game.steel,rocketSteel);colorizeReq('reqIsotope',game.isotope,game.costs.rocketIsotope);
+                updateToggleUI('factory','btnToggleFactory','statusFactory');updateToggleUI('lab','btnToggleLab','statusLab');
+            }catch(e){console.log(e);}
+        }
+
+        function updateToggleUI(type, btnId, statusId) {
+            const btn = document.getElementById(btnId); const status = document.getElementById(statusId); if(!btn) return;
+            const knob = btn.firstElementChild;
+            if(game.active[type]) { btn.classList.replace('bg-gray-600', 'bg-green-500'); knob.style.left = '16px'; status.innerText = "ÇALIŞIYOR"; status.classList.replace('text-gray-400', 'text-green-400'); } 
+            else { btn.classList.replace('bg-green-500', 'bg-gray-600'); knob.style.left = '0px'; status.innerText = "KAPALI"; status.classList.replace('text-green-400', 'text-gray-400'); }
+        }
+        function checkUnlock(id, condition) { const el = document.getElementById(id); if(!el) return; if(condition) el.classList.remove('opacity-50', 'pointer-events-none'); else el.classList.add('opacity-50', 'pointer-events-none'); }
+        function colorizeReq(id, current, needed) { const el = document.getElementById(id); if(!el) return; if(current >= needed) el.classList.replace('text-red-500', 'text-green-400'); else { el.classList.remove('text-green-400', 'text-gold', 'text-purple-300', 'text-techtoxic'); el.classList.add('text-red-500'); } }
+
+        function toggleMachine(type) { game.active[type] = !game.active[type]; safeUpdateUI(); }
         
-        function renderStaff() { const c=document.getElementById('staffContainer'); if(!c)return; c.innerHTML=""; for(const[k,d] of Object.entries(staffData)){const h=game.staff[k]; const ht=`<div class="bg-panel p-3 rounded border ${h?'border-green-500 bg-green-900/20 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'border-gray-600'} transition flex justify-between items-center"><div><h4 class="font-bold text-sm ${h?'text-green-400':'text-white'}">${d.name}</h4><p class="text-[10px] text-gray-400">${d.role}</p>${h?`<p class="text-[10px] text-green-300 mt-1 font-bold animate-pulse">⚡ AKTİF: ${d.desc}</p>`:`<p class="text-[10px] text-gray-500 mt-1 italic">${d.desc}</p>`}</div>${h?`<span class="text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i></span>`:`<button onclick="hireStaff('${k}')" class="px-3 py-2 bg-gray-700 hover:bg-gold hover:text-black text-gold text-[10px] font-bold rounded border border-gray-500 flex flex-col items-end min-w-[80px]"><span>İŞE AL</span><span class="opacity-70 text-[9px]">${d.costText}</span></button>`}</div>`;c.innerHTML+=ht;} if(game.staff.furkan){ document.getElementById('btnHireBoss').innerText="RUHUNU SATTI"; document.getElementById('btnHireBoss').disabled=true; document.getElementById('furkanDesc').innerHTML = `<span class="text-red-500 font-bold blink-text">RAGE MODE AKTİF: ÜRETİM x10, STAJYER x10!</span>`;} }
-        window.onload = function() { localStorage.clear(); renderStaff(); const pl=document.getElementById('productionList'); if(pl.innerHTML.trim() === ""){ pl.innerHTML += `<div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-yellow-500 transition relative"><div class="flex justify-between items-center mb-1"><h3 class="font-bold text-yellow-200 text-sm">Stajyer Maymun</h3><span class="text-xs font-bold bg-yellow-500 text-black px-2 py-0.5 rounded shadow-sm" id="countStajyer">0</span></div><p class="text-[10px] text-gray-400 mb-2">Hız: <span id="rateStajyer" class="text-white">1.0</span> Muz/sn</p><button onclick="buyMachine('stajyer')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3 border border-gray-600 hover:border-gold transition"><span>İŞE AL</span><span class="text-gold" id="costStajyer">20 ₺</span></button></div>`; pl.innerHTML += `<div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-purple-500 transition opacity-50 relative" id="unlockFactory"><div id="iconFactory" class="absolute bottom-2 left-2 text-xl hidden animate-pulse z-10"></div><div class="absolute top-3 right-3 flex items-center gap-2"><span class="text-[10px] text-gray-400 font-mono" id="statusFactory">KAPALI</span><button onclick="toggleMachine('factory')" id="btnToggleFactory" class="w-8 h-4 bg-gray-600 rounded-full relative transition-colors duration-300"><div class="w-4 h-4 bg-white rounded-full absolute top-0 left-0"></div></button></div><div class="flex justify-between items-center mb-1 pr-16"><h3 class="font-bold text-purple-300 text-sm">Dökümhane</h3><span class="text-xs font-bold bg-purple-600 text-white px-2 py-0.5 rounded shadow-sm" id="countFactory">0</span></div><div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded w-fit"><span class="text-red-400" id="consumeFactory">-10 Muz</span><i class="fas fa-arrow-right text-gray-600"></i><span class="text-purple-300">+1 Çelik</span></div><button onclick="buyMachine('factory')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3"><span>İNŞA ET</span><span class="text-gold" id="costFactory">500 ₺</span></button></div>`; pl.innerHTML += `<div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-techtoxic transition opacity-50 relative" id="unlockLab"><div id="iconLab" class="absolute bottom-2 left-2 text-xl hidden animate-pulse z-10"></div><div class="absolute top-3 right-3 flex items-center gap-2"><span class="text-[10px] text-gray-400 font-mono" id="statusLab">KAPALI</span><button onclick="toggleMachine('lab')" id="btnToggleLab" class="w-8 h-4 bg-gray-600 rounded-full relative transition-colors duration-300"><div class="w-4 h-4 bg-white rounded-full absolute top-0 left-0"></div></button></div><div class="flex justify-between items-center mb-1 pr-16"><h3 class="font-bold text-techtoxic text-sm">Laboratuvar</h3><span class="text-xs font-bold bg-lime-600 text-black px-2 py-0.5 rounded shadow-sm" id="countLab">0</span></div><div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded w-fit"><span class="text-red-400" id="consumeLab">-25 Muz</span><i class="fas fa-arrow-right text-gray-600"></i><span class="text-techtoxic">+1 İzotop</span></div><button onclick="buyMachine('lab')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3"><span>KUR</span><span class="text-gold" id="costLab">2.500 ₺</span></button></div>`; } if(!localStorage.getItem('v10_1_patch_seen')) { toggleUpdates(); localStorage.setItem('v10_1_patch_seen', 'true'); } safeUpdateUI(); };
-        setInterval(() => { triggerRandomEvent(); if (game.units.stajyer > 0) { let base = (game.units.stajyer || 0) * (game.multipliers.stajyer || 1); if(game.staff.emre) base *= 1.3; if(game.staff.furkan) base *= 10; if ((game.banana || 0) + base <= game.storageCap) game.banana += base; else game.banana = game.storageCap; } if (game.active.factory && game.units.factory > 0) { let consume = game.staff.dogi ? 8 : 10; let produce = game.units.factory * (game.multipliers.factory || 1); if(game.staff.furkan) produce *= 10; if (game.banana >= consume * game.units.factory) { game.banana -= consume * game.units.factory; game.steel += produce; } } if (game.active.lab && game.units.lab > 0) { let consume = game.staff.dogi ? 20 : 25; let produce = game.units.lab * (game.multipliers.lab || 1); if(game.staff.mehmet) produce *= 1.25; if(game.staff.furkan) produce *= 10; if (game.banana >= consume * game.units.lab) { game.banana -= consume * game.units.lab; game.isotope += produce; } } safeUpdateUI(); }, 1000);
+        function sellBananas(mode) {
+            let mult = game.staff.servet ? 1.2 : 1;
+            let currentRate = game.marketPrice * mult;
+            let amount = 0;
+            if (mode === 'all') { amount = game.banana; } 
+            else if (mode === 'amount') { const val = parseInt(document.getElementById('manualSellInput').value); if (val > 0) amount = Math.min(val, Math.floor(game.banana)); }
+
+            if (amount > 0) {
+                game.money += amount * currentRate; game.banana -= amount;
+                createFloatingText(window.innerWidth/3, window.innerHeight/2, `💰 +${(amount * currentRate).toFixed(2)}₺`, "text-green-400"); safeUpdateUI();
+            } else { if(mode === 'amount') showToast({title: "HATA", text: "Yetersiz muz veya geçersiz miktar.", type: 'bad'}); }
+        }
+
+        function sellItem(type) {
+            let amount = 1; let mult = game.staff.servet ? 1.2 : 1;
+            if(type === 'steel') { const val = parseInt(document.getElementById('inputSteel').value); if(val > 0) amount = val; if(game.steel >= amount) { game.steel -= amount; game.money += (75 * mult * amount); } else if(game.steel > 0) { game.money += (75 * mult * game.steel); game.steel = 0; } }
+            if(type === 'isotope') { const val = parseInt(document.getElementById('inputIsotope').value); if(val > 0) amount = val; if(game.isotope >= amount) { game.isotope -= amount; game.money += (250 * mult * amount); } else if(game.isotope > 0) { game.money += (250 * mult * game.isotope); game.isotope = 0; } }
+            safeUpdateUI();
+        }
+        function buyMachine(type) {
+            let cost = 0;
+            if (type === 'stajyer') cost = Math.floor(game.costs.stajyer * Math.pow(1.25, game.units.stajyer));
+            if (type === 'factory') cost = Math.floor(game.costs.factory * Math.pow(1.2, game.units.factory));
+            if (type === 'lab')     cost = Math.floor(game.costs.lab * Math.pow(1.3, game.units.lab));
+            if (game.money >= cost) { game.money -= cost; game.units[type]++; if(type !== 'stajyer') game.active[type] = true; safeUpdateUI(); }
+        }
+        function upgradeStorage() { if (game.money >= game.costs.storage) { game.money -= game.costs.storage; game.storageCap *= 2; game.costs.storage = Math.floor(game.costs.storage * 2.5); safeUpdateUI(); } }
+        
+        function craftRocket() {
+            let cost = game.staff.mert ? 4000 : 5000; let steel = game.staff.mert ? 80 : 100;
+            if (game.money >= cost && game.steel >= steel && game.isotope >= 20) {
+                game.money -= cost; game.steel -= steel; game.isotope -= 20; game.rocketParts++;
+                if (game.rocketParts >= 10) { document.getElementById('winModal').classList.remove('hidden'); document.getElementById('winModal').classList.add('flex'); }
+                safeUpdateUI();
+            }
+        }
+        function toggleUpdates() { const modal = document.getElementById('updateModal'); if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); modal.classList.add('flex'); } else { modal.classList.add('hidden'); modal.classList.remove('flex'); } }
+        document.addEventListener('keydown', function(event) { if (event.key.toLowerCase() === 'p') { game.money += 100000; safeUpdateUI(); } });
+
+        const randomEvents = [
+            { title: "İŞ KAZASI", text: "Laboratuvarda kaza! Üretim %50 düştü.", target: 'lab', multiplier: 0.5, duration: 15000, type: 'bad' },
+            { title: "BAKIM YAPILDI", text: "Dökümhane yağlandı. Hız %25 arttı.", target: 'factory', multiplier: 1.25, duration: 15000, type: 'good' },
+            { title: "BİLİMSEL DEHA", text: "Yeni formül bulundu! Lab x2 Hız!", target: 'lab', multiplier: 2.0, duration: 10000, type: 'epic' }
+        ];
+        let eventActive = false;
+        function triggerRandomEvent() {
+            if(game.units.stajyer > 0 && Math.random() < 0.005) {
+                const prize = Math.floor(Math.random() * 4001) + 1000; game.money += prize;
+                showToast({title: "GİZEMLİ KUTU 🎁", text: `Stajyerler ${prize}₺ buldu!`, type: 'epic'}); return;
+            }
+            if(eventActive || Math.random() > 0.05) return;
+            const event = randomEvents[Math.floor(Math.random() * randomEvents.length)];
+            if(game.units[event.target] === 0) return;
+            activateEvent(event);
+        }
+        function activateEvent(event) {
+            eventActive = true; game.multipliers[event.target] = event.multiplier; showToast(event);
+            if(event.type === 'epic' && !game.staff.mehmet) showDialogue('system', "HAYYE! (Ümit Hoca)"); else if(event.target === 'lab') showDialogue('mehmet');
+            let iconDiv; if(event.target==='lab') iconDiv=document.getElementById('iconLab'); if(event.target==='factory') iconDiv=document.getElementById('iconFactory');
+            if(iconDiv) { iconDiv.innerHTML = event.type==='bad'?"🔻":"⚡"; iconDiv.classList.remove('hidden'); }
+            setTimeout(() => { game.multipliers[event.target] = 1; eventActive = false; if(iconDiv) iconDiv.classList.add('hidden'); safeUpdateUI(); }, event.duration); safeUpdateUI();
+        }
+        function showToast(event) {
+            const toast = document.getElementById('newsToast'); const card = document.getElementById('toastCard'); const title = document.getElementById('toastTitle'); const body = document.getElementById('toastBody'); const icon = document.getElementById('toastIcon');
+            if(event.type === 'bad') { card.className = "bg-gray-800 border-l-4 border-red-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4"; title.className = "font-bold text-sm tracking-wide mb-1 text-red-500"; icon.innerText = "🚨"; } 
+            else if(event.type === 'epic') { card.className = "bg-gray-800 border-l-4 border-purple-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4"; title.className = "font-bold text-sm tracking-wide mb-1 text-purple-400"; icon.innerText = "💎"; } 
+            else { card.className = "bg-gray-800 border-l-4 border-green-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4"; title.className = "font-bold text-sm tracking-wide mb-1 text-green-500"; icon.innerText = "🍀"; }
+            title.innerText = event.title; body.innerText = event.text; toast.classList.remove('hidden'); toast.classList.add('toast-animate');
+            setTimeout(() => { toast.classList.remove('toast-animate'); toast.classList.add('hidden'); }, 5000);
+        }
+
+        // --- NEW: UPDATE VISUALS INSTEAD OF RE-RENDERING ---
+        function updateStaffVisuals() {
+            for(const [key, data] of Object.entries(staffData)) {
+                const isHired = game.staff[key];
+                const card = document.getElementById(`card-${key}`);
+                const btn = document.getElementById(`btn-${key}`);
+                const badge = document.getElementById(`badge-${key}`);
+                const name = document.getElementById(`name-${key}`);
+                const desc = document.getElementById(`desc-${key}`);
+
+                if(card) {
+                    if(isHired) {
+                        card.classList.remove('border-gray-600');
+                        card.classList.add('border-green-500', 'bg-green-900/20', 'shadow-[0_0_10px_rgba(16,185,129,0.3)]');
+                        if(btn) btn.classList.add('hidden');
+                        if(badge) badge.classList.remove('hidden');
+                        if(name) { name.classList.remove('text-white'); name.classList.add('text-green-400'); }
+                        if(desc) { 
+                            desc.innerHTML = `⚡ AKTİF: ${data.desc}`;
+                            desc.classList.remove('text-gray-500', 'italic');
+                            desc.classList.add('text-green-300', 'font-bold', 'animate-pulse');
+                        }
+                    } else {
+                        // Reset to default
+                        card.classList.add('border-gray-600');
+                        card.classList.remove('border-green-500', 'bg-green-900/20', 'shadow-[0_0_10px_rgba(16,185,129,0.3)]');
+                        if(btn) btn.classList.remove('hidden');
+                        if(badge) badge.classList.add('hidden');
+                        if(name) { name.classList.add('text-white'); name.classList.remove('text-green-400'); }
+                        if(desc) {
+                            desc.innerHTML = data.desc;
+                            desc.classList.add('text-gray-500', 'italic');
+                            desc.classList.remove('text-green-300', 'font-bold', 'animate-pulse');
+                        }
+                    }
+                }
+            }
+            if(game.staff.furkan){ 
+                const btn = document.getElementById('btnHireBoss'); 
+                if(btn) { btn.innerText="RUHUNU SATTI"; btn.disabled=true; btn.classList.replace('bg-red-900', 'bg-black'); }
+                const fDesc = document.getElementById('furkanDesc');
+                if(fDesc) fDesc.innerHTML = `<span class="text-red-500 font-bold blink-text">RAGE MODE AKTİF: ÜRETİM x10, STAJYER x10!</span>`;
+            } 
+        }
+
+        window.onload = function() {
+            localStorage.clear(); 
+            updateStaffVisuals(); // Just update state, don't create elements
+            if(!localStorage.getItem('v11_3_patch_seen')) { toggleUpdates(); localStorage.setItem('v11_3_patch_seen', 'true'); } 
+            safeUpdateUI(); 
+        };
+
+        // LOOP İÇİNDE DURUM KONTROLÜ
+        setInterval(() => {
+            triggerRandomEvent();
+            
+            if (game.units.stajyer > 0) {
+                let base = (game.units.stajyer || 0) * (game.multipliers.stajyer || 1);
+                if(base < 1) base = 1; 
+                if(game.staff.emre) base *= 1.3; 
+                if(game.staff.furkan) base *= 10;
+                
+                if ((game.banana || 0) + base <= game.storageCap) {
+                    game.banana += base;
+                } else {
+                    game.banana = game.storageCap;
+                }
+            }
+
+            if (game.active.factory && game.units.factory > 0) {
+                let consume = game.staff.dogi ? 8 : 10; 
+                let produce = game.units.factory * (game.multipliers.factory || 1);
+                if(game.staff.furkan) produce *= 10;
+                
+                if (game.banana >= consume * game.units.factory) { 
+                    game.banana -= consume * game.units.factory; 
+                    game.steel += produce; 
+                }
+            }
+
+            if (game.active.lab && game.units.lab > 0) {
+                let consume = game.staff.dogi ? 20 : 25; 
+                let produce = game.units.lab * (game.multipliers.lab || 1);
+                if(game.staff.mehmet) produce *= 1.25; 
+                if(game.staff.furkan) produce *= 10;
+                
+                if (game.banana >= consume * game.units.lab) { 
+                    game.banana -= consume * game.units.lab; 
+                    game.isotope += produce; 
+                }
+            }
+            safeUpdateUI();
+        }, 1000);
+        
+        setInterval(safeUpdateUI, 100); 
+
     </script>
 </body>
 </html>
