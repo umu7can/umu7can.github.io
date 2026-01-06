@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Banana Inc. | V2.1</title>
+    <title>Cyber Banana Inc. | V3.0 Chaos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
@@ -36,11 +36,22 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-        /* Inputlardaki ok işaretlerini gizle */
         input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; margin: 0; 
-        }
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .toggle-checkbox:checked { right: 0; border-color: #10b981; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #10b981; }
+
+        /* Haber Bandı Animasyonu */
+        .marquee-container { overflow: hidden; white-space: nowrap; position: relative; }
+        .marquee-content { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+
+        /* Flash Efekti (Buff/Nerf gelince) */
+        @keyframes flashRed { 0%, 100% { background-color: transparent; } 50% { background-color: rgba(244, 63, 94, 0.2); } }
+        @keyframes flashGreen { 0%, 100% { background-color: transparent; } 50% { background-color: rgba(16, 185, 129, 0.2); } }
+        .bg-flash-red { animation: flashRed 0.5s 2; }
+        .bg-flash-green { animation: flashGreen 0.5s 2; }
     </style>
 </head>
 <body class="flex flex-col h-screen font-sans">
@@ -52,7 +63,7 @@
             </a>
             <span class="text-lg font-bold text-techblue tracking-wider">
                 CYBER BANANA 
-                <span class="ml-2 text-[10px] text-techgreen border border-techgreen px-1.5 py-0.5 rounded font-mono">V2.1 BATCH</span>
+                <span class="ml-2 text-[10px] text-yellow-400 border border-yellow-400 px-1.5 py-0.5 rounded font-mono">V3.0 CHAOS</span>
             </span>
             <button onclick="toggleUpdates()" class="text-xs bg-gray-800 hover:bg-gray-700 text-techgreen px-3 py-1 rounded border border-gray-600 transition flex items-center gap-2">
                 <i class="fas fa-scroll"></i> <span class="hidden md:inline">Yama Notları</span>
@@ -71,9 +82,17 @@
         </div>
     </nav>
 
-    <div class="flex flex-1 overflow-hidden">
+    <div class="bg-black border-b border-gray-800 h-8 flex items-center marquee-container shrink-0">
+        <div id="newsFeed" class="marquee-content text-xs font-mono font-bold text-gray-400">
+            SİSTEM BAŞLATILDI... ÜRETİM HATTI AKTİF... BOL KAZANÇLAR PATRON...
+        </div>
+    </div>
+
+    <div class="flex flex-1 overflow-hidden relative" id="mainGameArea">
         
-        <div class="w-1/3 p-6 border-r border-gray-700 flex flex-col items-center bg-darkbg relative">
+        <div class="w-1/3 p-6 border-r border-gray-700 flex flex-col items-center bg-darkbg relative transition-colors" id="panelStajyer">
+            <div id="iconStajyer" class="absolute top-2 right-2 text-2xl hidden animate-bounce"></div>
+
             <div class="w-full mb-8">
                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                     <span>Muz Deposu</span>
@@ -103,16 +122,18 @@
 
         <div class="w-1/3 p-4 border-r border-gray-700 bg-panel overflow-y-auto">
             <h2 class="text-techblue font-bold text-sm mb-4 sticky top-0 bg-panel py-2 z-10 border-b border-gray-700 flex items-center gap-2">
-                <i class="fas fa-industry"></i> ÜRETİM BİRİMLERİ
+                <i class="fas fa-industry"></i> ÜRETİM HATLARI
             </h2>
             
             <div class="space-y-4 pb-10">
-                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-yellow-500 transition relative overflow-hidden group">
+                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-yellow-500 transition">
                     <div class="flex justify-between items-center mb-1">
                         <h3 class="font-bold text-yellow-200 text-sm">Stajyer Maymun</h3>
                         <span class="text-[10px] bg-yellow-900/50 text-yellow-200 px-2 py-0.5 rounded" id="countStajyer">0</span>
                     </div>
-                    <p class="text-[10px] text-gray-400 mb-2">Otomatik muz toplar. (+1 Muz/sn)</p>
+                    <p class="text-[10px] text-gray-400 mb-2">
+                        Hız: <span id="rateStajyer" class="text-white">1</span> Muz/sn
+                    </p>
                     <button onclick="buyMachine('stajyer')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3 border border-gray-600 hover:border-gold transition">
                         <span>İŞE AL</span>
                         <span class="text-gold" id="costStajyer">20 ₺</span>
@@ -124,7 +145,6 @@
                         <h3 class="font-bold text-blue-200 text-sm">Depo Genişletme</h3>
                         <span class="text-[10px] bg-blue-900/50 text-blue-200 px-2 py-0.5 rounded" id="storageLevel">Lvl 1</span>
                     </div>
-                    <p class="text-[10px] text-gray-400 mb-2">Kapasiteyi 2 katına çıkarır.</p>
                     <button onclick="upgradeStorage()" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3">
                         <span>GENİŞLET</span>
                         <span class="text-gold" id="costStorage">150 ₺</span>
@@ -133,15 +153,23 @@
 
                 <div class="border-t border-gray-700 my-4"></div>
 
-                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-purple-500 transition opacity-50" id="unlockFactory">
-                    <div class="flex justify-between items-center mb-1">
-                        <h3 class="font-bold text-purple-300 text-sm">Demir Dökümhanesi</h3>
+                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-purple-500 transition opacity-50 relative" id="unlockFactory">
+                    <div class="absolute top-3 right-3 flex items-center gap-2">
+                        <span class="text-[10px] text-gray-400 font-mono" id="statusFactory">KAPALI</span>
+                        <button onclick="toggleMachine('factory')" id="btnToggleFactory" class="w-8 h-4 bg-gray-600 rounded-full relative transition-colors duration-300">
+                            <div class="w-4 h-4 bg-white rounded-full absolute top-0 left-0 transition-all duration-300 transform scale-75"></div>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-1 pr-16">
+                        <h3 class="font-bold text-purple-300 text-sm">Dökümhane</h3>
                         <span class="text-[10px] bg-purple-900/50 text-purple-200 px-2 py-0.5 rounded" id="countFactory">0</span>
                     </div>
-                    <div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded">
-                        <span class="text-red-400">-10 Muz/sn</span>
+                    
+                    <div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded w-fit">
+                        <span class="text-red-400">-10 Muz</span>
                         <i class="fas fa-arrow-right text-gray-600"></i>
-                        <span class="text-purple-300">+1 Çelik/sn</span>
+                        <span class="text-purple-300">+1 Çelik</span>
                     </div>
                     <button onclick="buyMachine('factory')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3">
                         <span>İNŞA ET</span>
@@ -149,16 +177,26 @@
                     </button>
                 </div>
 
-                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-techtoxic transition opacity-50" id="unlockLab">
-                    <div class="flex justify-between items-center mb-1">
-                        <h3 class="font-bold text-techtoxic text-sm">Biyo-Laboratuvar</h3>
+                <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-techtoxic transition opacity-50 relative" id="unlockLab">
+                    <div id="iconLab" class="absolute bottom-2 right-2 text-xl hidden animate-pulse z-10"></div>
+                    
+                    <div class="absolute top-3 right-3 flex items-center gap-2">
+                        <span class="text-[10px] text-gray-400 font-mono" id="statusLab">KAPALI</span>
+                        <button onclick="toggleMachine('lab')" id="btnToggleLab" class="w-8 h-4 bg-gray-600 rounded-full relative transition-colors duration-300">
+                            <div class="w-4 h-4 bg-white rounded-full absolute top-0 left-0 transition-all duration-300 transform scale-75"></div>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-1 pr-16">
+                        <h3 class="font-bold text-techtoxic text-sm">Laboratuvar</h3>
                         <span class="text-[10px] bg-lime-900/50 text-lime-200 px-2 py-0.5 rounded" id="countLab">0</span>
                     </div>
-                    <div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded">
-                        <span class="text-red-400">-25 Muz/sn</span>
+                    <div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded w-fit">
+                        <span class="text-red-400">-25 Muz</span>
                         <i class="fas fa-arrow-right text-gray-600"></i>
-                        <span class="text-techtoxic">+1 İzotop/sn</span>
+                        <span class="text-techtoxic">+1 İzotop</span>
                     </div>
+                    <p class="text-[10px] text-gray-500 mt-1">Verim: %<span id="rateLab">100</span></p>
                     <button onclick="buyMachine('lab')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3">
                         <span>KUR</span>
                         <span class="text-gold" id="costLab">2.500 ₺</span>
@@ -168,7 +206,6 @@
         </div>
 
         <div class="w-1/3 p-4 bg-darkbg overflow-y-auto flex flex-col border-l border-gray-800">
-            
             <h2 class="text-gray-400 font-bold text-sm mb-4 flex items-center gap-2">
                 <i class="fas fa-box-open"></i> DEPO & LOGİSTİK
             </h2>
@@ -183,13 +220,11 @@
                                 <p class="font-mono font-bold text-purple-300 text-sm" id="displaySteel">0</p>
                             </div>
                         </div>
-                        <span class="text-[10px] text-green-400 bg-green-900/20 px-1 rounded">75 ₺/adet</span>
+                        <span class="text-[10px] text-green-400 bg-green-900/20 px-1 rounded">75 ₺</span>
                     </div>
                     <div class="flex gap-2">
                         <input type="number" id="inputSteel" placeholder="Miktar" class="w-16 bg-darkbg border border-gray-600 rounded px-2 text-xs text-center text-white focus:border-techblue outline-none" min="1">
-                        <button onclick="sellItem('steel')" class="flex-1 px-2 py-1 bg-gray-700 hover:bg-green-700 text-gray-300 hover:text-white text-[10px] rounded border border-gray-600 transition">
-                            SATIŞ YAP
-                        </button>
+                        <button onclick="sellItem('steel')" class="flex-1 px-2 py-1 bg-gray-700 hover:bg-green-700 text-gray-300 hover:text-white text-[10px] rounded border border-gray-600 transition">SATIŞ</button>
                     </div>
                 </div>
 
@@ -202,13 +237,11 @@
                                 <p class="font-mono font-bold text-techtoxic text-sm" id="displayIsotope">0</p>
                             </div>
                         </div>
-                        <span class="text-[10px] text-green-400 bg-green-900/20 px-1 rounded">250 ₺/adet</span>
+                        <span class="text-[10px] text-green-400 bg-green-900/20 px-1 rounded">250 ₺</span>
                     </div>
                     <div class="flex gap-2">
                         <input type="number" id="inputIsotope" placeholder="Miktar" class="w-16 bg-darkbg border border-gray-600 rounded px-2 text-xs text-center text-white focus:border-techblue outline-none" min="1">
-                        <button onclick="sellItem('isotope')" class="flex-1 px-2 py-1 bg-gray-700 hover:bg-green-700 text-gray-300 hover:text-white text-[10px] rounded border border-gray-600 transition">
-                            SATIŞ YAP
-                        </button>
+                        <button onclick="sellItem('isotope')" class="flex-1 px-2 py-1 bg-gray-700 hover:bg-green-700 text-gray-300 hover:text-white text-[10px] rounded border border-gray-600 transition">SATIŞ</button>
                     </div>
                 </div>
             </div>
@@ -231,14 +264,11 @@
                         <span id="reqIsotope" class="text-techtoxic">20 Adet</span>
                     </div>
                 </div>
-
-                <button onclick="craftRocket()" id="craftBtn" class="w-full py-3 bg-gradient-to-r from-red-700 to-orange-700 text-white font-bold rounded shadow-lg disabled:opacity-20 disabled:cursor-not-allowed transition hover:scale-105 active:scale-95 text-sm">
-                    MOTORU ÜRET
-                </button>
+                <button onclick="craftRocket()" id="craftBtn" class="w-full py-3 bg-gradient-to-r from-red-700 to-orange-700 text-white font-bold rounded shadow-lg disabled:opacity-20 disabled:cursor-not-allowed transition text-sm">MOTORU ÜRET</button>
             </div>
             
             <div class="text-center mt-4">
-                 <p class="text-[10px] text-gray-600">Cyber Banana Inc. V2.1</p>
+                 <p class="text-[10px] text-gray-600">Cyber Banana Inc. V3.0</p>
                  <div class="w-full bg-gray-800 h-1 mt-1 rounded-full overflow-hidden">
                     <div id="progressBar" class="bg-techred h-full w-0 transition-all duration-500"></div>
                 </div>
@@ -247,74 +277,148 @@
     </div>
 
     <div id="updateModal" class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in">
-        <div class="bg-panel w-full max-w-md p-6 rounded-lg border border-techblue shadow-[0_0_20px_rgba(0,242,255,0.2)] relative">
+        <div class="bg-panel w-full max-w-md p-6 rounded-lg border border-yellow-500 relative">
             <div class="flex justify-between items-start mb-4 border-b border-gray-700 pb-2">
                 <div>
-                    <h2 class="text-xl font-bold text-techblue">SİSTEM GÜNCELLEMESİ</h2>
-                    <span class="text-xs text-techgreen font-mono bg-techgreen/10 px-1 rounded">PATCH V2.1</span>
+                    <h2 class="text-xl font-bold text-yellow-500">CHAOS UPDATE</h2>
+                    <span class="text-xs text-white bg-red-600 px-1 rounded font-mono">PATCH V3.0</span>
                 </div>
                 <button onclick="toggleUpdates()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
-
-            <div class="space-y-3 text-sm font-mono text-gray-300 max-h-[60vh] overflow-y-auto pr-2">
-                
-                <div class="bg-black/30 p-2 rounded border-l-2 border-techgreen">
-                    <p class="text-techgreen font-bold text-xs mb-1">YENİLİKLER</p>
-                    <ul class="list-disc list-inside space-y-1 text-xs">
-                        <li><span class="text-white">Toplu Satış Sistemi</span> eklendi.</li>
-                        <li>Artık miktarı elle girip tek tıkla satış yapabilirsiniz.</li>
-                         <li><span class="text-white">Yeni İşleme Modelleri</span> eklendi.</li>
-                        <li>Artık motor üretmek için farklı işlenmiş materyallere ihtiyacınız var. </li>
-                    </ul>
+            <div class="space-y-3 text-sm font-mono text-gray-300">
+                <div class="bg-black/30 p-2 rounded border-l-2 border-yellow-500">
+                    <p class="text-yellow-500 font-bold text-xs mb-1">RASTGELE OLAYLAR</p>
+                    <p class="text-xs">Artık oyunda her an her şey olabilir! Laboratuvar kazaları, stajyer isyanları, nadir bitkiler...</p>
                 </div>
-
-                <div class="bg-black/30 p-2 rounded border-l-2 border-red-500">
-                    <p class="text-red-500 font-bold text-xs mb-1">DENGELER</p>
-                    <ul class="list-disc list-inside space-y-1 text-xs">
-                        <li>V2.0 Hardcore ekonomi modeli aktif.</li>
-                    </ul>
+                <div class="bg-black/30 p-2 rounded border-l-2 border-blue-500">
+                    <p class="text-blue-500 font-bold text-xs mb-1">HABER BANDI</p>
+                    <p class="text-xs">Son dakika gelişmeleri için yukarıdaki kayan yazıyı takip edin.</p>
                 </div>
             </div>
-
-            <button onclick="toggleUpdates()" class="w-full mt-6 py-2 bg-techblue hover:bg-cyan-400 text-black font-bold rounded transition">
-                ANLAŞILDI, PATRON
-            </button>
+            <button onclick="toggleUpdates()" class="w-full mt-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded transition">HAZIRIM</button>
         </div>
     </div>
 
     <div id="winModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/95 backdrop-blur-md">
-        <div class="bg-panel p-8 rounded-xl border-2 border-gold text-center max-w-lg shadow-2xl relative overflow-hidden">
-            <div class="absolute inset-0 bg-gold opacity-5 animate-pulse"></div>
+        <div class="bg-panel p-8 rounded-xl border-2 border-gold text-center max-w-lg shadow-2xl">
             <h1 class="text-3xl font-bold text-gold mb-2">GALAKSİ FATİHİ! 👑</h1>
-            <p class="text-gray-300 mb-6 text-sm">Büyük patron sensin! Şirketiniz muz endüstrisini domine etti ve uzaya açıldı.</p>
-            <div class="text-6xl mb-6 animate-bounce">🦍🚀🌌</div>
-            <div class="flex gap-4 justify-center relative z-10">
-                <button onclick="location.reload()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-sm">Şirketi Sıfırla</button>
-                <a href="index.html" class="px-6 py-2 bg-techblue hover:bg-cyan-500 text-black font-bold rounded text-sm">Portfolyoya Dön</a>
-            </div>
+            <p class="text-gray-300 mb-6 text-sm">Büyük patron sensin! Şirketiniz muz endüstrisini domine etti.</p>
+            <button onclick="location.reload()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-sm">Sıfırla</button>
         </div>
     </div>
 
     <script>
         // === OYUN STATE ===
         const game = {
-            money: 0,
-            banana: 0,
-            steel: 0,
-            isotope: 0,
-            rocketParts: 0,
-            storageCap: 200,
+            money: 0, banana: 0, steel: 0, isotope: 0, rocketParts: 0, storageCap: 200,
             units: { stajyer: 0, factory: 0, lab: 0 },
+            active: { factory: true, lab: true },
+            // ÇARPANLAR (Multipliers) - Varsayılan 1
+            multipliers: { stajyer: 1, factory: 1, lab: 1 },
+            
             costs: {
-                stajyer: 20,     
-                factory: 500,    
-                lab: 2500,       
-                storage: 150,
-                rocketMoney: 5000,
-                rocketSteel: 100,
-                rocketIsotope: 20
+                stajyer: 20, factory: 500, lab: 2500, storage: 150,
+                rocketMoney: 5000, rocketSteel: 100, rocketIsotope: 20
             }
         };
+
+        // === OLAY SİSTEMİ (EVENT ENGINE) ===
+        const randomEvents = [
+            {
+                text: "SON DAKİKA: Laboratuvarda kaza! Prof. Dr. Ümit Havare hafif yaralandı. (Üretim %50 Düştü)",
+                target: 'lab', multiplier: 0.5, duration: 20000, type: 'bad'
+            },
+            {
+                text: "MÜJDE: Stajyerler ormanda nadir bir muz bitkisine rastladı! (Toplama Hızı %50 Arttı)",
+                target: 'stajyer', multiplier: 1.5, duration: 15000, type: 'good'
+            },
+            {
+                text: "BİLGİ: Dökümhane makineleri yeni yağlandı. (Üretim Hızı %25 Arttı)",
+                target: 'factory', multiplier: 1.25, duration: 15000, type: 'good'
+            },
+            {
+                text: "UYARI: Muz kabuklarına basan stajyerler iş yavaşlatıyor! (Hız %30 Düştü)",
+                target: 'stajyer', multiplier: 0.7, duration: 10000, type: 'bad'
+            },
+            {
+                text: "HABER: Prof. Dr. Ümit Havare yeni bir formül buldu! (Lab Hızı 2 Katına Çıktı!)",
+                target: 'lab', multiplier: 2.0, duration: 10000, type: 'epic'
+            }
+        ];
+
+        let eventActive = false;
+
+        function triggerRandomEvent() {
+            // Zaten bir olay varsa veya şans tutmadıysa (%5 ihtimal) çık
+            if(eventActive || Math.random() > 0.05) return;
+
+            // Rastgele olay seç
+            const event = randomEvents[Math.floor(Math.random() * randomEvents.length)];
+            
+            // Eğer hedef birim hiç yoksa olayı iptal et (Lab yoksa lab kazası saçma olur)
+            if(game.units[event.target] === 0) return;
+
+            activateEvent(event);
+        }
+
+        function activateEvent(event) {
+            eventActive = true;
+            
+            // Çarpanı uygula
+            game.multipliers[event.target] = event.multiplier;
+            
+            // Haberi göster
+            const newsEl = document.getElementById('newsFeed');
+            newsEl.innerText = event.text;
+            
+            if(event.type === 'bad') newsEl.className = "marquee-content text-xs font-mono font-bold text-red-500";
+            else if(event.type === 'epic') newsEl.className = "marquee-content text-xs font-mono font-bold text-techblue";
+            else newsEl.className = "marquee-content text-xs font-mono font-bold text-green-400";
+
+            // Görsel Efektler (UI)
+            updateRateUI(event.target, event.type);
+
+            // Süre bitince sıfırla
+            setTimeout(() => {
+                game.multipliers[event.target] = 1; // Normale dön
+                newsEl.innerText = "SİSTEM STABİL... RADYOAKTİF SEVİYE NORMAL...";
+                newsEl.className = "marquee-content text-xs font-mono font-bold text-gray-400";
+                eventActive = false;
+                clearEffects(event.target);
+                updateUI();
+            }, event.duration);
+            
+            updateUI();
+        }
+
+        function updateRateUI(target, type) {
+            // Sadece görsel ikonları açar
+            let iconDiv;
+            if(target === 'lab') iconDiv = document.getElementById('iconLab');
+            if(target === 'stajyer') iconDiv = document.getElementById('iconStajyer');
+            // Fabrika için de eklenebilir
+
+            if(iconDiv) {
+                iconDiv.classList.remove('hidden');
+                if(type === 'bad') iconDiv.innerHTML = "🔻";
+                else iconDiv.innerHTML = "⚡";
+            }
+            
+            // Ekranı kırmızı/yeşil flashlat
+            const mainArea = document.getElementById('mainGameArea');
+            if(type === 'bad') mainArea.classList.add('bg-flash-red');
+            else mainArea.classList.add('bg-flash-green');
+            
+            setTimeout(() => {
+                mainArea.classList.remove('bg-flash-red', 'bg-flash-green');
+            }, 1000);
+        }
+
+        function clearEffects(target) {
+            if(target === 'lab') document.getElementById('iconLab').classList.add('hidden');
+            if(target === 'stajyer') document.getElementById('iconStajyer').classList.add('hidden');
+        }
+
 
         // UI GÜNCELLEME
         function updateUI() {
@@ -323,9 +427,8 @@
             document.getElementById('displaySteel').innerText = game.steel;
             document.getElementById('displayIsotope').innerText = game.isotope;
             document.getElementById('displayRocket').innerText = game.rocketParts + ' / 10';
-
-            const progress = (game.rocketParts / 10) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
+            
+            document.getElementById('progressBar').style.width = ((game.rocketParts / 10) * 100) + '%';
 
             const storagePct = (game.banana / game.storageCap) * 100;
             const bar = document.getElementById('storageBar');
@@ -334,188 +437,123 @@
             else bar.classList.replace('bg-red-500', 'bg-yellow-400');
             document.getElementById('storageText').innerText = `${Math.floor(game.banana)} / ${game.storageCap}`;
 
-            const stajyerCost = Math.floor(game.costs.stajyer * Math.pow(1.25, game.units.stajyer));
+            // Hız Göstergeleri (Buff/Nerf Durumu)
+            const stajyerRate = (1 * game.multipliers.stajyer).toFixed(1);
+            document.getElementById('rateStajyer').innerText = stajyerRate;
+            if(game.multipliers.stajyer > 1) document.getElementById('rateStajyer').className = "text-green-400 font-bold";
+            else if(game.multipliers.stajyer < 1) document.getElementById('rateStajyer').className = "text-red-500 font-bold";
+            else document.getElementById('rateStajyer').className = "text-white";
+
+            const labRate = (100 * game.multipliers.lab).toFixed(0);
+            document.getElementById('rateLab').innerText = labRate;
+            if(game.multipliers.lab > 1) document.getElementById('rateLab').className = "text-green-400 font-bold";
+            else if(game.multipliers.lab < 1) document.getElementById('rateLab').className = "text-red-500 font-bold";
+            else document.getElementById('rateLab').className = "text-white";
+
+
+            // Fiyatlar
             document.getElementById('countStajyer').innerText = game.units.stajyer;
-            document.getElementById('costStajyer').innerText = stajyerCost.toLocaleString() + " ₺";
-
-            const factoryCost = Math.floor(game.costs.factory * Math.pow(1.2, game.units.factory));
+            document.getElementById('costStajyer').innerText = Math.floor(game.costs.stajyer * Math.pow(1.25, game.units.stajyer)).toLocaleString() + " ₺";
             document.getElementById('countFactory').innerText = game.units.factory;
-            document.getElementById('costFactory').innerText = factoryCost.toLocaleString() + " ₺";
-
-            const labCost = Math.floor(game.costs.lab * Math.pow(1.3, game.units.lab));
+            document.getElementById('costFactory').innerText = Math.floor(game.costs.factory * Math.pow(1.2, game.units.factory)).toLocaleString() + " ₺";
             document.getElementById('countLab').innerText = game.units.lab;
-            document.getElementById('costLab').innerText = labCost.toLocaleString() + " ₺";
-
+            document.getElementById('costLab').innerText = Math.floor(game.costs.lab * Math.pow(1.3, game.units.lab)).toLocaleString() + " ₺";
             document.getElementById('storageLevel').innerText = "Kapasite: " + game.storageCap;
             document.getElementById('costStorage').innerText = game.costs.storage.toLocaleString() + " ₺";
 
             checkUnlock('unlockFactory', game.money > 200 || game.units.factory > 0);
             checkUnlock('unlockLab', game.money > 1000 || game.units.lab > 0);
 
-            const canCraft = game.money >= game.costs.rocketMoney && 
-                             game.steel >= game.costs.rocketSteel && 
-                             game.isotope >= game.costs.rocketIsotope;
-            
-            const btn = document.getElementById('craftBtn');
-            btn.disabled = !canCraft;
+            const canCraft = game.money >= game.costs.rocketMoney && game.steel >= game.costs.rocketSteel && game.isotope >= game.costs.rocketIsotope;
+            document.getElementById('craftBtn').disabled = !canCraft;
             
             colorizeReq('reqMoney', game.money, game.costs.rocketMoney);
             colorizeReq('reqSteel', game.steel, game.costs.rocketSteel);
             colorizeReq('reqIsotope', game.isotope, game.costs.rocketIsotope);
+
+            updateToggleUI('factory', 'btnToggleFactory', 'statusFactory');
+            updateToggleUI('lab', 'btnToggleLab', 'statusLab');
         }
 
-        function checkUnlock(id, condition) {
-            const el = document.getElementById(id);
-            if(condition) el.classList.remove('opacity-50', 'pointer-events-none');
-            else el.classList.add('opacity-50', 'pointer-events-none');
-        }
-
-        function colorizeReq(id, current, needed) {
-            const el = document.getElementById(id);
-            if(current >= needed) el.classList.replace('text-red-500', 'text-green-400');
-            else {
-                el.classList.remove('text-green-400', 'text-gold', 'text-purple-300', 'text-techtoxic');
-                el.classList.add('text-red-500');
+        function updateToggleUI(type, btnId, statusId) {
+            const btn = document.getElementById(btnId);
+            const status = document.getElementById(statusId);
+            const knob = btn.firstElementChild;
+            if(game.active[type]) {
+                btn.classList.replace('bg-gray-600', 'bg-green-500');
+                knob.style.left = '16px'; 
+                status.innerText = "ÇALIŞIYOR";
+                status.classList.replace('text-gray-400', 'text-green-400');
+            } else {
+                btn.classList.replace('bg-green-500', 'bg-gray-600');
+                knob.style.left = '0px'; 
+                status.innerText = "KAPALI";
+                status.classList.replace('text-green-400', 'text-gray-400');
             }
         }
+        function checkUnlock(id, condition) { const el = document.getElementById(id); if(condition) el.classList.remove('opacity-50', 'pointer-events-none'); else el.classList.add('opacity-50', 'pointer-events-none'); }
+        function colorizeReq(id, current, needed) { const el = document.getElementById(id); if(current >= needed) el.classList.replace('text-red-500', 'text-green-400'); else { el.classList.remove('text-green-400', 'text-gold', 'text-purple-300', 'text-techtoxic'); el.classList.add('text-red-500'); } }
 
         // --- AKSİYONLAR ---
-
-        function clickBanana() {
-            if (game.banana < game.storageCap) {
-                game.banana++;
-                updateUI();
-            }
-        }
-
-        function sellBananas() {
-            if (game.banana > 0) {
-                game.money += game.banana * 1; 
-                game.banana = 0;
-                updateUI();
-            }
-        }
-
-        // YENİ: MİKTARLI SATIŞ SİSTEMİ
+        function toggleMachine(type) { game.active[type] = !game.active[type]; updateUI(); }
+        function clickBanana() { if (game.banana < game.storageCap) { game.banana++; updateUI(); } }
+        function sellBananas() { if (game.banana > 0) { game.money += game.banana * 1; game.banana = 0; updateUI(); } }
         function sellItem(type) {
-            let amount = 1; // Varsayılan: 1 adet
-            
-            // Input'tan değeri al
-            if(type === 'steel') {
-                const inputVal = parseInt(document.getElementById('inputSteel').value);
-                if(inputVal > 0) amount = inputVal;
-            } else if(type === 'isotope') {
-                const inputVal = parseInt(document.getElementById('inputIsotope').value);
-                if(inputVal > 0) amount = inputVal;
-            }
-
-            // Çelik Satışı
-            if(type === 'steel') {
-                if(game.steel >= amount) {
-                    game.steel -= amount;
-                    game.money += (75 * amount);
-                } else {
-                    // Elindekinden fazlasını satmaya çalışırsa hepsini sat
-                    if(game.steel > 0) {
-                        game.money += (75 * game.steel);
-                        game.steel = 0;
-                    }
-                }
-            }
-
-            // İzotop Satışı
-            if(type === 'isotope') {
-                if(game.isotope >= amount) {
-                    game.isotope -= amount;
-                    game.money += (250 * amount);
-                } else {
-                    if(game.isotope > 0) {
-                        game.money += (250 * game.isotope);
-                        game.isotope = 0;
-                    }
-                }
-            }
+            let amount = 1;
+            if(type === 'steel') { const val = parseInt(document.getElementById('inputSteel').value); if(val > 0) amount = val; if(game.steel >= amount) { game.steel -= amount; game.money += (75 * amount); } else if(game.steel > 0) { game.money += (75 * game.steel); game.steel = 0; } }
+            if(type === 'isotope') { const val = parseInt(document.getElementById('inputIsotope').value); if(val > 0) amount = val; if(game.isotope >= amount) { game.isotope -= amount; game.money += (250 * amount); } else if(game.isotope > 0) { game.money += (250 * game.isotope); game.isotope = 0; } }
             updateUI();
         }
-
         function buyMachine(type) {
             let cost = 0;
             if (type === 'stajyer') cost = Math.floor(game.costs.stajyer * Math.pow(1.25, game.units.stajyer));
             if (type === 'factory') cost = Math.floor(game.costs.factory * Math.pow(1.2, game.units.factory));
             if (type === 'lab')     cost = Math.floor(game.costs.lab * Math.pow(1.3, game.units.lab));
-
-            if (game.money >= cost) {
-                game.money -= cost;
-                game.units[type]++;
-                updateUI();
-            }
+            if (game.money >= cost) { game.money -= cost; game.units[type]++; if(type === 'factory' || type === 'lab') game.active[type] = true; updateUI(); }
         }
-
-        function upgradeStorage() {
-            if (game.money >= game.costs.storage) {
-                game.money -= game.costs.storage;
-                game.storageCap *= 2;
-                game.costs.storage = Math.floor(game.costs.storage * 2.5);
-                updateUI();
-            }
-        }
-
+        function upgradeStorage() { if (game.money >= game.costs.storage) { game.money -= game.costs.storage; game.storageCap *= 2; game.costs.storage = Math.floor(game.costs.storage * 2.5); updateUI(); } }
         function craftRocket() {
-            if (game.money >= game.costs.rocketMoney && 
-                game.steel >= game.costs.rocketSteel && 
-                game.isotope >= game.costs.rocketIsotope) {
-                
-                game.money -= game.costs.rocketMoney;
-                game.steel -= game.costs.rocketSteel;
-                game.isotope -= game.costs.rocketIsotope;
+            if (game.money >= game.costs.rocketMoney && game.steel >= game.costs.rocketSteel && game.isotope >= game.costs.rocketIsotope) {
+                game.money -= game.costs.rocketMoney; game.steel -= game.costs.rocketSteel; game.isotope -= game.costs.rocketIsotope;
                 game.rocketParts++;
-                
-                if (game.rocketParts >= 10) {
-                    document.getElementById('winModal').classList.remove('hidden');
-                    document.getElementById('winModal').classList.add('flex');
-                }
+                if (game.rocketParts >= 10) { document.getElementById('winModal').classList.remove('hidden'); document.getElementById('winModal').classList.add('flex'); }
                 updateUI();
             }
         }
+        function toggleUpdates() { const modal = document.getElementById('updateModal'); if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); modal.classList.add('flex'); } else { modal.classList.add('hidden'); modal.classList.remove('flex'); } }
+        document.addEventListener('keydown', function(event) { if (event.key.toLowerCase() === 'p') { game.money += 1000000; game.steel += 500; game.isotope += 100; updateUI(); } });
+        window.onload = function() { if (!localStorage.getItem('v3_patch_seen')) { toggleUpdates(); localStorage.setItem('v3_patch_seen', 'true'); } updateUI(); };
 
-        function toggleUpdates() {
-            const modal = document.getElementById('updateModal');
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        window.onload = function() {
-            if (!localStorage.getItem('v2_1_patch_seen')) {
-                toggleUpdates();
-                localStorage.setItem('v2_1_patch_seen', 'true');
-            }
-            updateUI();
-        };
-
-        // TICK
+        // === OTOMASYON DÖNGÜSÜ (TICK) ===
         setInterval(() => {
+            // Olayları Tetikle (%5 Şans)
+            triggerRandomEvent();
+
+            // 1. Stajyerler (Çarpanlı)
             if (game.units.stajyer > 0) {
-                let production = game.units.stajyer;
+                // Çarpan 1.5 ise ve 1 stajyer varsa -> 1.5 muz toplar (Math.floor kullanmıyoruz, ondalık önemli)
+                let production = game.units.stajyer * game.multipliers.stajyer;
                 if (game.banana + production <= game.storageCap) game.banana += production;
                 else game.banana = game.storageCap;
             }
-            if (game.units.factory > 0) {
+
+            // 2. Fabrika (Çarpanlı)
+            if (game.active.factory && game.units.factory > 0) {
+                // Çarpan üretim hızını artırır (daha çok çelik), ama tüketim de artmalı mı?
+                // Basitlik için sadece üretimi artıralım, tüketim sabit kalsın (bu bir buff olur)
                 const cost = game.units.factory * 10; 
                 if (game.banana >= cost) {
                     game.banana -= cost;
-                    game.steel += game.units.factory;
+                    game.steel += (game.units.factory * game.multipliers.factory);
                 }
             }
-            if (game.units.lab > 0) {
+
+            // 3. Lab (Çarpanlı - Prof. Dr. Ümit Havare Etkisi)
+            if (game.active.lab && game.units.lab > 0) {
                 const cost = game.units.lab * 25;
                 if (game.banana >= cost) {
                     game.banana -= cost;
-                    game.isotope += game.units.lab;
+                    game.isotope += (game.units.lab * game.multipliers.lab);
                 }
             }
             updateUI();
