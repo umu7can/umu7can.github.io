@@ -134,16 +134,35 @@
         
         <div id="tsparticles"></div>
 
-        <div class="fixed bottom-5 left-5 z-50 bg-black/50 backdrop-blur-md p-3 rounded-full border border-techblue/30 flex items-center gap-3 transition hover:bg-black/80">
-        <button id="playBtn" onclick="toggleMusic()" class="w-10 h-10 bg-techblue rounded-full text-darkbg flex items-center justify-center hover:scale-110 transition">
-            <i class="fas fa-play"></i>
-        </button>
-        <div class="hidden md:block pr-2">
-            <p class="text-xs text-gray-400">YouTube Radyo</p>
-            <p id="musicStatus" class="text-xs font-bold text-techblue">Duraklatıldı</p>
-        </div>
+      <div class="fixed bottom-5 left-5 z-50 flex flex-col items-start gap-2">
         
-        <div id="youtube-audio-hidden" style="display:none;"></div>
+        <div id="playlistMenu" class="hidden bg-darkbg/90 backdrop-blur-md border border-techblue/30 rounded-lg p-3 w-64 mb-2 max-h-60 overflow-y-auto shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+            <h4 class="text-techblue text-xs font-bold mb-2 border-b border-gray-700 pb-1">ÇALMA LİSTESİ</h4>
+            <ul id="playlistItems" class="text-sm text-gray-300 space-y-2">
+                </ul>
+        </div>
+
+        <div class="bg-black/60 backdrop-blur-md p-3 rounded-full border border-techblue/30 flex items-center gap-3 transition hover:bg-black/80 pr-6">
+            
+            <button id="playBtn" onclick="toggleMusic()" class="w-10 h-10 bg-techblue rounded-full text-darkbg flex items-center justify-center hover:scale-110 transition shrink-0">
+                <i class="fas fa-play"></i>
+            </button>
+
+            <button onclick="nextSong()" class="text-gray-400 hover:text-white transition" title="Sonraki Şarkı">
+                <i class="fas fa-step-forward"></i>
+            </button>
+
+            <div class="hidden md:block min-w-[100px]">
+                <p id="songTitleDisplay" class="text-xs font-bold text-white truncate max-w-[150px]">Yükleniyor...</p>
+                <p id="musicStatus" class="text-[10px] text-techblue">Hazır</p>
+            </div>
+
+            <button onclick="togglePlaylist()" class="text-gray-400 hover:text-techblue transition ml-2" title="Listeyi Göster">
+                <i class="fas fa-list"></i>
+            </button>
+            
+            <div id="youtube-audio-hidden" style="display:none;"></div>
+        </div>
     </div>
 
         <div id="jungle-area" class="absolute top-0 left-0 w-full h-screen overflow-hidden pointer-events-none">
@@ -219,47 +238,73 @@
 
     <script>
         
-      // === YOUTUBE MÜZİK ÇALAR API ===
+    // === GELİŞMİŞ YOUTUBE PLAYLIST SİSTEMİ ===
+        
+        // 1. ŞARKILARINI BURAYA EKLE
+        const playlist = [
+            { title: "Ati242 - Maraton", id: "aQb_uxNfcGk" },
+            { title: "Ati242 - Her Nerdeysen", id: "-gbJopcRj2A" },
+            { title: "Motive - EXORCIST", id: "vVeVjoKkYz0" },
+            { title: "Sansar Salvo - Bombalar Hedef Bulur", id: "oeZ-0JYonq4" },
+            { title: "Ati242 - Aynı Duraklar", id: "4p_aQwIedN4" },
+            { title: "Motive - PvG", id: "55_a15rbHAk" },
+            { title: "askim cok pardon kfadhdjahf", id: "wGAH8PSk-rg" },
+            { title: "tak tak tak amk", id: "0xji3PXYSxU" },
+            { title: "batuflex - 🌊dalga🌊", id: "48HSS_XnEvM" },
+            { title: "lvbel c5- kAhPe emre", id: "NOyrTRdOM3s" },
+            { title: "maraton2.0", id: "DfhuOxk1Tbk" },
+            { title: "intro2.0", id: "E8IpWWOfns4" },
+            { title: "nazar2.0", id: "GW5psPxrkK8" },
+            { title: "lvbelc5 mermer mix", id: "wt8HFAouB-k" }
+            
+        ];
+
+        let currentSongIndex = 0; // Şu an çalan şarkının sırası
         var player;
         var isPlaying = false;
+
         const playBtn = document.getElementById("playBtn");
         const statusText = document.getElementById("musicStatus");
+        const titleDisplay = document.getElementById("songTitleDisplay");
+        const playlistMenu = document.getElementById("playlistMenu");
+        const playlistList = document.getElementById("playlistItems");
 
-        // 1. YouTube API Kodunu Dinamik Olarak Yükle
+        // YouTube API Yükleme
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        // 2. API Hazır Olduğunda Player'ı Oluştur
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-audio-hidden', {
                 height: '0',
                 width: '0',
-                videoId: '-sePewgzVfU', // BURAYA İSTEDİĞİN YOUTUBE ID'SİNİ YAZ
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'disablekb': 1,
-                    'fs': 0,
-                    'loop': 1,           // Döngü için
-                    'playlist': '-sePewgzVfU' // Tek videonun dönmesi için ID tekrar yazılır
-                },
+                videoId: playlist[currentSongIndex].id,
+                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1 },
                 events: {
-                    'onReady': onPlayerReady
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
                 }
             });
         }
 
-        // 3. Player Hazır Olduğunda Ayarlar
         function onPlayerReady(event) {
-            event.target.setVolume(40); // Ses seviyesi %40
+            event.target.setVolume(30);
+            updateSongInfo();
+            renderPlaylist(); // Listeyi oluştur
         }
 
-        // 4. Play/Pause Butonu Fonksiyonu
-        function toggleMusic() {
-            if (!player || !player.playVideo) return; // Player henüz yüklenmediyse bekle
+        // Şarkı bitince otomatik sonrakine geç
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                nextSong();
+            }
+        }
 
+        // Play/Pause İşlemi
+        function toggleMusic() {
+            if (!player || !player.playVideo) return;
+            
             if (isPlaying) {
                 player.pauseVideo();
                 playBtn.innerHTML = '<i class="fas fa-play"></i>';
@@ -268,10 +313,58 @@
             } else {
                 player.playVideo();
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                statusText.innerText = "YouTube'dan Çalıyor...";
+                statusText.innerText = "Çalıyor...";
                 statusText.classList.add("animate-pulse");
             }
             isPlaying = !isPlaying;
+        }
+
+        // Sonraki Şarkı
+        function nextSong() {
+            currentSongIndex++;
+            if (currentSongIndex >= playlist.length) {
+                currentSongIndex = 0; // Listenin sonuna geldiyse başa dön
+            }
+            loadSong(currentSongIndex);
+        }
+
+        // Belirli bir şarkıyı yükle
+        function loadSong(index) {
+            currentSongIndex = index;
+            player.loadVideoById(playlist[index].id);
+            isPlaying = true;
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            statusText.innerText = "Çalıyor...";
+            statusText.classList.add("animate-pulse");
+            updateSongInfo();
+            renderPlaylist(); // Listeyi güncelle (aktif olanı boyamak için)
+        }
+
+        // UI Güncellemeleri
+        function updateSongInfo() {
+            titleDisplay.innerText = playlist[currentSongIndex].title;
+        }
+
+        function togglePlaylist() {
+            playlistMenu.classList.toggle("hidden");
+        }
+
+        // Listeyi HTML'e dökme
+        function renderPlaylist() {
+            playlistList.innerHTML = ""; // Temizle
+            playlist.forEach((song, index) => {
+                const li = document.createElement("li");
+                li.className = "cursor-pointer p-2 rounded hover:bg-white/10 flex justify-between items-center transition " + 
+                               (index === currentSongIndex ? "text-techblue font-bold bg-white/5" : "");
+                
+                li.innerHTML = `<span>${index + 1}. ${song.title}</span> ${index === currentSongIndex ? '<i class="fas fa-music text-xs"></i>' : ''}`;
+                
+                li.onclick = () => {
+                    loadSong(index);
+                    // Listeyi kapatmak istersen burayı aç: togglePlaylist(); 
+                };
+                playlistList.appendChild(li);
+            });
         }
 
         // === MAYMUN VE OYUN MANTIĞI ===
