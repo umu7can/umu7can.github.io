@@ -135,17 +135,16 @@
         <div id="tsparticles"></div>
 
         <div class="fixed bottom-5 left-5 z-50 bg-black/50 backdrop-blur-md p-3 rounded-full border border-techblue/30 flex items-center gap-3 transition hover:bg-black/80">
-            <button id="playBtn" onclick="toggleMusic()" class="w-10 h-10 bg-techblue rounded-full text-darkbg flex items-center justify-center hover:scale-110 transition">
-                <i class="fas fa-play"></i>
-            </button>
-            <div class="hidden md:block pr-2">
-                <p class="text-xs text-gray-400">Lo-Fi Radio</p>
-                <p id="musicStatus" class="text-xs font-bold text-techblue">Duraklatıldı</p>
-            </div>
-            <audio id="bgMusic" loop>
-                <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112778.mp3" type="audio/mpeg">
-            </audio>
+        <button id="playBtn" onclick="toggleMusic()" class="w-10 h-10 bg-techblue rounded-full text-darkbg flex items-center justify-center hover:scale-110 transition">
+            <i class="fas fa-play"></i>
+        </button>
+        <div class="hidden md:block pr-2">
+            <p class="text-xs text-gray-400">YouTube Radyo</p>
+            <p id="musicStatus" class="text-xs font-bold text-techblue">Duraklatıldı</p>
         </div>
+        
+        <div id="youtube-audio-hidden" style="display:none;"></div>
+    </div>
 
         <div id="jungle-area" class="absolute top-0 left-0 w-full h-screen overflow-hidden pointer-events-none">
             <div id="monkey" class="monkey-container pointer-events-auto" onclick="askName()">
@@ -219,23 +218,57 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
-        // === MÜZİK ÇALAR ===
-        const audio = document.getElementById("bgMusic");
+        
+      // === YOUTUBE MÜZİK ÇALAR API ===
+        var player;
+        var isPlaying = false;
         const playBtn = document.getElementById("playBtn");
         const statusText = document.getElementById("musicStatus");
-        let isPlaying = false;
-        audio.volume = 0.4;
 
+        // 1. YouTube API Kodunu Dinamik Olarak Yükle
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 2. API Hazır Olduğunda Player'ı Oluştur
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-audio-hidden', {
+                height: '0',
+                width: '0',
+                videoId: '-sePewgzVfU', // BURAYA İSTEDİĞİN YOUTUBE ID'SİNİ YAZ
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'fs': 0,
+                    'loop': 1,           // Döngü için
+                    'playlist': '-sePewgzVfU' // Tek videonun dönmesi için ID tekrar yazılır
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        // 3. Player Hazır Olduğunda Ayarlar
+        function onPlayerReady(event) {
+            event.target.setVolume(40); // Ses seviyesi %40
+        }
+
+        // 4. Play/Pause Butonu Fonksiyonu
         function toggleMusic() {
+            if (!player || !player.playVideo) return; // Player henüz yüklenmediyse bekle
+
             if (isPlaying) {
-                audio.pause();
+                player.pauseVideo();
                 playBtn.innerHTML = '<i class="fas fa-play"></i>';
                 statusText.innerText = "Duraklatıldı";
                 statusText.classList.remove("animate-pulse");
             } else {
-                audio.play().catch(e => console.log("Otomatik oynatma engeli."));
+                player.playVideo();
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                statusText.innerText = "Çalıyor...";
+                statusText.innerText = "YouTube'dan Çalıyor...";
                 statusText.classList.add("animate-pulse");
             }
             isPlaying = !isPlaying;
