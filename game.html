@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Banana Inc. | V6.1 INFO</title>
+    <title>Cyber Banana Inc. | V7.0 VOICE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
@@ -29,11 +29,21 @@
               },
               animation: {
                   'float-up': 'floatUp 1s ease-out forwards',
+                  'pop-in': 'popIn 0.3s ease-out forwards',
+                  'fade-out': 'fadeOut 0.5s ease-in forwards 4s', // 4sn bekle sonra silin
               },
               keyframes: {
                   floatUp: {
                       '0%': { transform: 'translateY(0) scale(1)', opacity: '1' },
                       '100%': { transform: 'translateY(-50px) scale(1.5)', opacity: '0' },
+                  },
+                  popIn: {
+                      '0%': { transform: 'scale(0.5) translateY(100%)', opacity: '0' },
+                      '100%': { transform: 'scale(1) translateY(0)', opacity: '1' },
+                  },
+                  fadeOut: {
+                      '0%': { opacity: '1', transform: 'translateY(0)' },
+                      '100%': { opacity: '0', transform: 'translateY(20px)' },
                   }
               }
             }
@@ -49,16 +59,7 @@
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
-        @keyframes slideDown {
-            0% { transform: translate(-50%, -150%); opacity: 0; }
-            10% { transform: translate(-50%, 20%); opacity: 1; }
-            90% { transform: translate(-50%, 20%); opacity: 1; }
-            100% { transform: translate(-50%, -150%); opacity: 0; }
-        }
-        .toast-animate { animation: slideDown 5s ease-in-out forwards; }
         .rage-mode { background-color: #2a0a0a !important; border-color: #ef4444 !important; }
-        
-        /* Yanıp sönen yazı efekti */
         .blink-text { animation: blinker 1.5s linear infinite; }
         @keyframes blinker { 50% { opacity: 0.5; } }
     </style>
@@ -67,15 +68,8 @@
 
     <div id="clickEffectsContainer" class="fixed inset-0 pointer-events-none z-50"></div>
 
-    <div id="newsToast" class="fixed top-0 left-1/2 transform -translate-x-1/2 z-[100] hidden pointer-events-none w-full max-w-lg">
-        <div class="bg-gray-800 border-l-4 shadow-2xl rounded-b-lg p-4 flex items-start gap-4" id="toastCard">
-            <div class="text-3xl" id="toastIcon">⚠️</div>
-            <div>
-                <h4 class="font-bold text-sm tracking-wide mb-1" id="toastTitle">SİSTEM</h4>
-                <p class="text-xs text-gray-300 font-mono" id="toastBody">...</p>
-            </div>
+    <div id="chatContainer" class="fixed bottom-4 right-4 w-80 z-[60] flex flex-col gap-2 pointer-events-none">
         </div>
-    </div>
 
     <nav class="flex justify-between items-center py-3 px-6 bg-panel border-b border-gray-700 shadow-lg shrink-0 z-20">
         <div class="flex items-center gap-4">
@@ -84,7 +78,7 @@
             </a>
             <span class="text-lg font-bold text-techblue tracking-wider">
                 CYBER BANANA 
-                <span class="ml-2 text-[10px] text-black bg-techtoxic px-1.5 py-0.5 rounded font-mono">V6.1 INFO</span>
+                <span class="ml-2 text-[10px] text-white bg-blue-600 px-1.5 py-0.5 rounded font-mono">V7.0 VOICE</span>
             </span>
             <button onclick="hardReset()" class="text-xs bg-red-900 hover:bg-red-700 text-white px-3 py-1 rounded border border-red-500 transition ml-4">
                 <i class="fas fa-bomb"></i> SIFIRLA
@@ -292,7 +286,7 @@
             </div>
             
             <div class="text-center mt-4 text-xs text-gray-600">
-                 Cyber Banana Inc. V6.1 <span class="text-green-600 ml-2" id="saveStatus"></span>
+                 Cyber Banana Inc. V7.0 <span class="text-green-600 ml-2" id="saveStatus"></span>
             </div>
         </div>
     </div>
@@ -301,15 +295,15 @@
         <div class="bg-panel w-full max-w-md p-6 rounded-lg border border-white relative">
             <div class="flex justify-between items-start mb-4 border-b border-gray-700 pb-2">
                 <div>
-                    <h2 class="text-xl font-bold text-white">SİSTEM TEMİZLENDİ</h2>
-                    <span class="text-xs text-black bg-white px-1 rounded font-mono">FINAL V6.1</span>
+                    <h2 class="text-xl font-bold text-white">SESLİ SİSTEM</h2>
+                    <span class="text-xs text-black bg-white px-1 rounded font-mono">FINAL V7.0</span>
                 </div>
                 <button onclick="toggleUpdates()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
             <div class="space-y-3 text-sm font-mono text-gray-300 max-h-[60vh] overflow-y-auto pr-2">
-                 <div class="bg-black/30 p-2 rounded border-l-2 border-green-500">
-                    <p class="text-green-500 font-bold text-xs mb-1">GÖRÜNÜRLÜK SORUNU ÇÖZÜLDÜ</p>
-                    <p class="text-xs">Personel etkileri artık kartların üzerinde yeşil ve parlak olarak yazıyor.</p>
+                 <div class="bg-black/30 p-2 rounded border-l-2 border-blue-500">
+                    <p class="text-blue-500 font-bold text-xs mb-1">ŞİRKET CANLANDI</p>
+                    <p class="text-xs">Artık karakterler (Emre, Dogi, Servet vs.) olaylara tepki veriyor. Sağ alt köşedeki telsiz bildirimlerini takip et!</p>
                 </div>
             </div>
             <button onclick="toggleUpdates()" class="w-full mt-6 py-2 bg-white hover:bg-gray-200 text-black font-bold rounded transition">TAMAMDIR</button>
@@ -335,7 +329,6 @@
             costs: { stajyer: 20, factory: 500, lab: 2500, storage: 150, rocketMoney: 5000, rocketSteel: 100, rocketIsotope: 20 }
         };
 
-        // SAVE SİSTEMİ İPTAL - TEMİZ BAŞLANGIÇ
         let game = JSON.parse(JSON.stringify(defaultState)); 
 
         const staffData = {
@@ -343,8 +336,75 @@
             dogi: { name: "Doğukan (Dogi)", role: "Baş Mühendis", desc: "Fabrika tüketimini %20 azaltır.", costText: "5.000₺ + 50 Çelik", money: 5000, steel: 50, isotope: 0 },
             mert: { name: "Mert Uçar", role: "Bakım Şefi", desc: "Roket maliyetini %20 düşürür.", costText: "10.000₺ + 100 Çelik", money: 10000, steel: 100, isotope: 0 },
             mehmet: { name: "Mehmet Seçer", role: "Nükleer Direktör", desc: "Laboratuvar hızını %25 artırır.", costText: "15.000₺ + 25 İzotop", money: 15000, steel: 0, isotope: 25 },
-            servet: { name: "Servet Kasimoğlu", role: "İhracat Müdürü", desc: "Satış gelirlerini %20 artırır.", costText: "25.000₺", money: 25000, steel: 0, isotope: 0 }
+            servet: { name: "Servet Kasimoğlu", role: "Kaçakçı aka mayın eşeklerine fısıldayan adam", desc: "Satış gelirlerini %20 artırır.", costText: "25.000₺", money: 25000, steel: 0, isotope: 0 }
         };
+
+        // === DIALOGUE SYSTEM ===
+        const dialoguePool = {
+            emre: [
+                "İstikamet depo! Marş marş!",
+                "Stajyerlerin saç sakal tıraşı bozuk. Disiplin şart!",
+                "Ben bu orduyu... pardon şirketi adam ederim.",
+                "GOSTAK GOSTAK YÜRÜ YÜRÜ! 🥁" // Inside Joke
+            ],
+            dogi: [
+                "Bu fabrikanın otomasyonunu kim yazdı? Spagetti koda dönmüş!",
+                "Şalter attı sandım meğer stajyer kabloyu kemirmiş.",
+                "Bana bir tornavida bir de koli bandı verin, hallederim."
+            ],
+            mehmet: [
+                "Aydın inciri niyetine Plütonyum yedik, bize bir şey olmaz.",
+                "Patron, reaktör ısındı ama Rus usulü soğutuyorum.",
+                "Laboratuvar patlarsa bana değil Ümit hocaya kızın."
+            ],
+            servet: [
+                "Hatay'dan özel 'mal' geldi, gümrüksüz... İlgilenir misin?",
+                "Polonya'da havalar soğuk, piyasa sıcak patron.",
+                "Sarışın bir stajyer başvurusu var, hemen işe alalım bence."
+            ],
+            mert: [
+                "Motorun sesi soluğundan belli, yağ yakıyor bu makine.",
+                "Kaportada göçük var ama hallederiz, sanayi çocuğuyuz.",
+                "Roketin egzozuna susturucu takalım mı? Çok bağırıyor."
+            ],
+            furkan: [
+                "YETERSİZ...", "DAHA HIZLI! DAHA FAZLA KAOS!", "BU SİSTEMİ YIKACAĞIM."
+            ]
+        };
+
+        function showDialogue(charKey, message = null) {
+            // Eğer karakter işe alınmamışsa konuşmasın (Furkan hariç bazen korkutabilir ama şimdilik kapalı)
+            if(charKey !== 'system' && !game.staff[charKey]) return;
+
+            const nameMap = { emre: "Emre Öztürk", dogi: "Dogi", mehmet: "Mehmet Seçer", servet: "Servet K.", mert: "Mert Uçar", furkan: "FURKAN" };
+            const colorMap = { emre: "text-blue-400", dogi: "text-yellow-400", mehmet: "text-green-400", servet: "text-purple-400", mert: "text-orange-400", furkan: "text-red-600" };
+            
+            // Rastgele mesaj seç (eğer özel mesaj yoksa)
+            let txt = message;
+            if(!txt && dialoguePool[charKey]) {
+                txt = dialoguePool[charKey][Math.floor(Math.random() * dialoguePool[charKey].length)];
+            }
+            if(!txt) return;
+
+            const container = document.getElementById('chatContainer');
+            const el = document.createElement('div');
+            el.className = "bg-gray-900/90 border-l-4 border-gray-500 p-3 rounded shadow-lg text-xs font-mono animate-pop-in animate-fade-out";
+            el.innerHTML = `<span class="font-bold ${colorMap[charKey] || 'text-white'}">${nameMap[charKey] || 'SİSTEM'}:</span> <span class="text-gray-300">${txt}</span>`;
+            
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 4500); // Animasyon bitince sil
+        }
+
+        // Random Banter Trigger
+        setInterval(() => {
+            if(Math.random() < 0.3) { // %30 şansla konuşsunlar
+                const hiredKeys = Object.keys(game.staff).filter(k => game.staff[k]);
+                if(hiredKeys.length > 0) {
+                    const randomChar = hiredKeys[Math.floor(Math.random() * hiredKeys.length)];
+                    showDialogue(randomChar);
+                }
+            }
+        }, 15000); // Her 15 saniyede bir dene
 
         function hardReset() {
             localStorage.clear();
@@ -383,17 +443,12 @@
             container.innerHTML = "";
             for (const [key, data] of Object.entries(staffData)) {
                 const isHired = game.staff[key];
-                
-                // BU KISIM GÜNCELLENDİ: INFO GÖSTERİMİ
                 const html = `
                 <div class="bg-panel p-3 rounded border ${isHired ? 'border-green-500 bg-green-900/20 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'border-gray-600'} transition flex justify-between items-center">
                     <div>
                         <h4 class="font-bold text-sm ${isHired ? 'text-green-400' : 'text-white'}">${data.name}</h4>
                         <p class="text-[10px] text-gray-400">${data.role}</p>
-                        ${isHired ? 
-                            `<p class="text-[10px] text-green-300 mt-1 font-bold animate-pulse">⚡ AKTİF: ${data.desc}</p>` : 
-                            `<p class="text-[10px] text-gray-500 mt-1 italic">${data.desc}</p>`
-                        }
+                        ${isHired ? `<p class="text-[10px] text-green-300 mt-1 font-bold animate-pulse">⚡ AKTİF: ${data.desc}</p>` : `<p class="text-[10px] text-gray-500 mt-1 italic">${data.desc}</p>`}
                     </div>
                     ${isHired ? 
                         `<span class="text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i></span>` : 
@@ -408,7 +463,6 @@
             if(game.staff.furkan) {
                 const btn = document.getElementById('btnHireBoss');
                 if(btn) { btn.innerText = "RUHUNU SATTI"; btn.disabled = true; btn.classList.replace('bg-red-900', 'bg-black'); }
-                // Furkan Açıklaması
                 document.getElementById('furkanDesc').innerHTML = `<span class="text-red-500 font-bold blink-text">RAGE MODE AKTİF: ÜRETİM x10, STAJYER x10!</span>`;
             }
         }
@@ -419,6 +473,7 @@
                 game.money -= data.money; game.steel -= data.steel; game.isotope -= data.isotope;
                 game.staff[key] = true;
                 showToast({title: "YENİ PERSONEL", text: `${data.name} işe alındı!`, type: 'good'});
+                showDialogue(key, "Selam millet! Ben geldim."); // İşe giriş konuşması
                 renderStaff(); safeUpdateUI();
             } else { showToast({title: "YETERSİZ KAYNAK", text: "Bütçe yetersiz.", type: 'bad'}); }
         }
@@ -429,63 +484,50 @@
                 game.staff.furkan = true; activateRageMode(); renderStaff(); safeUpdateUI();
             } else { showToast({title: "YETERSİZ GÜÇ", text: "Furkan henüz hazır değil.", type: 'bad'}); }
         }
-        function activateRageMode() { document.body.classList.add('rage-mode'); showToast({title: "KAOS BAŞLADI", text: "RAGE MODE AKTİF!", type: 'epic'}); }
+        function activateRageMode() { 
+            document.body.classList.add('rage-mode'); 
+            showToast({title: "KAOS BAŞLADI", text: "RAGE MODE AKTİF!", type: 'epic'});
+            showDialogue('furkan', "SİSTEMİN SONU GELDİ..."); 
+        }
 
-        // === SAFE UI UPDATE (GÜVENLİ MOD) ===
+        // === SAFE UI UPDATE ===
         function setTxt(id, txt) { const el = document.getElementById(id); if(el) el.innerText = txt; }
         
         function safeUpdateUI() {
             try {
-                // NaN Koruması
-                if(isNaN(game.banana)) game.banana = 0;
-                if(isNaN(game.money)) game.money = 0;
+                if(isNaN(game.banana)) game.banana = 0; if(isNaN(game.money)) game.money = 0;
 
                 setTxt('displayMoney', Math.floor(game.money).toLocaleString() + ' ₺');
                 setTxt('displayBanana', Math.floor(game.banana).toLocaleString());
-                setTxt('displaySteel', game.steel);
-                setTxt('displayIsotope', game.isotope);
+                setTxt('displaySteel', game.steel); setTxt('displayIsotope', game.isotope);
                 setTxt('displayRocket', game.rocketParts + ' / 10');
 
-                const pg = document.getElementById('progressBar');
-                if(pg) pg.style.width = ((game.rocketParts / 10) * 100) + '%';
+                const pg = document.getElementById('progressBar'); if(pg) pg.style.width = ((game.rocketParts / 10) * 100) + '%';
                 
                 const storagePct = (game.banana / game.storageCap) * 100;
                 const bar = document.getElementById('storageBar');
-                if(bar) {
-                    bar.style.width = storagePct + '%';
-                    bar.className = `h-full transition-all duration-300 ${storagePct >= 100 ? 'bg-red-500' : 'bg-yellow-400'}`;
-                }
+                if(bar) { bar.style.width = storagePct + '%'; bar.className = `h-full transition-all duration-300 ${storagePct >= 100 ? 'bg-red-500' : 'bg-yellow-400'}`; }
                 setTxt('storageText', `${Math.floor(game.banana)} / ${game.storageCap}`);
                 setTxt('storagePercentText', Math.floor(storagePct) + "%");
 
-                // Pasif Etkiler
                 let stajyerSpd = (1 * (game.multipliers.stajyer || 1));
-                if(game.staff.emre) stajyerSpd *= 1.3;
-                if(game.staff.furkan) stajyerSpd *= 10;
+                if(game.staff.emre) stajyerSpd *= 1.3; if(game.staff.furkan) stajyerSpd *= 10;
                 setTxt('rateStajyer', stajyerSpd.toFixed(1));
 
-                let factoryConsume = game.staff.dogi ? 8 : 10;
-                setTxt('consumeFactory', `-${factoryConsume} Muz`);
-                let labConsume = game.staff.dogi ? 20 : 25;
-                setTxt('consumeLab', `-${labConsume} Muz`);
+                let factoryConsume = game.staff.dogi ? 8 : 10; setTxt('consumeFactory', `-${factoryConsume} Muz`);
+                let labConsume = game.staff.dogi ? 20 : 25; setTxt('consumeLab', `-${labConsume} Muz`);
 
                 let sellMult = game.staff.servet ? 1.2 : 1;
-                setTxt('priceSteel', Math.floor(75 * sellMult) + " ₺");
-                setTxt('priceIsotope', Math.floor(250 * sellMult) + " ₺");
+                setTxt('priceSteel', Math.floor(75 * sellMult) + " ₺"); setTxt('priceIsotope', Math.floor(250 * sellMult) + " ₺");
                 setTxt('lblBananaPrice', `Kur: ${(1 * sellMult).toFixed(1)}₺`);
 
-                let rocketCost = game.staff.mert ? 4000 : 5000;
-                let rocketSteel = game.staff.mert ? 80 : 100;
-                setTxt('reqMoney', rocketCost.toLocaleString() + " ₺");
-                setTxt('reqSteel', rocketSteel + " Adet");
+                let rocketCost = game.staff.mert ? 4000 : 5000; let rocketSteel = game.staff.mert ? 80 : 100;
+                setTxt('reqMoney', rocketCost.toLocaleString() + " ₺"); setTxt('reqSteel', rocketSteel + " Adet");
 
-                // Birimler
                 setTxt('countStajyer', game.units.stajyer || 0);
                 setTxt('costStajyer', Math.floor(game.costs.stajyer * Math.pow(1.25, game.units.stajyer)).toLocaleString() + " ₺");
-                
                 setTxt('countFactory', game.units.factory || 0);
                 setTxt('costFactory', Math.floor(game.costs.factory * Math.pow(1.2, game.units.factory)).toLocaleString() + " ₺");
-                
                 setTxt('countLab', game.units.lab || 0);
                 setTxt('costLab', Math.floor(game.costs.lab * Math.pow(1.3, game.units.lab)).toLocaleString() + " ₺");
                 
@@ -496,20 +538,15 @@
                 checkUnlock('unlockLab', game.money > 1000 || game.units.lab > 0);
                 const canCraft = game.money >= rocketCost && game.steel >= rocketSteel && game.isotope >= game.costs.rocketIsotope;
                 const cBtn = document.getElementById('craftBtn'); if(cBtn) cBtn.disabled = !canCraft;
-                colorizeReq('reqMoney', game.money, rocketCost);
-                colorizeReq('reqSteel', game.steel, rocketSteel);
-                colorizeReq('reqIsotope', game.isotope, game.costs.rocketIsotope);
+                colorizeReq('reqMoney', game.money, rocketCost); colorizeReq('reqSteel', game.steel, rocketSteel); colorizeReq('reqIsotope', game.isotope, game.costs.rocketIsotope);
                 
                 updateToggleUI('factory', 'btnToggleFactory', 'statusFactory');
                 updateToggleUI('lab', 'btnToggleLab', 'statusLab');
-            } catch(e) {
-                console.log("UI Update Skip:", e);
-            }
+            } catch(e) { console.log("UI Skip", e); }
         }
 
         function updateToggleUI(type, btnId, statusId) {
-            const btn = document.getElementById(btnId); const status = document.getElementById(statusId); 
-            if(!btn) return;
+            const btn = document.getElementById(btnId); const status = document.getElementById(statusId); if(!btn) return;
             const knob = btn.firstElementChild;
             if(game.active[type]) { btn.classList.replace('bg-gray-600', 'bg-green-500'); knob.style.left = '16px'; status.innerText = "ÇALIŞIYOR"; status.classList.replace('text-gray-400', 'text-green-400'); } 
             else { btn.classList.replace('bg-green-500', 'bg-gray-600'); knob.style.left = '0px'; status.innerText = "KAPALI"; status.classList.replace('text-green-400', 'text-gray-400'); }
@@ -520,13 +557,7 @@
         // === ACTIONS ===
         function toggleMachine(type) { game.active[type] = !game.active[type]; safeUpdateUI(); }
         function sellBananas() { 
-            if (game.banana > 0) { 
-                let mult = game.staff.servet ? 1.2 : 1;
-                game.money += game.banana * mult; 
-                game.banana = 0; 
-                createFloatingText(window.innerWidth/3, window.innerHeight/2, "💰 SATILDI", "text-green-400");
-                safeUpdateUI(); 
-            } 
+            if (game.banana > 0) { let mult = game.staff.servet ? 1.2 : 1; game.money += game.banana * mult; game.banana = 0; createFloatingText(window.innerWidth/3, window.innerHeight/2, "💰 SATILDI", "text-green-400"); safeUpdateUI(); } 
         }
         function sellItem(type) {
             let amount = 1; let mult = game.staff.servet ? 1.2 : 1;
@@ -552,8 +583,6 @@
             }
         }
         function toggleUpdates() { const modal = document.getElementById('updateModal'); if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); modal.classList.add('flex'); } else { modal.classList.add('hidden'); modal.classList.remove('flex'); } }
-        
-        // Hile Kodu
         document.addEventListener('keydown', function(event) { if (event.key.toLowerCase() === 'p') { game.money += 100000; safeUpdateUI(); } });
 
         // === EVENTS ===
@@ -575,6 +604,11 @@
         }
         function activateEvent(event) {
             eventActive = true; game.multipliers[event.target] = event.multiplier; showToast(event);
+            
+            // Ümit Hoca Tepkisi
+            if(event.type === 'epic' && !game.staff.mehmet) showDialogue('system', "HAYYE! (Ümit Hoca)"); 
+            else if(event.target === 'lab') showDialogue('mehmet');
+
             let iconDiv; if(event.target==='lab') iconDiv=document.getElementById('iconLab'); if(event.target==='factory') iconDiv=document.getElementById('iconFactory');
             if(iconDiv) { iconDiv.innerHTML = event.type==='bad'?"🔻":"⚡"; iconDiv.classList.remove('hidden'); }
             setTimeout(() => { game.multipliers[event.target] = 1; eventActive = false; if(iconDiv) iconDiv.classList.add('hidden'); safeUpdateUI(); }, event.duration); safeUpdateUI();
@@ -590,10 +624,9 @@
 
         // === INIT & LOOP ===
         window.onload = function() {
-            // SADECE TEMİZLE VE BAŞLA
             localStorage.clear();
             renderStaff(); 
-            if (!localStorage.getItem('v5_patch_seen')) { toggleUpdates(); localStorage.setItem('v5_patch_seen', 'true'); } 
+            if (!localStorage.getItem('v7_patch_seen')) { toggleUpdates(); localStorage.setItem('v7_patch_seen', 'true'); } 
             safeUpdateUI();
         };
 
