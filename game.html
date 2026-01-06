@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Banana Inc. | V4.0 Dream Team</title>
+    <title>Cyber Banana Inc. | V6.1 INFO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;800&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
                 techpurple: '#a855f7',
                 techtoxic: '#bef264',
                 gold: '#fbbf24',
-                rage: '#7f1d1d' // Furkan Modu Rengi
+                rage: '#7f1d1d'
               },
               fontFamily: {
                 sans: ['Inter', 'sans-serif'],
@@ -29,18 +29,11 @@
               },
               animation: {
                   'float-up': 'floatUp 1s ease-out forwards',
-                  'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
               },
               keyframes: {
                   floatUp: {
                       '0%': { transform: 'translateY(0) scale(1)', opacity: '1' },
                       '100%': { transform: 'translateY(-50px) scale(1.5)', opacity: '0' },
-                  },
-                  shake: {
-                      '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
-                      '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
-                      '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
-                      '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
                   }
               }
             }
@@ -56,9 +49,6 @@
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
-        .toggle-checkbox:checked { right: 0; border-color: #10b981; }
-        
-        /* Bildirim Animasyonu */
         @keyframes slideDown {
             0% { transform: translate(-50%, -150%); opacity: 0; }
             10% { transform: translate(-50%, 20%); opacity: 1; }
@@ -66,16 +56,14 @@
             100% { transform: translate(-50%, -150%); opacity: 0; }
         }
         .toast-animate { animation: slideDown 5s ease-in-out forwards; }
-
-        /* Furkan Rage Mode */
-        .rage-mode {
-            background-color: #2a0a0a !important;
-            border-color: #ef4444 !important;
-        }
-        .text-rage { color: #ff0000; text-shadow: 0 0 5px red; }
+        .rage-mode { background-color: #2a0a0a !important; border-color: #ef4444 !important; }
+        
+        /* Yanıp sönen yazı efekti */
+        .blink-text { animation: blinker 1.5s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0.5; } }
     </style>
 </head>
-<body class="flex flex-col h-screen font-sans relative transition-colors duration-1000" id="bodyElement">
+<body class="flex flex-col h-screen font-sans relative transition-colors duration-1000">
 
     <div id="clickEffectsContainer" class="fixed inset-0 pointer-events-none z-50"></div>
 
@@ -96,16 +84,11 @@
             </a>
             <span class="text-lg font-bold text-techblue tracking-wider">
                 CYBER BANANA 
-                <span class="ml-2 text-[10px] text-white bg-purple-600 px-1.5 py-0.5 rounded font-mono">V4.0 DREAM TEAM</span>
+                <span class="ml-2 text-[10px] text-black bg-techtoxic px-1.5 py-0.5 rounded font-mono">V6.1 INFO</span>
             </span>
-            <div class="flex gap-2">
-                <button onclick="toggleUpdates()" class="text-xs bg-gray-800 hover:bg-gray-700 text-techgreen px-3 py-1 rounded border border-gray-600 transition">
-                    <i class="fas fa-scroll"></i> Notlar
-                </button>
-                <button onclick="saveGame(true)" class="text-xs bg-gray-800 hover:bg-gray-700 text-gold px-3 py-1 rounded border border-gray-600 transition">
-                    <i class="fas fa-save"></i> Kaydet
-                </button>
-            </div>
+            <button onclick="hardReset()" class="text-xs bg-red-900 hover:bg-red-700 text-white px-3 py-1 rounded border border-red-500 transition ml-4">
+                <i class="fas fa-bomb"></i> SIFIRLA
+            </button>
         </div>
 
         <div class="flex gap-6 font-mono text-sm">
@@ -123,15 +106,16 @@
     <div class="flex flex-1 overflow-hidden relative" id="mainGameArea">
         
         <div class="w-1/3 p-6 border-r border-gray-700 flex flex-col items-center bg-darkbg relative transition-colors" id="panelStajyer">
-            <div id="iconStajyer" class="absolute top-2 right-2 text-2xl hidden animate-bounce z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+            <div id="iconStajyer" class="absolute top-2 right-2 text-2xl hidden animate-bounce z-10"></div>
 
             <div class="w-full mb-8">
                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                     <span>Muz Deposu</span>
                     <span id="storageText">0 / 200</span>
                 </div>
-                <div class="w-full bg-gray-700 h-3 rounded-full overflow-hidden border border-gray-600">
+                <div class="w-full bg-gray-700 h-4 rounded-full overflow-hidden border border-gray-600 relative">
                     <div id="storageBar" class="bg-yellow-400 h-full w-0 transition-all duration-300"></div>
+                    <div id="storagePercentText" class="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-black opacity-60">0%</div>
                 </div>
             </div>
 
@@ -147,13 +131,12 @@
             <div class="w-full mt-auto">
                 <button onclick="sellBananas()" class="w-full py-4 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg shadow-lg flex justify-between items-center px-6 transition group active:scale-95" id="btnSellBanana">
                     <span class="flex items-center gap-2"><i class="fas fa-sack-dollar"></i> MUZLARI SAT</span>
-                    <span class="text-green-200 text-sm group-hover:text-white">Kur: 1₺</span>
+                    <span id="lblBananaPrice" class="text-green-200 text-sm group-hover:text-white">Kur: 1₺</span>
                 </button>
             </div>
         </div>
 
         <div class="w-1/3 p-4 border-r border-gray-700 bg-panel overflow-y-auto">
-            
             <h2 class="text-techblue font-bold text-sm mb-4 sticky top-0 bg-panel py-2 z-10 border-b border-gray-700 flex items-center gap-2">
                 <i class="fas fa-industry"></i> ÜRETİM HATLARI
             </h2>
@@ -162,9 +145,9 @@
                 <div class="bg-darkbg p-3 rounded border border-gray-600 hover:border-yellow-500 transition relative">
                     <div class="flex justify-between items-center mb-1">
                         <h3 class="font-bold text-yellow-200 text-sm">Stajyer Maymun</h3>
-                        <span class="text-[10px] bg-yellow-900/50 text-yellow-200 px-2 py-0.5 rounded" id="countStajyer">0</span>
+                        <span class="text-xs font-bold bg-yellow-500 text-black px-2 py-0.5 rounded shadow-sm" id="countStajyer">0</span>
                     </div>
-                    <p class="text-[10px] text-gray-400 mb-2">Hız: <span id="rateStajyer" class="text-white">1</span> Muz/sn</p>
+                    <p class="text-[10px] text-gray-400 mb-2">Hız: <span id="rateStajyer" class="text-white">1.0</span> Muz/sn</p>
                     <button onclick="buyMachine('stajyer')" class="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded text-xs font-mono flex justify-between px-3 border border-gray-600 hover:border-gold transition">
                         <span>İŞE AL</span>
                         <span class="text-gold" id="costStajyer">20 ₺</span>
@@ -181,7 +164,7 @@
                     </div>
                     <div class="flex justify-between items-center mb-1 pr-16">
                         <h3 class="font-bold text-purple-300 text-sm">Dökümhane</h3>
-                        <span class="text-[10px] bg-purple-900/50 text-purple-200 px-2 py-0.5 rounded" id="countFactory">0</span>
+                        <span class="text-xs font-bold bg-purple-600 text-white px-2 py-0.5 rounded shadow-sm" id="countFactory">0</span>
                     </div>
                     <div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded w-fit">
                         <span class="text-red-400" id="consumeFactory">-10 Muz</span>
@@ -204,7 +187,7 @@
                     </div>
                     <div class="flex justify-between items-center mb-1 pr-16">
                         <h3 class="font-bold text-techtoxic text-sm">Laboratuvar</h3>
-                        <span class="text-[10px] bg-lime-900/50 text-lime-200 px-2 py-0.5 rounded" id="countLab">0</span>
+                        <span class="text-xs font-bold bg-lime-600 text-black px-2 py-0.5 rounded shadow-sm" id="countLab">0</span>
                     </div>
                     <div class="flex gap-2 text-[10px] text-gray-500 mb-2 font-mono bg-black/20 p-1 rounded w-fit">
                         <span class="text-red-400" id="consumeLab">-25 Muz</span>
@@ -221,29 +204,22 @@
             <h2 class="text-gold font-bold text-sm mb-4 border-b border-gray-700 pb-2 flex items-center gap-2">
                 <i class="fas fa-users"></i> YÖNETİM KADROSU
             </h2>
-            
-            <div class="space-y-3 pb-8" id="staffContainer">
-                </div>
+            <div class="space-y-3 pb-8" id="staffContainer"></div>
 
             <div id="bossSection" class="mt-8 border-t-2 border-red-900 pt-4 opacity-50 filter grayscale transition hover:grayscale-0 hover:opacity-100">
                 <div class="bg-black border border-red-800 p-4 rounded-lg relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-red-900 opacity-10 group-hover:opacity-20 transition"></div>
                     <div class="flex justify-between items-center relative z-10">
                         <div>
                             <h3 class="font-bold text-red-500 text-lg">FURKAN SAKIZ</h3>
-                            <p class="text-[10px] text-red-300">Unvan: Kaos Lordu</p>
+                            <p class="text-[10px] text-red-300">Kaos Lordu</p>
                         </div>
                         <div class="text-3xl">👹</div>
                     </div>
-                    <p class="text-xs text-gray-400 mt-2 mb-3 italic">"Sistemi kökünden değiştirir. Dikkatli ol."</p>
+                    <p class="text-xs text-gray-400 mt-2 mb-3 italic" id="furkanDesc">"Sistemi kökünden değiştirir."</p>
                     <div class="space-y-1 text-[10px] font-mono text-gray-500 mb-3">
-                        <p>1.000.000 ₺</p>
-                        <p>2.000 Çelik</p>
-                        <p>500 İzotop</p>
+                        <p>1.000.000 ₺</p> <p>2.000 Çelik</p> <p>500 İzotop</p>
                     </div>
-                    <button onclick="hireBoss()" id="btnHireBoss" class="w-full py-2 bg-red-900 hover:bg-red-700 text-white font-bold rounded text-xs transition border border-red-600">
-                        SÖZLEŞME İMZALA
-                    </button>
+                    <button onclick="hireBoss()" id="btnHireBoss" class="w-full py-2 bg-red-900 hover:bg-red-700 text-white font-bold rounded text-xs transition border border-red-600">SÖZLEŞME İMZALA</button>
                 </div>
             </div>
         </div>
@@ -316,35 +292,27 @@
             </div>
             
             <div class="text-center mt-4 text-xs text-gray-600">
-                 Cyber Banana Inc. V4.0 <span class="text-green-600 ml-2" id="saveStatus"></span>
+                 Cyber Banana Inc. V6.1 <span class="text-green-600 ml-2" id="saveStatus"></span>
             </div>
         </div>
     </div>
 
     <div id="updateModal" class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in">
-        <div class="bg-panel w-full max-w-md p-6 rounded-lg border border-purple-500 relative">
+        <div class="bg-panel w-full max-w-md p-6 rounded-lg border border-white relative">
             <div class="flex justify-between items-start mb-4 border-b border-gray-700 pb-2">
                 <div>
-                    <h2 class="text-xl font-bold text-purple-400">DREAM TEAM UPDATE</h2>
-                    <span class="text-xs text-white bg-purple-600 px-1 rounded font-mono">PATCH V4.0</span>
+                    <h2 class="text-xl font-bold text-white">SİSTEM TEMİZLENDİ</h2>
+                    <span class="text-xs text-black bg-white px-1 rounded font-mono">FINAL V6.1</span>
                 </div>
                 <button onclick="toggleUpdates()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
             <div class="space-y-3 text-sm font-mono text-gray-300 max-h-[60vh] overflow-y-auto pr-2">
-                <div class="bg-black/30 p-2 rounded border-l-2 border-gold">
-                    <p class="text-gold font-bold text-xs mb-1">YÖNETİM KADROSU</p>
-                    <p class="text-xs">Artık Emre, Dogi, Mert, Mehmet ve Servet'i işe alarak şirketi büyütebilirsiniz. Her biri benzersiz avantajlar sağlar.</p>
-                </div>
-                <div class="bg-black/30 p-2 rounded border-l-2 border-techblue">
-                    <p class="text-techblue font-bold text-xs mb-1">GİZEMLİ KUTU</p>
-                    <p class="text-xs">Stajyerler artık çalışırken içinde yüklü para olan kutular bulabilir.</p>
-                </div>
                  <div class="bg-black/30 p-2 rounded border-l-2 border-green-500">
-                    <p class="text-green-500 font-bold text-xs mb-1">OTO-KAYIT (SAVE)</p>
-                    <p class="text-xs">Oyununuz artık otomatik kaydediliyor. Tarayıcıyı kapatsanız da kaldığınız yerden devam edebilirsiniz.</p>
+                    <p class="text-green-500 font-bold text-xs mb-1">GÖRÜNÜRLÜK SORUNU ÇÖZÜLDÜ</p>
+                    <p class="text-xs">Personel etkileri artık kartların üzerinde yeşil ve parlak olarak yazıyor.</p>
                 </div>
             </div>
-            <button onclick="toggleUpdates()" class="w-full mt-6 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded transition">HARİKA</button>
+            <button onclick="toggleUpdates()" class="w-full mt-6 py-2 bg-white hover:bg-gray-200 text-black font-bold rounded transition">TAMAMDIR</button>
         </div>
     </div>
 
@@ -352,32 +320,24 @@
         <div class="bg-panel p-8 rounded-xl border-2 border-gold text-center max-w-lg shadow-2xl">
             <h1 class="text-3xl font-bold text-gold mb-2">GALAKSİ FATİHİ! 👑</h1>
             <p class="text-gray-300 mb-6 text-sm">Büyük patron sensin! Şirketiniz muz endüstrisini domine etti.</p>
-            <button onclick="resetGame()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-sm">Şirketi Sıfırla</button>
+            <button onclick="hardReset()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-sm">Şirketi Sıfırla</button>
         </div>
     </div>
 
     <script>
-        // === OYUN STATE (DEFAULT) ===
+        // === STATE DEFAULT ===
         const defaultState = {
             money: 0, banana: 0, steel: 0, isotope: 0, rocketParts: 0, storageCap: 200,
             units: { stajyer: 0, factory: 0, lab: 0 },
             active: { factory: true, lab: true },
             multipliers: { stajyer: 1, factory: 1, lab: 1 },
-            
-            // KADRO DURUMU
-            staff: {
-                emre: false, dogi: false, mert: false, mehmet: false, servet: false, furkan: false
-            },
-            
-            costs: {
-                stajyer: 20, factory: 500, lab: 2500, storage: 150,
-                rocketMoney: 5000, rocketSteel: 100, rocketIsotope: 20
-            }
+            staff: { emre: false, dogi: false, mert: false, mehmet: false, servet: false, furkan: false },
+            costs: { stajyer: 20, factory: 500, lab: 2500, storage: 150, rocketMoney: 5000, rocketSteel: 100, rocketIsotope: 20 }
         };
 
-        let game = JSON.parse(JSON.stringify(defaultState)); // Deep copy
+        // SAVE SİSTEMİ İPTAL - TEMİZ BAŞLANGIÇ
+        let game = JSON.parse(JSON.stringify(defaultState)); 
 
-        // PERSONEL VERİTABANI
         const staffData = {
             emre: { name: "Emre Öztürk", role: "Güvenlik Şefi", desc: "Stajyer hızını %30 artırır.", costText: "2.000₺ + 25 Çelik", money: 2000, steel: 25, isotope: 0 },
             dogi: { name: "Doğukan (Dogi)", role: "Baş Mühendis", desc: "Fabrika tüketimini %20 azaltır.", costText: "5.000₺ + 50 Çelik", money: 5000, steel: 50, isotope: 0 },
@@ -386,52 +346,23 @@
             servet: { name: "Servet Kasimoğlu", role: "İhracat Müdürü", desc: "Satış gelirlerini %20 artırır.", costText: "25.000₺", money: 25000, steel: 0, isotope: 0 }
         };
 
-        // === SAVE / LOAD SİSTEMİ ===
-        function saveGame(manual = false) {
-            localStorage.setItem('cyberBananaSaveV4', JSON.stringify(game));
-            if(manual) {
-                const status = document.getElementById('saveStatus');
-                status.innerText = "(Kaydedildi)";
-                setTimeout(() => status.innerText = "", 2000);
-            }
-        }
-
-        function loadGame() {
-            const saved = localStorage.getItem('cyberBananaSaveV4');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                // Versiyon uyumluluğu için merge
-                game = { ...defaultState, ...parsed, units: { ...defaultState.units, ...parsed.units }, staff: { ...defaultState.staff, ...parsed.staff } };
-                // Rage mode kontrolü
-                if(game.staff.furkan) activateRageMode();
-            }
-        }
-
-        function resetGame() {
-            localStorage.removeItem('cyberBananaSaveV4');
+        function hardReset() {
+            localStorage.clear();
             location.reload();
         }
 
-        // === TIKLAMA EFEKTLERİ ===
+        // === CLICK & EFX ===
         function clickBanana(e) {
             if (game.banana < game.storageCap) {
-                // Bonus miktar (Furkan varsa x10)
                 let amount = 1;
                 if(game.staff.furkan) amount = 10; 
-                else if(game.staff.emre) amount = 1.3; // Emre varsa biraz daha fazla tık gücü
+                else if(game.staff.emre) amount = 1.3;
 
                 game.banana += amount;
                 if(game.banana > game.storageCap) game.banana = game.storageCap;
                 
-                // Görsel Efekt
                 createFloatingText(e.clientX, e.clientY, `+${Math.floor(amount)}`, 'text-yellow-300');
-                
-                updateUI();
-            } else {
-                // Depo Dolu
-                 const bar = document.getElementById('storageBar');
-                 bar.parentElement.classList.add('animate-shake');
-                 setTimeout(() => bar.parentElement.classList.remove('animate-shake'), 500);
+                safeUpdateUI();
             }
         }
 
@@ -445,24 +376,28 @@
             setTimeout(() => el.remove(), 1000);
         }
 
-        // === PERSONEL SİSTEMİ ===
+        // === STAFF ===
         function renderStaff() {
             const container = document.getElementById('staffContainer');
+            if(!container) return;
             container.innerHTML = "";
-
             for (const [key, data] of Object.entries(staffData)) {
                 const isHired = game.staff[key];
                 
+                // BU KISIM GÜNCELLENDİ: INFO GÖSTERİMİ
                 const html = `
-                <div class="bg-panel p-3 rounded border ${isHired ? 'border-green-500 bg-green-900/20' : 'border-gray-600'} transition flex justify-between items-center">
+                <div class="bg-panel p-3 rounded border ${isHired ? 'border-green-500 bg-green-900/20 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'border-gray-600'} transition flex justify-between items-center">
                     <div>
                         <h4 class="font-bold text-sm ${isHired ? 'text-green-400' : 'text-white'}">${data.name}</h4>
                         <p class="text-[10px] text-gray-400">${data.role}</p>
-                        <p class="text-[10px] text-gray-300 mt-1 italic">"${data.desc}"</p>
+                        ${isHired ? 
+                            `<p class="text-[10px] text-green-300 mt-1 font-bold animate-pulse">⚡ AKTİF: ${data.desc}</p>` : 
+                            `<p class="text-[10px] text-gray-500 mt-1 italic">${data.desc}</p>`
+                        }
                     </div>
                     ${isHired ? 
-                        `<span class="text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i> KADRODA</span>` : 
-                        `<button onclick="hireStaff('${key}')" class="px-3 py-2 bg-gray-700 hover:bg-gold hover:text-black text-gold text-[10px] font-bold rounded border border-gray-500 transition flex flex-col items-end min-w-[80px]">
+                        `<span class="text-xs bg-green-600 text-white px-2 py-1 rounded font-bold"><i class="fas fa-check"></i></span>` : 
+                        `<button onclick="hireStaff('${key}')" class="px-3 py-2 bg-gray-700 hover:bg-gold hover:text-black text-gold text-[10px] font-bold rounded border border-gray-500 flex flex-col items-end min-w-[80px]">
                             <span>İŞE AL</span>
                             <span class="opacity-70 text-[9px]">${data.costText}</span>
                         </button>`
@@ -470,315 +405,216 @@
                 </div>`;
                 container.innerHTML += html;
             }
-
-            // Furkan Kontrolü
-            const bossBtn = document.getElementById('btnHireBoss');
             if(game.staff.furkan) {
-                bossBtn.innerText = "RUHUNU SATTI";
-                bossBtn.disabled = true;
-                bossBtn.classList.replace('bg-red-900', 'bg-black');
-                document.getElementById('bossSection').classList.remove('opacity-50', 'filter', 'grayscale');
+                const btn = document.getElementById('btnHireBoss');
+                if(btn) { btn.innerText = "RUHUNU SATTI"; btn.disabled = true; btn.classList.replace('bg-red-900', 'bg-black'); }
+                // Furkan Açıklaması
+                document.getElementById('furkanDesc').innerHTML = `<span class="text-red-500 font-bold blink-text">RAGE MODE AKTİF: ÜRETİM x10, STAJYER x10!</span>`;
             }
         }
 
         function hireStaff(key) {
             const data = staffData[key];
             if (game.money >= data.money && game.steel >= data.steel && game.isotope >= data.isotope) {
-                game.money -= data.money;
-                game.steel -= data.steel;
-                game.isotope -= data.isotope;
+                game.money -= data.money; game.steel -= data.steel; game.isotope -= data.isotope;
                 game.staff[key] = true;
-                
-                showToast({title: "YENİ PERSONEL", text: `${data.name} aramıza katıldı!`, type: 'good'});
-                renderStaff();
-                updateUI();
-            } else {
-                showToast({title: "YETERSİZ KAYNAK", text: "Bu personeli işe alacak bütçeniz yok.", type: 'bad'});
-            }
+                showToast({title: "YENİ PERSONEL", text: `${data.name} işe alındı!`, type: 'good'});
+                renderStaff(); safeUpdateUI();
+            } else { showToast({title: "YETERSİZ KAYNAK", text: "Bütçe yetersiz.", type: 'bad'}); }
         }
 
         function hireBoss() {
-            // Furkan Bedeli: 1M Para, 2000 Çelik, 500 İzotop
             if(game.money >= 1000000 && game.steel >= 2000 && game.isotope >= 500) {
-                game.money -= 1000000;
-                game.steel -= 2000;
-                game.isotope -= 500;
-                game.staff.furkan = true;
-                activateRageMode();
-                updateUI();
-            } else {
-                showToast({title: "YETERSİZ GÜÇ", text: "Furkan Sakız bu şirketi henüz layık görmüyor.", type: 'bad'});
+                game.money -= 1000000; game.steel -= 2000; game.isotope -= 500;
+                game.staff.furkan = true; activateRageMode(); renderStaff(); safeUpdateUI();
+            } else { showToast({title: "YETERSİZ GÜÇ", text: "Furkan henüz hazır değil.", type: 'bad'}); }
+        }
+        function activateRageMode() { document.body.classList.add('rage-mode'); showToast({title: "KAOS BAŞLADI", text: "RAGE MODE AKTİF!", type: 'epic'}); }
+
+        // === SAFE UI UPDATE (GÜVENLİ MOD) ===
+        function setTxt(id, txt) { const el = document.getElementById(id); if(el) el.innerText = txt; }
+        
+        function safeUpdateUI() {
+            try {
+                // NaN Koruması
+                if(isNaN(game.banana)) game.banana = 0;
+                if(isNaN(game.money)) game.money = 0;
+
+                setTxt('displayMoney', Math.floor(game.money).toLocaleString() + ' ₺');
+                setTxt('displayBanana', Math.floor(game.banana).toLocaleString());
+                setTxt('displaySteel', game.steel);
+                setTxt('displayIsotope', game.isotope);
+                setTxt('displayRocket', game.rocketParts + ' / 10');
+
+                const pg = document.getElementById('progressBar');
+                if(pg) pg.style.width = ((game.rocketParts / 10) * 100) + '%';
+                
+                const storagePct = (game.banana / game.storageCap) * 100;
+                const bar = document.getElementById('storageBar');
+                if(bar) {
+                    bar.style.width = storagePct + '%';
+                    bar.className = `h-full transition-all duration-300 ${storagePct >= 100 ? 'bg-red-500' : 'bg-yellow-400'}`;
+                }
+                setTxt('storageText', `${Math.floor(game.banana)} / ${game.storageCap}`);
+                setTxt('storagePercentText', Math.floor(storagePct) + "%");
+
+                // Pasif Etkiler
+                let stajyerSpd = (1 * (game.multipliers.stajyer || 1));
+                if(game.staff.emre) stajyerSpd *= 1.3;
+                if(game.staff.furkan) stajyerSpd *= 10;
+                setTxt('rateStajyer', stajyerSpd.toFixed(1));
+
+                let factoryConsume = game.staff.dogi ? 8 : 10;
+                setTxt('consumeFactory', `-${factoryConsume} Muz`);
+                let labConsume = game.staff.dogi ? 20 : 25;
+                setTxt('consumeLab', `-${labConsume} Muz`);
+
+                let sellMult = game.staff.servet ? 1.2 : 1;
+                setTxt('priceSteel', Math.floor(75 * sellMult) + " ₺");
+                setTxt('priceIsotope', Math.floor(250 * sellMult) + " ₺");
+                setTxt('lblBananaPrice', `Kur: ${(1 * sellMult).toFixed(1)}₺`);
+
+                let rocketCost = game.staff.mert ? 4000 : 5000;
+                let rocketSteel = game.staff.mert ? 80 : 100;
+                setTxt('reqMoney', rocketCost.toLocaleString() + " ₺");
+                setTxt('reqSteel', rocketSteel + " Adet");
+
+                // Birimler
+                setTxt('countStajyer', game.units.stajyer || 0);
+                setTxt('costStajyer', Math.floor(game.costs.stajyer * Math.pow(1.25, game.units.stajyer)).toLocaleString() + " ₺");
+                
+                setTxt('countFactory', game.units.factory || 0);
+                setTxt('costFactory', Math.floor(game.costs.factory * Math.pow(1.2, game.units.factory)).toLocaleString() + " ₺");
+                
+                setTxt('countLab', game.units.lab || 0);
+                setTxt('costLab', Math.floor(game.costs.lab * Math.pow(1.3, game.units.lab)).toLocaleString() + " ₺");
+                
+                setTxt('storageLevel', "Lvl " + Math.log2(game.storageCap/100));
+                setTxt('costStorage', game.costs.storage.toLocaleString() + " ₺");
+
+                checkUnlock('unlockFactory', game.money > 200 || game.units.factory > 0);
+                checkUnlock('unlockLab', game.money > 1000 || game.units.lab > 0);
+                const canCraft = game.money >= rocketCost && game.steel >= rocketSteel && game.isotope >= game.costs.rocketIsotope;
+                const cBtn = document.getElementById('craftBtn'); if(cBtn) cBtn.disabled = !canCraft;
+                colorizeReq('reqMoney', game.money, rocketCost);
+                colorizeReq('reqSteel', game.steel, rocketSteel);
+                colorizeReq('reqIsotope', game.isotope, game.costs.rocketIsotope);
+                
+                updateToggleUI('factory', 'btnToggleFactory', 'statusFactory');
+                updateToggleUI('lab', 'btnToggleLab', 'statusLab');
+            } catch(e) {
+                console.log("UI Update Skip:", e);
             }
-        }
-
-        function activateRageMode() {
-            document.body.classList.add('rage-mode');
-            document.getElementById('bossSection').classList.remove('opacity-50', 'filter', 'grayscale');
-            showToast({title: "KAOS BAŞLADI", text: "FURKAN SAKIZ ŞİRKETİN BAŞINA GEÇTİ! ÜRETİM ÇILDIRDI!", type: 'epic'});
-        }
-
-
-        // === UI GÜNCELLEME ===
-        function updateUI() {
-            document.getElementById('displayMoney').innerText = Math.floor(game.money).toLocaleString() + ' ₺';
-            document.getElementById('displayBanana').innerText = Math.floor(game.banana).toLocaleString();
-            document.getElementById('displaySteel').innerText = game.steel;
-            document.getElementById('displayIsotope').innerText = game.isotope;
-            document.getElementById('displayRocket').innerText = game.rocketParts + ' / 10';
-            document.getElementById('progressBar').style.width = ((game.rocketParts / 10) * 100) + '%';
-            
-            const storagePct = (game.banana / game.storageCap) * 100;
-            const bar = document.getElementById('storageBar');
-            bar.style.width = storagePct + '%';
-            bar.className = `h-full transition-all duration-300 ${storagePct >= 100 ? 'bg-red-500' : 'bg-yellow-400'}`;
-            document.getElementById('storageText').innerText = `${Math.floor(game.banana)} / ${game.storageCap}`;
-
-            // PASİF ETKİLERİN HESAPLANMASI
-            let stajyerSpd = (1 * game.multipliers.stajyer);
-            if(game.staff.emre) stajyerSpd *= 1.3;
-            if(game.staff.furkan) stajyerSpd *= 10;
-            document.getElementById('rateStajyer').innerText = stajyerSpd.toFixed(1);
-
-            // Maliyet & Tüketim Hesapları
-            let factoryConsume = 10;
-            if(game.staff.dogi) factoryConsume = 8;
-            document.getElementById('consumeFactory').innerText = `-${factoryConsume} Muz`;
-
-            let labConsume = 25;
-            if(game.staff.dogi) labConsume = 20;
-            document.getElementById('consumeLab').innerText = `-${labConsume} Muz`;
-
-            // Satış Fiyatları
-            let sellMult = 1;
-            if(game.staff.servet) sellMult = 1.2;
-            document.getElementById('priceSteel').innerText = Math.floor(75 * sellMult) + " ₺";
-            document.getElementById('priceIsotope').innerText = Math.floor(250 * sellMult) + " ₺";
-            document.getElementById('btnSellBanana').querySelector('span.text-sm').innerText = `Kur: ${1 * sellMult}₺`;
-
-            // Roket Maliyet
-            let rocketCost = 5000;
-            let rocketSteel = 100;
-            if(game.staff.mert) { rocketCost = 4000; rocketSteel = 80; }
-            document.getElementById('reqMoney').innerText = rocketCost.toLocaleString() + " ₺";
-            document.getElementById('reqSteel').innerText = rocketSteel + " Adet";
-
-
-            // Birim Fiyatları
-            document.getElementById('countStajyer').innerText = game.units.stajyer;
-            document.getElementById('costStajyer').innerText = Math.floor(game.costs.stajyer * Math.pow(1.25, game.units.stajyer)).toLocaleString() + " ₺";
-            document.getElementById('countFactory').innerText = game.units.factory;
-            document.getElementById('costFactory').innerText = Math.floor(game.costs.factory * Math.pow(1.2, game.units.factory)).toLocaleString() + " ₺";
-            document.getElementById('countLab').innerText = game.units.lab;
-            document.getElementById('costLab').innerText = Math.floor(game.costs.lab * Math.pow(1.3, game.units.lab)).toLocaleString() + " ₺";
-            document.getElementById('storageLevel').innerText = "Lvl " + Math.log2(game.storageCap/100);
-            document.getElementById('costStorage').innerText = game.costs.storage.toLocaleString() + " ₺";
-
-            checkUnlock('unlockFactory', game.money > 200 || game.units.factory > 0);
-            checkUnlock('unlockLab', game.money > 1000 || game.units.lab > 0);
-
-            // Craft Butonu
-            const canCraft = game.money >= rocketCost && game.steel >= rocketSteel && game.isotope >= game.costs.rocketIsotope;
-            document.getElementById('craftBtn').disabled = !canCraft;
-            colorizeReq('reqMoney', game.money, rocketCost);
-            colorizeReq('reqSteel', game.steel, rocketSteel);
-            colorizeReq('reqIsotope', game.isotope, game.costs.rocketIsotope);
-
-            updateToggleUI('factory', 'btnToggleFactory', 'statusFactory');
-            updateToggleUI('lab', 'btnToggleLab', 'statusLab');
         }
 
         function updateToggleUI(type, btnId, statusId) {
-            const btn = document.getElementById(btnId);
-            const status = document.getElementById(statusId);
+            const btn = document.getElementById(btnId); const status = document.getElementById(statusId); 
+            if(!btn) return;
             const knob = btn.firstElementChild;
-            if(game.active[type]) {
-                btn.classList.replace('bg-gray-600', 'bg-green-500');
-                knob.style.left = '16px'; 
-                status.innerText = "ÇALIŞIYOR";
-                status.classList.replace('text-gray-400', 'text-green-400');
-            } else {
-                btn.classList.replace('bg-green-500', 'bg-gray-600');
-                knob.style.left = '0px'; 
-                status.innerText = "KAPALI";
-                status.classList.replace('text-green-400', 'text-gray-400');
-            }
+            if(game.active[type]) { btn.classList.replace('bg-gray-600', 'bg-green-500'); knob.style.left = '16px'; status.innerText = "ÇALIŞIYOR"; status.classList.replace('text-gray-400', 'text-green-400'); } 
+            else { btn.classList.replace('bg-green-500', 'bg-gray-600'); knob.style.left = '0px'; status.innerText = "KAPALI"; status.classList.replace('text-green-400', 'text-gray-400'); }
         }
+        function checkUnlock(id, condition) { const el = document.getElementById(id); if(!el) return; if(condition) el.classList.remove('opacity-50', 'pointer-events-none'); else el.classList.add('opacity-50', 'pointer-events-none'); }
+        function colorizeReq(id, current, needed) { const el = document.getElementById(id); if(!el) return; if(current >= needed) el.classList.replace('text-red-500', 'text-green-400'); else { el.classList.remove('text-green-400', 'text-gold', 'text-purple-300', 'text-techtoxic'); el.classList.add('text-red-500'); } }
 
-        function checkUnlock(id, condition) { const el = document.getElementById(id); if(condition) el.classList.remove('opacity-50', 'pointer-events-none'); else el.classList.add('opacity-50', 'pointer-events-none'); }
-        function colorizeReq(id, current, needed) { const el = document.getElementById(id); if(current >= needed) el.classList.replace('text-red-500', 'text-green-400'); else { el.classList.remove('text-green-400', 'text-gold', 'text-purple-300', 'text-techtoxic'); el.classList.add('text-red-500'); } }
-
-        // === AKSİYONLAR ===
-        function toggleMachine(type) { game.active[type] = !game.active[type]; updateUI(); }
+        // === ACTIONS ===
+        function toggleMachine(type) { game.active[type] = !game.active[type]; safeUpdateUI(); }
         function sellBananas() { 
             if (game.banana > 0) { 
                 let mult = game.staff.servet ? 1.2 : 1;
                 game.money += game.banana * mult; 
                 game.banana = 0; 
                 createFloatingText(window.innerWidth/3, window.innerHeight/2, "💰 SATILDI", "text-green-400");
-                updateUI(); 
+                safeUpdateUI(); 
             } 
         }
         function sellItem(type) {
-            let amount = 1;
-            let mult = game.staff.servet ? 1.2 : 1;
-            if(type === 'steel') { 
-                const val = parseInt(document.getElementById('inputSteel').value); if(val > 0) amount = val; 
-                if(game.steel >= amount) { game.steel -= amount; game.money += (75 * mult * amount); } 
-                else if(game.steel > 0) { game.money += (75 * mult * game.steel); game.steel = 0; } 
-            }
-            if(type === 'isotope') { 
-                const val = parseInt(document.getElementById('inputIsotope').value); if(val > 0) amount = val; 
-                if(game.isotope >= amount) { game.isotope -= amount; game.money += (250 * mult * amount); } 
-                else if(game.isotope > 0) { game.money += (250 * mult * game.isotope); game.isotope = 0; } 
-            }
-            updateUI();
+            let amount = 1; let mult = game.staff.servet ? 1.2 : 1;
+            if(type === 'steel') { const val = parseInt(document.getElementById('inputSteel').value); if(val > 0) amount = val; if(game.steel >= amount) { game.steel -= amount; game.money += (75 * mult * amount); } else if(game.steel > 0) { game.money += (75 * mult * game.steel); game.steel = 0; } }
+            if(type === 'isotope') { const val = parseInt(document.getElementById('inputIsotope').value); if(val > 0) amount = val; if(game.isotope >= amount) { game.isotope -= amount; game.money += (250 * mult * amount); } else if(game.isotope > 0) { game.money += (250 * mult * game.isotope); game.isotope = 0; } }
+            safeUpdateUI();
         }
         function buyMachine(type) {
             let cost = 0;
             if (type === 'stajyer') cost = Math.floor(game.costs.stajyer * Math.pow(1.25, game.units.stajyer));
             if (type === 'factory') cost = Math.floor(game.costs.factory * Math.pow(1.2, game.units.factory));
             if (type === 'lab')     cost = Math.floor(game.costs.lab * Math.pow(1.3, game.units.lab));
-            if (game.money >= cost) { game.money -= cost; game.units[type]++; if(type === 'factory' || type === 'lab') game.active[type] = true; updateUI(); }
+            if (game.money >= cost) { game.money -= cost; game.units[type]++; if(type === 'factory' || type === 'lab') game.active[type] = true; safeUpdateUI(); }
         }
-        function upgradeStorage() { if (game.money >= game.costs.storage) { game.money -= game.costs.storage; game.storageCap *= 2; game.costs.storage = Math.floor(game.costs.storage * 2.5); updateUI(); } }
+        function upgradeStorage() { if (game.money >= game.costs.storage) { game.money -= game.costs.storage; game.storageCap *= 2; game.costs.storage = Math.floor(game.costs.storage * 2.5); safeUpdateUI(); } }
         
         function craftRocket() {
-            let cost = game.staff.mert ? 4000 : 5000;
-            let steel = game.staff.mert ? 80 : 100;
-
+            let cost = game.staff.mert ? 4000 : 5000; let steel = game.staff.mert ? 80 : 100;
             if (game.money >= cost && game.steel >= steel && game.isotope >= game.costs.rocketIsotope) {
-                game.money -= cost; game.steel -= steel; game.isotope -= game.costs.rocketIsotope;
-                game.rocketParts++;
+                game.money -= cost; game.steel -= steel; game.isotope -= game.costs.rocketIsotope; game.rocketParts++;
                 if (game.rocketParts >= 10) { document.getElementById('winModal').classList.remove('hidden'); document.getElementById('winModal').classList.add('flex'); }
-                updateUI();
+                safeUpdateUI();
             }
         }
+        function toggleUpdates() { const modal = document.getElementById('updateModal'); if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); modal.classList.add('flex'); } else { modal.classList.add('hidden'); modal.classList.remove('flex'); } }
+        
+        // Hile Kodu
+        document.addEventListener('keydown', function(event) { if (event.key.toLowerCase() === 'p') { game.money += 100000; safeUpdateUI(); } });
 
-        // === OLAYLAR & GİZEMLİ KUTU ===
+        // === EVENTS ===
         const randomEvents = [
             { title: "İŞ KAZASI", text: "Laboratuvarda kaza! Üretim %50 düştü.", target: 'lab', multiplier: 0.5, duration: 15000, type: 'bad' },
             { title: "BAKIM YAPILDI", text: "Dökümhane yağlandı. Hız %25 arttı.", target: 'factory', multiplier: 1.25, duration: 15000, type: 'good' },
             { title: "BİLİMSEL DEHA", text: "Yeni formül bulundu! Lab x2 Hız!", target: 'lab', multiplier: 2.0, duration: 10000, type: 'epic' }
         ];
-
         let eventActive = false;
-
         function triggerRandomEvent() {
-            // GİZEMLİ KUTU KONTROLÜ (Stajyerler varsa %0.5 ihtimal)
             if(game.units.stajyer > 0 && Math.random() < 0.005) {
-                const prize = Math.floor(Math.random() * 4001) + 1000; // 1000-5000
-                game.money += prize;
-                showToast({title: "GİZEMLİ KUTU 🎁", text: `Stajyerler ${prize}₺ buldu!`, type: 'epic'});
-                return;
+                const prize = Math.floor(Math.random() * 4001) + 1000; game.money += prize;
+                showToast({title: "GİZEMLİ KUTU 🎁", text: `Stajyerler ${prize}₺ buldu!`, type: 'epic'}); return;
             }
-
             if(eventActive || Math.random() > 0.05) return;
             const event = randomEvents[Math.floor(Math.random() * randomEvents.length)];
             if(game.units[event.target] === 0) return;
             activateEvent(event);
         }
-
         function activateEvent(event) {
-            eventActive = true;
-            game.multipliers[event.target] = event.multiplier;
-            showToast(event);
-            
-            // UI ikon aç kapa vs...
-            let iconDiv;
-            if(event.target==='lab') iconDiv=document.getElementById('iconLab');
-            if(event.target==='factory') iconDiv=document.getElementById('iconFactory');
+            eventActive = true; game.multipliers[event.target] = event.multiplier; showToast(event);
+            let iconDiv; if(event.target==='lab') iconDiv=document.getElementById('iconLab'); if(event.target==='factory') iconDiv=document.getElementById('iconFactory');
             if(iconDiv) { iconDiv.innerHTML = event.type==='bad'?"🔻":"⚡"; iconDiv.classList.remove('hidden'); }
-
-            setTimeout(() => {
-                game.multipliers[event.target] = 1;
-                eventActive = false;
-                if(iconDiv) iconDiv.classList.add('hidden');
-                updateUI();
-            }, event.duration);
-            updateUI();
+            setTimeout(() => { game.multipliers[event.target] = 1; eventActive = false; if(iconDiv) iconDiv.classList.add('hidden'); safeUpdateUI(); }, event.duration); safeUpdateUI();
         }
-
         function showToast(event) {
-            const toast = document.getElementById('newsToast');
-            const card = document.getElementById('toastCard');
-            const title = document.getElementById('toastTitle');
-            const body = document.getElementById('toastBody');
-            const icon = document.getElementById('toastIcon');
-
-            // Renkler
-            if(event.type === 'bad') {
-                card.className = "bg-gray-800 border-l-4 border-red-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4";
-                title.className = "font-bold text-sm tracking-wide mb-1 text-red-500";
-                icon.innerText = "🚨";
-            } else if(event.type === 'epic') {
-                card.className = "bg-gray-800 border-l-4 border-purple-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4";
-                title.className = "font-bold text-sm tracking-wide mb-1 text-purple-400";
-                icon.innerText = "💎";
-            } else {
-                card.className = "bg-gray-800 border-l-4 border-green-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4";
-                title.className = "font-bold text-sm tracking-wide mb-1 text-green-500";
-                icon.innerText = "🍀";
-            }
-            title.innerText = event.title; body.innerText = event.text;
-            toast.classList.remove('hidden'); toast.classList.add('toast-animate');
+            const toast = document.getElementById('newsToast'); const card = document.getElementById('toastCard'); const title = document.getElementById('toastTitle'); const body = document.getElementById('toastBody'); const icon = document.getElementById('toastIcon');
+            if(event.type === 'bad') { card.className = "bg-gray-800 border-l-4 border-red-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4"; title.className = "font-bold text-sm tracking-wide mb-1 text-red-500"; icon.innerText = "🚨"; } 
+            else if(event.type === 'epic') { card.className = "bg-gray-800 border-l-4 border-purple-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4"; title.className = "font-bold text-sm tracking-wide mb-1 text-purple-400"; icon.innerText = "💎"; } 
+            else { card.className = "bg-gray-800 border-l-4 border-green-500 shadow-2xl rounded-b-lg p-4 flex items-start gap-4"; title.className = "font-bold text-sm tracking-wide mb-1 text-green-500"; icon.innerText = "🍀"; }
+            title.innerText = event.title; body.innerText = event.text; toast.classList.remove('hidden'); toast.classList.add('toast-animate');
             setTimeout(() => { toast.classList.remove('toast-animate'); toast.classList.add('hidden'); }, 5000);
         }
 
-        function toggleUpdates() { const modal = document.getElementById('updateModal'); if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); modal.classList.add('flex'); } else { modal.classList.add('hidden'); modal.classList.remove('flex'); } }
-        
-        // Hile Kodu
-        document.addEventListener('keydown', function(event) { if (event.key.toLowerCase() === 'p') { game.money += 100000; updateUI(); } });
-
-        // BAŞLANGIÇ
+        // === INIT & LOOP ===
         window.onload = function() {
-            loadGame(); // Kaydı yükle
-            renderStaff(); // Personeli çiz
-            if (!localStorage.getItem('v4_patch_seen')) { toggleUpdates(); localStorage.setItem('v4_patch_seen', 'true'); }
-            updateUI();
-            
-            // Oto Kayıt
-            setInterval(() => saveGame(false), 30000); // 30 saniyede bir kaydet
+            // SADECE TEMİZLE VE BAŞLA
+            localStorage.clear();
+            renderStaff(); 
+            if (!localStorage.getItem('v5_patch_seen')) { toggleUpdates(); localStorage.setItem('v5_patch_seen', 'true'); } 
+            safeUpdateUI();
         };
 
-        // LOOP
         setInterval(() => {
             triggerRandomEvent();
-
-            // 1. Stajyerler (Çarpan + Emre + Furkan)
             if (game.units.stajyer > 0) {
-                let base = game.units.stajyer * game.multipliers.stajyer;
-                if(game.staff.emre) base *= 1.3;
-                if(game.staff.furkan) base *= 10;
-                
-                if (game.banana + base <= game.storageCap) game.banana += base;
-                else game.banana = game.storageCap;
+                let base = (game.units.stajyer || 0) * (game.multipliers.stajyer || 1);
+                if(game.staff.emre) base *= 1.3; if(game.staff.furkan) base *= 10;
+                if ((game.banana || 0) + base <= game.storageCap) game.banana += base; else game.banana = game.storageCap;
             }
-
-            // 2. Fabrika (Çarpan + Dogi Tüketim + Furkan)
             if (game.active.factory && game.units.factory > 0) {
-                let consume = game.staff.dogi ? 8 : 10; // Dogi varsa 8 yer
-                let produce = game.units.factory * game.multipliers.factory;
+                let consume = game.staff.dogi ? 8 : 10; let produce = game.units.factory * (game.multipliers.factory || 1);
                 if(game.staff.furkan) produce *= 10;
-
-                if (game.banana >= consume * game.units.factory) {
-                    game.banana -= consume * game.units.factory;
-                    game.steel += produce;
-                }
+                if (game.banana >= consume * game.units.factory) { game.banana -= consume * game.units.factory; game.steel += produce; }
             }
-
-            // 3. Lab (Çarpan + Dogi Tüketim + Mehmet + Furkan)
             if (game.active.lab && game.units.lab > 0) {
-                let consume = game.staff.dogi ? 20 : 25; // Dogi varsa 20 yer
-                let produce = game.units.lab * game.multipliers.lab;
-                if(game.staff.mehmet) produce *= 1.25; // Mehmet bonus
-                if(game.staff.furkan) produce *= 10;
-
-                if (game.banana >= consume * game.units.lab) {
-                    game.banana -= consume * game.units.lab;
-                    game.isotope += produce;
-                }
+                let consume = game.staff.dogi ? 20 : 25; let produce = game.units.lab * (game.multipliers.lab || 1);
+                if(game.staff.mehmet) produce *= 1.25; if(game.staff.furkan) produce *= 10;
+                if (game.banana >= consume * game.units.lab) { game.banana -= consume * game.units.lab; game.isotope += produce; }
             }
-            updateUI();
+            safeUpdateUI();
         }, 1000);
     </script>
 </body>
