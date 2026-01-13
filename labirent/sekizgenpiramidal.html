@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>MEZAR ODASI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* BULMACA ÖZEL STİLLERİ */
+        .puzzle-wrapper {
+            position: relative;
+            width: 360px;
+            height: 360px;
+            margin: 40px auto;
+            border-radius: 50%;
+            background: radial-gradient(circle, #1a1a1a 0%, #050505 70%);
+            border: 4px solid #333;
+            box-shadow: 0 0 60px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Ortadaki Kilit Alanı */
+        .center-lock {
+            width: 130px;
+            height: 130px;
+            background-color: #0f0f0f;
+            border: 2px solid #d4af37;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            color: #d4af37;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.1);
+            transition: all 0.5s ease;
+            cursor: default;
+            z-index: 10;
+        }
+
+        .center-lock.unlocked {
+            background-color: #d4af37;
+            color: #000;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.9);
+            transform: scale(1.1);
+        }
+
+        /* Çevredeki Taş Düğmeler */
+        .stone-btn {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            background-color: #222;
+            border: 1px solid #444;
+            color: #ccc;
+            border-radius: 50%; /* Tam yuvarlak */
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .stone-btn:hover {
+            border-color: #d4af37;
+            color: #d4af37;
+            transform: scale(1.15);
+            background-color: #333;
+        }
+
+        .stone-btn.active {
+            background-color: #d4af37;
+            color: #000;
+            box-shadow: 0 0 20px #d4af37;
+            border-color: #d4af37;
+        }
+
+        .stone-btn.error {
+            background-color: #8b0000;
+            border-color: #8b0000;
+            color: #fff;
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .status-text {
+            margin-top: 25px;
+            font-family: 'Courier New', monospace;
+            color: #888;
+            font-size: 0.9rem;
+            height: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .reset-btn {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #555;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .reset-btn:hover { color: #8b0000; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>MEZAR ODASI</h1>
+        <p>Yolun sonuna geldin. Burası Vakanüvis'in en mahrem sırrını sakladığı yer.</p>
+        <p>Mezar odası sekizgen planlıdır, fakat bu kilidi açan anahtar bir <strong>tarihtir.</strong></p>
+        <p>Sonsuzluğa giden kapıyı açmak için, tarihin bizzat O'nun ağzından yazıldığı yılı bul.</p>
+
+        <div class="puzzle-wrapper">
+            <div class="center-lock" id="lock">
+                <i class="fas fa-lock"></i>
+            </div>
+            </div>
+
+        <div class="clue-box" style="text-align: center;">
+            <p style="margin-bottom: 10px; color: #d4af37; font-weight: bold;">ŞİFRE İPUCU:</p>
+           <p style="font-style: italic;">
+    "Bu tarih, Cumhuriyet'in ilanı değil, onun hikayesinin anlatıldığı yıldır."
+</p>
+<p>
+    O, tam 6 gün boyunca konuştu.
+    Sözleri, Türk Devrimi'nin <strong style="color:#d4af37;">hesap dökümü</strong> 
+    ve gelecek asırların <strong style="color:#d4af37;">manifestosu</strong>ydu.
+</p>
+<p style="margin-top: 10px;">
+    Tarih, bizzat O'nun ağzından hangi yıl kayda geçti?
+</p>
+            <p id="input-display" style="letter-spacing: 8px; font-weight: bold; color: #fff; margin-top: 15px; font-size: 1.5rem;">_ _ _ _</p>
+        </div>
+        
+        <p class="status-text" id="status-msg"></p>
+        <div class="reset-btn" onclick="resetEntry()">[Girişi Temizle]</div>
+    </div>
+
+    <script>
+        // YENİ ŞİFRE: 1927 (Nutuk'un Okunduğu Yıl)
+        const secretCode = [1, 9, 2, 7];
+        let userEntry = [];
+
+        const wrapper = document.querySelector('.puzzle-wrapper');
+        const radius = 140; // Yarıçap
+        // Rakamlar: 1, 2, 3... 9, 0 şeklinde dizilsin diye dizi oluşturuyoruz
+        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+        const totalButtons = numbers.length;
+
+        // Düğmeleri Çember Şeklinde Oluştur
+        numbers.forEach((num, index) => {
+            const btn = document.createElement('div');
+            btn.classList.add('stone-btn');
+            btn.innerText = num;
+            
+            // Saat yönünde dizilim (En tepeye 1 gelecek şekilde)
+            const angle = (index * (360 / totalButtons)) - 90; 
+            const rad = angle * (Math.PI / 180);
+            
+            // Konum hesaplama
+            const x = Math.cos(rad) * radius;
+            const y = Math.sin(rad) * radius;
+
+            // Merkeze göre hizalama
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+            
+            btn.addEventListener('click', () => handleInput(num, btn));
+            wrapper.appendChild(btn);
+        });
+
+        function handleInput(num, btnElement) {
+            if(userEntry.length >= 4) return; // 4 haneden fazla girilemez
+
+            // Efekt
+            btnElement.classList.add('active');
+            setTimeout(() => btnElement.classList.remove('active'), 200);
+
+            // Kayıt
+            userEntry.push(num);
+            updateDisplay();
+
+            // 4 hane girildiyse kontrol et
+            if (userEntry.length === 4) {
+                checkCode();
+            }
+        }
+
+        function updateDisplay() {
+            const display = document.getElementById('input-display');
+            // Girilen sayıları göster, kalanı _ _ yap
+            let text = "";
+            for(let i=0; i<4; i++) {
+                if(i < userEntry.length) text += userEntry[i] + " ";
+                else text += "_ ";
+            }
+            display.innerText = text.trim();
+        }
+
+        function checkCode() {
+            const lock = document.getElementById('lock');
+            const status = document.getElementById('status-msg');
+            
+            // Dizileri karşılaştır
+            if (JSON.stringify(userEntry) === JSON.stringify(secretCode)) {
+                // BAŞARILI
+                lock.innerHTML = '<i class="fas fa-lock-open"></i>';
+                lock.classList.add('unlocked');
+                status.style.color = "#d4af37";
+                status.innerText = "TARİH YAZILDI.";
+                
+                // Yönlendirme
+                setTimeout(() => {
+                    window.location.href = "sonsuzluk.html";
+                }, 1500);
+
+            } else {
+                // HATALI
+                status.style.color = "#8b0000";
+                status.innerText = "HATALI TARİH";
+                
+                const allBtns = document.querySelectorAll('.stone-btn');
+                allBtns.forEach(b => b.classList.add('error'));
+                
+                setTimeout(() => {
+                    allBtns.forEach(b => b.classList.remove('error'));
+                    resetEntry();
+                }, 600);
+            }
+        }
+
+        function resetEntry() {
+            userEntry = [];
+            updateDisplay();
+            document.getElementById('status-msg').innerText = "";
+        }
+    </script>
+</body>
+</html>

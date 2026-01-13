@@ -1,0 +1,116 @@
+/* MODERN FONTLAR */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+body {
+    background-color: #0a0a0a; /* Tam siyah değil, çok koyu antrasit (Gözü yormaz) */
+    color: #e0e0e0; /* Metinler kırık beyaz/gümüş */
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    text-align: center;
+    line-height: 1.8;
+}
+
+/* KAPSAYICI KUTU (DARK CARD) */
+.container {
+    max-width: 750px;
+    padding: 50px;
+    background-color: #161616; /* Arka plandan bir ton açık gri */
+    border: 1px solid #333; /* Çok ince gri çerçeve */
+    box-shadow: 0 0 50px rgba(0,0,0,0.8); /* Derin siyah gölge */
+    border-radius: 8px;
+    border-top: 4px solid #8b0000; /* Türk Bayrağı Kırmızısı Çizgi */
+    position: relative;
+}
+
+/* BAŞLIKLAR */
+h1 {
+    font-family: 'Playfair Display', serif;
+    color: #d4af37; /* ALTIN RENGİ (Anıtkabir mozaikleri gibi) */
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 30px;
+    display: inline-block;
+}
+
+/* Başlığın altındaki çizgi */
+h1::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    background-color: #8b0000; /* Kırmızı aksan */
+    margin: 15px auto 0;
+}
+
+/* PARAGRAFLAR */
+p {
+    font-weight: 300;
+    color: #ccc; /* Hafif gri metin */
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+}
+
+/* İPUCU / BELGE KUTULARI */
+.clue-box, .blueprint, .arch-riddle, .mission-file, .flag-box {
+    background: #0f0f0f; /* Neredeyse siyah */
+    color: #c5a059; /* Soluk altın rengi yazı (Eski belge havası) */
+    padding: 25px;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    margin-top: 30px;
+    border: 1px solid #333;
+    border-left: 4px solid #d4af37; /* Sol tarafta altın çizgi */
+    text-align: left;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* GÖRSELLER */
+img {
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid #333;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    margin: 20px 0;
+    filter: brightness(0.9) contrast(1.1); /* Karanlık temada resimler patlamasın diye hafif filtre */
+    transition: all 0.3s ease;
+}
+
+img:hover {
+    filter: brightness(1) contrast(1);
+    border-color: #d4af37;
+}
+
+/* LİNKLER */
+a {
+    color: #d4af37; /* Linkler Altın rengi olsun */
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px dotted #d4af37;
+    transition: all 0.3s ease;
+    padding-bottom: 2px;
+}
+
+a:hover {
+    color: #fff;
+    border-bottom: 1px solid #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* MOBİL UYUM */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+        margin: 10px;
+        border-top-width: 3px;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
+}

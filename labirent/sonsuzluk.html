@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAKANÜVİS'İN RAPORU</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GENEL AYARLAR --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050505; /* Zifiri karanlık */
+            color: #e0e0e0;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden; /* Yatay kaydırmayı engelle */
+        }
+
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin: 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        /* --- ORTAK ANİMASYON SINIFLARI --- */
+        /* Başlangıçta gizli olanlar */
+        .animate-block {
+            opacity: 0;
+            transform: translateY(50px); /* Aşağıda başlar */
+            transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1); /* Yumuşak geçiş */
+        }
+
+        /* Görünür olduğunda */
+        .animate-block.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Gecikme sınıfları */
+        .delay-1 { transition-delay: 0.3s; }
+        .delay-2 { transition-delay: 0.6s; }
+        .delay-3 { transition-delay: 1.5s; }
+
+
+        /* --- BÖLÜM 1: GİRİŞ (KİLİT SESİ) --- */
+        #intro-section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+            text-align: center;
+        }
+
+        .unlock-sound-text {
+            font-family: 'Courier New', monospace;
+            color: #d4af37;
+            font-size: 1.5rem;
+            letter-spacing: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            color: #555;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+
+
+        /* --- BÖLÜM 2: FLASHBACK (GERİYE BAKIŞ) --- */
+        .flashback-section {
+            min-height: 80vh; /* Her bölüm ekranın %80'ini kaplasın */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid #111;
+        }
+
+        /* Arka plan görselleri için "Hayalet" efekti */
+        .bg-ghost {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2; /* Çok silik */
+            filter: grayscale(100%) contrast(150%); /* Siyah beyaz ve yüksek kontrast */
+            z-index: 1;
+            transform: scale(1.1); /* Hafif zoom efekti için */
+            transition: transform 10s ease-out;
+        }
+        
+        /* Bölüm görünür olunca arka plan hafifçe hareket etsin */
+        .flashback-section.visible .bg-ghost {
+             transform: scale(1);
+        }
+
+        .content-box {
+            position: relative;
+            z-index: 2; /* Arka planın üstünde */
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(10, 10, 10, 0.8); /* Yarı saydam siyah kutu */
+            border: 1px solid #333;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .stage-title {
+            color: #d4af37; /* Altın rengi başlıklar */
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+
+        /* --- BÖLÜM 3: ZİRVE (ATATÜRK) --- */
+        #climax-section {
+            min-height: 120vh; /* Daha uzun bir bölüm */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(to bottom, #050505 0%, #1a1111 100%); /* Hafif kırmızıya çalan siyah */
+            padding: 50px 20px;
+        }
+
+        .ata-portrait {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 4px solid #d4af37;
+            box-shadow: 0 0 100px rgba(212, 175, 55, 0.4); /* Altın hare */
+            object-fit: cover;
+            margin-bottom: 50px;
+            /* Başlangıçta gizli ve küçük */
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        #climax-section.visible .ata-portrait {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .final-quote {
+            font-size: 1.8rem;
+            font-style: italic;
+            color: #fff;
+            max-width: 800px;
+            line-height: 1.4;
+            margin-bottom: 30px;
+            text-shadow: 0 5px 20px rgba(0,0,0,1);
+        }
+
+        .quote-author {
+            color: #d4af37;
+            font-size: 1.3rem;
+            letter-spacing: 3px;
+        }
+
+
+        /* --- BÖLÜM 4: FİNAL (KALEM SENDE) --- */
+        #finale-section {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            text-align: center;
+        }
+
+        .final-statement {
+            font-size: 1.5rem;
+            color: #888;
+            margin-bottom: 50px;
+        }
+
+        .the-pen {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            /* Yanıp sönme efekti */
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #d4af37, 0 0 20px #d4af37; opacity: 0.8; }
+            to { text-shadow: 0 0 30px #d4af37, 0 0 50px #ffedbc; opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <section id="intro-section">
+        <div class="animate-block">
+            <h1 style="font-size: 3rem; margin-bottom: 20px;">KİLİT AÇILDI</h1>
+            <div class="unlock-sound-text">1927</div>
+        </div>
+        <div class="scroll-hint">RAPORU OKUMAK İÇİN KAYDIR</div>
+    </section>
+
+
+    <section class="flashback-section" style="background-color: #0a0a0a;">
+        <div class="bg-ghost" style="background-image: url('assets/pera_dark.jpg');"></div>
+        <div class="content-box animate-block">
+            <span class="stage-title">BAŞLANGIÇ: 1890</span>
+            <h2>GÖRÜNENİN ARDINDAKİ</h2>
+            <p>"Herkes odaya baktı, sen ise anahtarın deliğinden sızan ışığa."</p>
+        </div>
+    </section>
+
+
+    <section class="flashback-section">
+        <div class="bg-ghost" style="background-image: url('assets/tren_dark.jpg');"></div>
+        <div class="content-box animate-block">
+            <span class="stage-title">İLETİŞİM: TELGRAF</span>
+            <h2>GÜRÜLTÜNÜN İÇİNDEKİ FISILTI</h2>
+            <p>"Mors alfabesinin ritmini duydun ve rotayı çizdin."</p>
+        </div>
+    </section>
+
+
+    <section class="flashback-section">
+        <div class="bg-ghost" style="background-image: url('assets/medusa_dark.jpg');"></div>
+        <div class="content-box animate-block">
+            <span class="stage-title">DERİNLİK: SARNIÇ</span>
+            <h2>KARANLIKLA YÜZLEŞME</h2>
+            <p>"Efsanelerin gözlerine bakmadan, gerçeği yeraltından çıkardın."</p>
+        </div>
+    </section>
+
+
+    <section class="flashback-section">
+        <div class="bg-ghost" style="background-image: url('assets/anitkabir_dark.jpg'); background-position: top center;"></div>
+        <div class="content-box animate-block">
+            <span class="stage-title">İNŞA: RASATTEPE</span>
+            <h2>TAŞLARIN MATEMATİĞİ</h2>
+            <p>"Bir anıtın sadece mermerden değil, saygı ve mühendislikten yapıldığını anladın."</p>
+        </div>
+    </section>
+
+
+    <section class="flashback-section" style="border-bottom: none;">
+        <div class="bg-ghost" style="background: radial-gradient(circle, #333 0%, #000 100%); opacity: 0.5;"></div>
+        <div class="content-box animate-block">
+            <span class="stage-title">NİHAİ HEDEF: 1927</span>
+            <h2>BÜYÜK MANİFESTO</h2>
+            <p>"Cumhuriyet'in ilanını değil, onun 'Hesap Dökümü'nün yapıldığı yılı buldun."</p>
+        </div>
+    </section>
+
+
+    <section id="climax-section">
+        <img src="assets/ata_zirve.jpg" alt="Mustafa Kemal Atatürk" class="ata-portrait delay-1">
+        
+        <div class="animate-block delay-2">
+            <h1 style="color: #d4af37; margin-bottom: 30px;">VAKANÜVİS</h1>
+            <div class="final-quote">
+                "Tarih yazmak, tarih yapmak kadar mühimdir. Yazan yapana sadık kalmazsa, değişmeyen hakikat, insanlığı şaşırtacak bir mahiyet alır."
+            </div>
+            <div class="quote-author">- Mustafa Kemal Atatürk</div>
+        </div>
+    </section>
+
+
+    <section id="finale-section">
+        <div class="animate-block">
+            <p class="final-statement">Gölge Arşiv kapandı. Görev tamamlandı.</p>
+            <p class="final-statement">Ama tarih, her gün yeniden yazılıyor...</p>
+        </div>
+        <div class="animate-block delay-3">
+            <h1 class="the-pen">KALEM SENDE.</h1>
+        </div>
+    </section>
+
+
+    <script>
+        // Sayfa yüklendiğinde çalışacak
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // İntersection Observer (Kesişim Gözlemcisi) Tanımlama
+            // Bu, bir eleman ekrana girdiğinde tetiklenir.
+            const observerOptions = {
+                root: null, // Tarayıcı penceresini baz al
+                threshold: 0.25, // Elemanın %25'i görününce tetikle
+                rootMargin: "0px"
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    // Eğer eleman ekrana girdiyse
+                    if (entry.isIntersecting) {
+                        // 'visible' sınıfını ekle (Animasyonu başlatır)
+                        entry.target.classList.add("visible");
+                        
+                        // Performans için: Artık bu elemanı gözlemlemeyi bırak
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // '.animate-block' sınıfına sahip tüm elemanları ve bölümleri gözlemle
+            const targets = document.querySelectorAll('.animate-block, .flashback-section, #climax-section');
+            targets.forEach(target => {
+                observer.observe(target);
+            });
+        });
+    </script>
+
+</body>
+</html>
