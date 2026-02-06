@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Uyumlu CV Oluşturucu</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="editor-panel">
+        <h2 style="text-align: center; color: #2c3e50;">CV Düzenleyici</h2>
+        <p style="text-align: center; font-size: 0.9em; color: #666;">Bilgileri girdikçe sağ taraf güncellenir.</p>
+        
+        <div class="input-group">
+            <h3>Kişisel Bilgiler</h3>
+            <input type="text" id="inName" placeholder="Ad Soyad" oninput="updateCV()">
+            <input type="text" id="inTitle" placeholder="Ünvan (Örn: Endüstri Mühendisi)" oninput="updateCV()">
+            <input type="text" id="inEmail" placeholder="E-posta" oninput="updateCV()">
+            <input type="text" id="inPhone" placeholder="Telefon" oninput="updateCV()">
+            <input type="text" id="inLink" placeholder="LinkedIn / Web Sitesi" oninput="updateCV()">
+            <textarea id="inSummary" placeholder="Kısa Özet (Kendinizi tanıtın)" oninput="updateCV()"></textarea>
+        </div>
+
+        <div class="input-group">
+            <h3>Deneyim #1 (Son İş)</h3>
+            <input type="text" id="inExp1Title" placeholder="Pozisyon Adı" oninput="updateCV()">
+            <input type="text" id="inExp1Comp" placeholder="Şirket Adı" oninput="updateCV()">
+            <input type="text" id="inExp1Date" placeholder="Tarih (Örn: 2024 - Devam)" oninput="updateCV()">
+            <textarea id="inExp1Desc" placeholder="Görev tanımı ve başarılar..." oninput="updateCV()"></textarea>
+        </div>
+
+        <div class="input-group">
+            <h3>Deneyim #2</h3>
+            <input type="text" id="inExp2Title" placeholder="Pozisyon Adı" oninput="updateCV()">
+            <input type="text" id="inExp2Comp" placeholder="Şirket Adı" oninput="updateCV()">
+            <input type="text" id="inExp2Date" placeholder="Tarih" oninput="updateCV()">
+            <textarea id="inExp2Desc" placeholder="Görev tanımı..." oninput="updateCV()"></textarea>
+        </div>
+
+        <div class="input-group">
+            <h3>Eğitim</h3>
+            <input type="text" id="inEdu1School" placeholder="Okul / Üniversite" oninput="updateCV()">
+            <input type="text" id="inEdu1Dept" placeholder="Bölüm" oninput="updateCV()">
+            <input type="text" id="inEdu1Date" placeholder="Mezuniyet Yılı" oninput="updateCV()">
+        </div>
+
+        <div class="input-group">
+            <h3>Yetkinlikler</h3>
+            <textarea id="inSkills" placeholder="Örn: IFS ERP, SQL, Python, İngilizce (B2)..." oninput="updateCV()"></textarea>
+        </div>
+
+        <button onclick="downloadPDF()" class="download-btn">PDF OLARAK İNDİR</button>
+    </div>
+
+    <div class="preview-panel">
+        <div id="cv-document">
+            <header class="cv-header">
+                <h1 id="outName">AD SOYAD</h1>
+                <h3 id="outTitle">Ünvan</h3>
+                <div class="contact-line">
+                    <span id="outEmail">email@ornek.com</span> | 
+                    <span id="outPhone">+90 555 000 00 00</span> | 
+                    <span id="outLink">linkedin.com/in/profil</span>
+                </div>
+            </header>
+
+            <section class="cv-section">
+                <h4>ÖZET</h4>
+                <p id="outSummary">Buraya girdiğiniz özet bilgisi gelecek. ATS uyumluluğu için sade bir dil kullanın.</p>
+            </section>
+
+            <section class="cv-section">
+                <h4>İŞ DENEYİMİ</h4>
+                
+                <div class="job-item">
+                    <div class="job-top">
+                        <span class="job-title" id="outExp1Title">Pozisyon</span>
+                        <span class="job-date" id="outExp1Date">Tarih</span>
+                    </div>
+                    <div class="job-comp" id="outExp1Comp">Şirket Adı</div>
+                    <p class="job-desc" id="outExp1Desc">İş tanımı buraya gelecek...</p>
+                </div>
+
+                <div class="job-item">
+                    <div class="job-top">
+                        <span class="job-title" id="outExp2Title">Pozisyon</span>
+                        <span class="job-date" id="outExp2Date">Tarih</span>
+                    </div>
+                    <div class="job-comp" id="outExp2Comp">Şirket Adı</div>
+                    <p class="job-desc" id="outExp2Desc">İş tanımı buraya gelecek...</p>
+                </div>
+            </section>
+
+            <section class="cv-section">
+                <h4>EĞİTİM</h4>
+                <div class="job-item">
+                    <div class="job-top">
+                        <span class="job-title" id="outEdu1School">Üniversite Adı</span>
+                        <span class="job-date" id="outEdu1Date">Yıl</span>
+                    </div>
+                    <div class="job-comp" id="outEdu1Dept">Bölüm Adı</div>
+                </div>
+            </section>
+
+            <section class="cv-section">
+                <h4>YETKİNLİKLER</h4>
+                <p id="outSkills">Teknik ve kişisel yetkinlikleriniz burada listelenecek.</p>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
