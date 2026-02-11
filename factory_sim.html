@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Üretim Hattı Darboğaz ve Verimlilik Analiz Paneli</title>
+    <title>Karar Destek Sistemi - Üretim Hattı Optimizasyon Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes pulse-glow {
@@ -26,67 +26,121 @@
         .station-card:hover {
             transform: translateY(-5px);
         }
+        @keyframes ai-pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .ai-indicator {
+            animation: ai-pulse 2s infinite;
+        }
+        .industrial-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+        }
+        .metric-card {
+            background: linear-gradient(145deg, #334155, #1e293b);
+            border-left: 4px solid;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white">
+<body class="bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 min-h-screen text-white">
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                Üretim Hattı Darboğaz ve Verimlilik Analiz Paneli
-            </h1>
-            <p class="text-slate-400">Theory of Constraints & Little's Law Simülasyonu</p>
+        <div class="mb-8 industrial-card rounded-xl p-6 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        Karar Destek Sistemi - Üretim Hattı Optimizasyon
+                    </h1>
+                    <p class="text-slate-400">Theory of Constraints & Little's Law Simülasyonu - AI-Powered Analytics</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-slate-400">Simülasyon Zamanı</div>
+                    <div id="simTime" class="text-2xl font-bold text-cyan-400">0.0s</div>
+                </div>
+            </div>
         </div>
 
         <!-- Control Panel -->
-        <div class="bg-slate-800 rounded-lg p-6 mb-8 shadow-xl">
+        <div class="industrial-card rounded-xl p-6 mb-8 shadow-2xl">
             <div class="flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex gap-4">
-                    <button id="startBtn" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg font-semibold transition">
-                        <i class="fas fa-play mr-2"></i>Başlat
+                    <button id="startBtn" class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 px-6 py-2 rounded-lg font-semibold transition shadow-lg">
+                        ▶ Başlat
                     </button>
-                    <button id="pauseBtn" class="bg-yellow-600 hover:bg-yellow-700 px-6 py-2 rounded-lg font-semibold transition" disabled>
-                        <i class="fas fa-pause mr-2"></i>Duraklat
+                    <button id="pauseBtn" class="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 px-6 py-2 rounded-lg font-semibold transition shadow-lg" disabled>
+                        ⏸ Duraklat
                     </button>
-                    <button id="resetBtn" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition">
-                        <i class="fas fa-redo mr-2"></i>Sıfırla
+                    <button id="resetBtn" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-6 py-2 rounded-lg font-semibold transition shadow-lg">
+                        ↻ Sıfırla
                     </button>
                 </div>
                 <div class="flex gap-4 items-center">
-                    <label class="text-sm">Hız:</label>
+                    <label class="text-sm font-semibold text-slate-300">Simülasyon Hızı:</label>
                     <input type="range" id="speedControl" min="1" max="10" value="5" class="w-32">
-                    <span id="speedValue" class="text-sm">5x</span>
+                    <span id="speedValue" class="text-sm font-bold text-cyan-400">5x</span>
                 </div>
             </div>
         </div>
 
-        <!-- Analytics Dashboard -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg p-6 shadow-xl">
-                <div class="text-sm text-blue-200 mb-1">Toplam Üretim</div>
-                <div id="totalProduced" class="text-3xl font-bold">0</div>
-                <div class="text-xs text-blue-200 mt-1">birim</div>
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Left: Analytics KPIs -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="metric-card rounded-lg p-4 shadow-xl border-cyan-500">
+                        <div class="text-xs text-slate-400 mb-1 uppercase tracking-wide">Toplam Üretim</div>
+                        <div id="totalProduced" class="text-3xl font-bold text-cyan-400">0</div>
+                        <div class="text-xs text-slate-500 mt-1">birim</div>
+                    </div>
+                    <div class="metric-card rounded-lg p-4 shadow-xl border-purple-500">
+                        <div class="text-xs text-slate-400 mb-1 uppercase tracking-wide">Cycle Time</div>
+                        <div id="cycleTime" class="text-3xl font-bold text-purple-400">0</div>
+                        <div class="text-xs text-slate-500 mt-1">saniye</div>
+                    </div>
+                    <div class="metric-card rounded-lg p-4 shadow-xl border-orange-500">
+                        <div class="text-xs text-slate-400 mb-1 uppercase tracking-wide">Darboğaz</div>
+                        <div id="bottleneck" class="text-2xl font-bold text-orange-400">-</div>
+                        <div class="text-xs text-slate-500 mt-1">en yavaş</div>
+                    </div>
+                    <div class="metric-card rounded-lg p-4 shadow-xl border-green-500">
+                        <div class="text-xs text-slate-400 mb-1 uppercase tracking-wide">Verimlilik</div>
+                        <div id="efficiency" class="text-3xl font-bold text-green-400">0%</div>
+                        <div class="text-xs text-slate-500 mt-1">teorik max</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="metric-card rounded-lg p-4 shadow-xl border-blue-500">
+                        <div class="text-xs text-slate-400 mb-1 uppercase tracking-wide">Ortalama Teslim Süresi</div>
+                        <div id="avgDeliveryTime" class="text-2xl font-bold text-blue-400">0.0</div>
+                        <div class="text-xs text-slate-500 mt-1">saniye</div>
+                    </div>
+                    <div class="metric-card rounded-lg p-4 shadow-xl border-pink-500">
+                        <div class="text-xs text-slate-400 mb-1 uppercase tracking-wide">Toplam Arıza Sayısı</div>
+                        <div id="totalFailures" class="text-2xl font-bold text-pink-400">0</div>
+                        <div class="text-xs text-slate-500 mt-1">arıza</div>
+                    </div>
+                </div>
             </div>
-            <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg p-6 shadow-xl">
-                <div class="text-sm text-purple-200 mb-1">Cycle Time</div>
-                <div id="cycleTime" class="text-3xl font-bold">0</div>
-                <div class="text-xs text-purple-200 mt-1">saniye</div>
-            </div>
-            <div class="bg-gradient-to-br from-orange-600 to-orange-800 rounded-lg p-6 shadow-xl">
-                <div class="text-sm text-orange-200 mb-1">Darboğaz İstasyon</div>
-                <div id="bottleneck" class="text-3xl font-bold">-</div>
-                <div class="text-xs text-orange-200 mt-1">en yavaş istasyon</div>
-            </div>
-            <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-lg p-6 shadow-xl">
-                <div class="text-sm text-green-200 mb-1">Verimlilik</div>
-                <div id="efficiency" class="text-3xl font-bold">0%</div>
-                <div class="text-xs text-green-200 mt-1">teorik maksimuma göre</div>
+
+            <!-- Right: AI Insights -->
+            <div class="lg:col-span-1">
+                <div class="industrial-card rounded-xl p-6 shadow-2xl h-full">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-3 h-3 bg-cyan-400 rounded-full ai-indicator"></div>
+                        <h3 class="text-lg font-bold text-cyan-400">AI Insights</h3>
+                    </div>
+                    <div id="aiInsights" class="space-y-3 text-sm">
+                        <div class="text-slate-400 italic">Simülasyonu başlatın...</div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Production Line Visualization -->
-        <div class="bg-slate-800 rounded-lg p-8 mb-8 shadow-xl">
-            <h2 class="text-2xl font-bold mb-6">Üretim Hattı - 5 Aşamalı Montaj</h2>
+        <div class="industrial-card rounded-xl p-8 mb-8 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Üretim Hattı - 5 Aşamalı Montaj</h2>
             <div class="space-y-4">
                 <!-- Input Flow -->
                 <div class="flex items-center justify-center mb-4">
@@ -111,11 +165,38 @@
             </div>
         </div>
 
-        <!-- Station Settings -->
-        <div class="bg-slate-800 rounded-lg p-6 shadow-xl">
-            <h2 class="text-2xl font-bold mb-6">İstasyon Ayarları</h2>
+        <!-- Dynamic Scenario Analysis Panel -->
+        <div class="industrial-card rounded-xl p-6 mb-8 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Dinamik Senaryo Analizi</h2>
             <div id="stationSettings" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Settings will be generated here -->
+            </div>
+        </div>
+
+        <!-- Simulation Results & Analytics -->
+        <div class="industrial-card rounded-xl p-6 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Simülasyon Sonuçları & Veri Analizi</h2>
+
+            <!-- Results Table -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-700">
+                            <th class="text-left py-3 px-4 text-slate-400 font-semibold">Metrik</th>
+                            <th class="text-right py-3 px-4 text-slate-400 font-semibold">Değer</th>
+                            <th class="text-right py-3 px-4 text-slate-400 font-semibold">Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTable">
+                        <!-- Results will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Performance Chart -->
+            <div class="bg-slate-900 rounded-lg p-4">
+                <h3 class="text-sm font-bold mb-4 text-slate-300">Üretim Performans Grafiği (Son 60 saniye)</h3>
+                <canvas id="performanceChart" width="800" height="200"></canvas>
             </div>
         </div>
     </div>
@@ -125,11 +206,11 @@
         // Configuration
         const CONFIG = {
             stations: [
-                { id: 1, name: 'Hammadde Hazırlama', processingTime: 3, bufferSize: 5 },
-                { id: 2, name: 'Montaj 1', processingTime: 5, bufferSize: 3 },
-                { id: 3, name: 'Montaj 2', processingTime: 4, bufferSize: 4 },
-                { id: 4, name: 'Kalite Kontrol', processingTime: 6, bufferSize: 3 },
-                { id: 5, name: 'Paketleme', processingTime: 2, bufferSize: 5 }
+                { id: 1, name: 'Hammadde Hazırlama', processingTime: 3, bufferSize: 5, mtbf: 100, mttr: 5 },
+                { id: 2, name: 'Montaj 1', processingTime: 5, bufferSize: 3, mtbf: 120, mttr: 8 },
+                { id: 3, name: 'Montaj 2', processingTime: 4, bufferSize: 4, mtbf: 150, mttr: 6 },
+                { id: 4, name: 'Kalite Kontrol', processingTime: 6, bufferSize: 3, mtbf: 200, mttr: 4 },
+                { id: 5, name: 'Paketleme', processingTime: 2, bufferSize: 5, mtbf: 180, mttr: 3 }
             ],
             inputRate: 1 // 1 unit per second
         };
@@ -141,12 +222,17 @@
             totalProduced: 0,
             stations: [],
             inputBuffer: [],
-            speed: 5
+            speed: 5,
+            totalFailures: 0,
+            deliveryTimes: [],
+            performanceHistory: [],
+            aiInsightsUpdateCounter: 0
         };
 
         let intervals = {
             main: null,
-            input: null
+            input: null,
+            aiUpdate: null
         };
 
         // Initialize stations
@@ -156,11 +242,16 @@
                 buffer: [],
                 currentItem: null,
                 processTimeRemaining: 0,
-                status: 'idle', // idle, working, blocked, starved
+                status: 'idle', // idle, working, blocked, starved, failure
                 totalProcessed: 0,
                 blockedTime: 0,
                 starvedTime: 0,
-                workingTime: 0
+                workingTime: 0,
+                failureTime: 0,
+                timeSinceLastFailure: 0,
+                isInFailure: false,
+                failureRepairRemaining: 0,
+                failureCount: 0
             }));
         }
 
@@ -220,28 +311,54 @@
         function renderStationSettings() {
             const container = document.getElementById('stationSettings');
             container.innerHTML = state.stations.map(station => `
-                <div class="bg-slate-700 rounded-lg p-4">
-                    <h4 class="font-bold mb-3">${station.name}</h4>
-                    <div class="space-y-2">
+                <div class="bg-slate-700 rounded-lg p-4 border border-slate-600">
+                    <h4 class="font-bold mb-3 text-cyan-300">${station.name}</h4>
+                    <div class="space-y-3">
                         <div>
-                            <label class="text-xs text-slate-400">İşlem Süresi (sn)</label>
+                            <label class="text-xs text-slate-400 block mb-1">Cycle Time (sn)</label>
                             <input type="number"
                                    id="time-${station.id}"
                                    value="${station.processingTime}"
                                    min="1"
-                                   max="10"
-                                   class="w-full bg-slate-600 rounded px-3 py-2 mt-1"
+                                   max="20"
+                                   class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white"
                                    onchange="updateStationTime(${station.id}, this.value)">
                         </div>
                         <div>
-                            <label class="text-xs text-slate-400">Buffer Boyutu</label>
+                            <label class="text-xs text-slate-400 block mb-1">Buffer Boyutu</label>
                             <input type="number"
                                    id="buffer-size-${station.id}"
                                    value="${station.bufferSize}"
                                    min="1"
                                    max="10"
-                                   class="w-full bg-slate-600 rounded px-3 py-2 mt-1"
+                                   class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white"
                                    onchange="updateBufferSize(${station.id}, this.value)">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">MTBF - Arızalar Arası (sn)</label>
+                            <input type="number"
+                                   id="mtbf-${station.id}"
+                                   value="${station.mtbf}"
+                                   min="10"
+                                   max="500"
+                                   class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white"
+                                   onchange="updateMTBF(${station.id}, this.value)">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 block mb-1">MTTR - Onarım Süresi (sn)</label>
+                            <input type="number"
+                                   id="mttr-${station.id}"
+                                   value="${station.mttr}"
+                                   min="1"
+                                   max="30"
+                                   class="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white"
+                                   onchange="updateMTTR(${station.id}, this.value)">
+                        </div>
+                        <div class="pt-2 border-t border-slate-600 text-xs">
+                            <div class="flex justify-between text-slate-400">
+                                <span>Arıza Sayısı:</span>
+                                <span id="failure-count-${station.id}" class="text-red-400">0</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -265,12 +382,53 @@
             }
         };
 
+        // Update MTBF
+        window.updateMTBF = function(stationId, value) {
+            const station = state.stations.find(s => s.id === stationId);
+            if (station) {
+                station.mtbf = parseInt(value);
+            }
+        };
+
+        // Update MTTR
+        window.updateMTTR = function(stationId, value) {
+            const station = state.stations.find(s => s.id === stationId);
+            if (station) {
+                station.mttr = parseInt(value);
+            }
+        };
+
         // Simulation step
         function simulationStep() {
             state.time += 0.1;
 
             // Process each station
             state.stations.forEach((station, index) => {
+                // Check for failures (MTBF/MTTR)
+                if (!station.isInFailure) {
+                    station.timeSinceLastFailure += 0.1;
+                    // Check if failure should occur based on MTBF
+                    if (station.timeSinceLastFailure >= station.mtbf && Math.random() < 0.01) {
+                        station.isInFailure = true;
+                        station.failureRepairRemaining = station.mttr;
+                        station.failureCount++;
+                        station.timeSinceLastFailure = 0;
+                        state.totalFailures++;
+                    }
+                }
+
+                // Handle failure state
+                if (station.isInFailure) {
+                    station.failureRepairRemaining -= 0.1;
+                    station.failureTime += 0.1;
+                    station.status = 'failure';
+
+                    if (station.failureRepairRemaining <= 0) {
+                        station.isInFailure = false;
+                    }
+                    return; // Skip processing during failure
+                }
+
                 // If station is currently processing
                 if (station.currentItem !== null) {
                     station.processTimeRemaining -= 0.1;
@@ -292,6 +450,8 @@
                             }
                         } else {
                             // Last station - output completed item
+                            const deliveryTime = state.time - station.currentItem.entryTime;
+                            state.deliveryTimes.push(deliveryTime);
                             state.totalProduced++;
                             station.currentItem = null;
                             station.totalProcessed++;
@@ -314,6 +474,18 @@
                 }
             });
 
+            // Track performance history
+            if (Math.floor(state.time) !== Math.floor(state.time - 0.1)) {
+                state.performanceHistory.push({
+                    time: Math.floor(state.time),
+                    produced: state.totalProduced
+                });
+                // Keep only last 60 seconds
+                if (state.performanceHistory.length > 60) {
+                    state.performanceHistory.shift();
+                }
+            }
+
             updateUI();
         }
 
@@ -329,10 +501,20 @@
 
         // Update UI
         function updateUI() {
+            // Update simulation time
+            document.getElementById('simTime').textContent = state.time.toFixed(1) + 's';
+
             // Update analytics
             document.getElementById('totalProduced').textContent = state.totalProduced;
             document.getElementById('cycleTime').textContent = calculateCycleTime().toFixed(1);
             document.getElementById('efficiency').textContent = calculateEfficiency().toFixed(1) + '%';
+            document.getElementById('totalFailures').textContent = state.totalFailures;
+
+            // Calculate and update average delivery time
+            const avgDelivery = state.deliveryTimes.length > 0
+                ? state.deliveryTimes.reduce((a, b) => a + b, 0) / state.deliveryTimes.length
+                : 0;
+            document.getElementById('avgDeliveryTime').textContent = avgDelivery.toFixed(1);
 
             // Update output rate
             const outputRate = state.time > 0 ? (state.totalProduced / state.time).toFixed(2) : '0.00';
@@ -354,6 +536,9 @@
                 } else if (station.status === 'starved') {
                     statusText = 'Açlık';
                     statusClass = 'bg-yellow-600 text-white';
+                } else if (station.status === 'failure') {
+                    statusText = 'ARIZA';
+                    statusClass = 'bg-pink-600 text-white animate-pulse';
                 }
 
                 statusEl.textContent = statusText;
@@ -380,7 +565,19 @@
                 document.getElementById(`work-time-${station.id}`).textContent = station.workingTime.toFixed(1) + 's';
                 document.getElementById(`block-time-${station.id}`).textContent = station.blockedTime.toFixed(1) + 's';
                 document.getElementById(`starve-time-${station.id}`).textContent = station.starvedTime.toFixed(1) + 's';
+
+                // Failure count
+                const failureCountEl = document.getElementById(`failure-count-${station.id}`);
+                if (failureCountEl) {
+                    failureCountEl.textContent = station.failureCount;
+                }
             });
+
+            // Update results table
+            updateResultsTable();
+
+            // Update performance chart
+            updatePerformanceChart();
         }
 
         // Calculate cycle time
@@ -407,6 +604,216 @@
             );
 
             document.getElementById('bottleneck').textContent = bottleneckStation.name;
+            return bottleneckStation;
+        }
+
+        // AI Insights - Analyze and provide recommendations
+        function generateAIInsights() {
+            const insights = [];
+
+            // Identify bottleneck
+            const bottleneck = state.stations.reduce((max, station) =>
+                station.processingTime > max.processingTime ? station : max
+            );
+
+            // Calculate potential improvement
+            const currentThroughput = state.time > 0 ? state.totalProduced / state.time : 0;
+            const bottleneckImprovement = 0.1; // 10% improvement
+            const newBottleneckTime = bottleneck.processingTime * (1 - bottleneckImprovement);
+            const potentialThroughput = 1 / newBottleneckTime;
+            const throughputIncrease = ((potentialThroughput - (1 / bottleneck.processingTime)) / (1 / bottleneck.processingTime)) * 100;
+
+            insights.push({
+                type: 'bottleneck',
+                icon: '🎯',
+                title: 'Darboğaz Analizi',
+                text: `<strong>${bottleneck.name}</strong> darboğaz noktası. Kapasitesini %10 artırırsanız, toplam verim yaklaşık <strong>%${throughputIncrease.toFixed(1)}</strong> artabilir.`,
+                priority: 'high'
+            });
+
+            // Check for blocked stations
+            const blockedStations = state.stations.filter(s => s.blockedTime > s.workingTime * 0.2);
+            if (blockedStations.length > 0) {
+                const mostBlocked = blockedStations.reduce((max, s) => s.blockedTime > max.blockedTime ? s : max);
+                insights.push({
+                    type: 'blocked',
+                    icon: '⚠️',
+                    title: 'Blokaj Uyarısı',
+                    text: `<strong>${mostBlocked.name}</strong> sık sık bloke oluyor. Sonraki istasyonun buffer kapasitesini artırın veya hızını iyileştirin.`,
+                    priority: 'medium'
+                });
+            }
+
+            // Check for starved stations
+            const starvedStations = state.stations.filter(s => s.starvedTime > s.workingTime * 0.2);
+            if (starvedStations.length > 0) {
+                const mostStarved = starvedStations.reduce((max, s) => s.starvedTime > max.starvedTime ? s : max);
+                insights.push({
+                    type: 'starved',
+                    icon: '📉',
+                    title: 'Açlık Problemi',
+                    text: `<strong>${mostStarved.name}</strong> sık sık malzeme bekliyor. Önceki istasyonların hızını artırın veya buffer boyutunu büyütün.`,
+                    priority: 'medium'
+                });
+            }
+
+            // Check for high failure stations
+            const highFailureStations = state.stations.filter(s => s.failureCount > 2);
+            if (highFailureStations.length > 0) {
+                const mostFailing = highFailureStations.reduce((max, s) => s.failureCount > max.failureCount ? s : max);
+                insights.push({
+                    type: 'failure',
+                    icon: '🔧',
+                    title: 'Bakım Önerisi',
+                    text: `<strong>${mostFailing.name}</strong> çok arıza veriyor (${mostFailing.failureCount} arıza). MTBF değerini artırarak bakım programını iyileştirin.`,
+                    priority: 'high'
+                });
+            }
+
+            // Efficiency recommendation
+            const efficiency = calculateEfficiency();
+            if (efficiency < 70 && state.time > 30) {
+                insights.push({
+                    type: 'efficiency',
+                    icon: '💡',
+                    title: 'Verimlilik Önerisi',
+                    text: `Sistem verimliliği %${efficiency.toFixed(1)}. İstasyonlar arası dengeyi optimize edin - tüm istasyonların cycle time değerlerini darboğaza yaklaştırın.`,
+                    priority: 'high'
+                });
+            }
+
+            // Buffer optimization
+            const overfilledBuffers = state.stations.filter(s => s.buffer.length === s.bufferSize);
+            if (overfilledBuffers.length > 0) {
+                insights.push({
+                    type: 'buffer',
+                    icon: '📦',
+                    title: 'Buffer Optimizasyonu',
+                    text: `${overfilledBuffers.length} istasyonun buffer'ı dolu. Bu istasyonların sonraki süreçlerini hızlandırın.`,
+                    priority: 'low'
+                });
+            }
+
+            // Display insights
+            const container = document.getElementById('aiInsights');
+            if (insights.length === 0) {
+                container.innerHTML = '<div class="text-slate-400 italic">Sistem dengeli çalışıyor ✓</div>';
+            } else {
+                container.innerHTML = insights.map(insight => `
+                    <div class="bg-slate-800 border-l-4 ${
+                        insight.priority === 'high' ? 'border-red-500' :
+                        insight.priority === 'medium' ? 'border-yellow-500' :
+                        'border-blue-500'
+                    } rounded p-3">
+                        <div class="flex items-start gap-2">
+                            <span class="text-xl">${insight.icon}</span>
+                            <div class="flex-1">
+                                <div class="font-semibold text-xs text-slate-300 mb-1">${insight.title}</div>
+                                <div class="text-xs text-slate-400">${insight.text}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update results table
+        function updateResultsTable() {
+            const totalWorkTime = state.stations.reduce((sum, s) => sum + s.workingTime, 0);
+            const totalBlockTime = state.stations.reduce((sum, s) => sum + s.blockedTime, 0);
+            const totalStarveTime = state.stations.reduce((sum, s) => sum + s.starvedTime, 0);
+            const totalFailureTime = state.stations.reduce((sum, s) => sum + s.failureTime, 0);
+
+            const outputRate = state.time > 0 ? (state.totalProduced / state.time) : 0;
+
+            const metrics = [
+                { name: 'Toplam Üretilen Ürün', value: state.totalProduced + ' birim', trend: '📈' },
+                { name: 'Ortalama Çıkış Oranı', value: outputRate.toFixed(3) + ' birim/sn', trend: outputRate > 0.15 ? '✅' : '⚠️' },
+                { name: 'Ortalama Teslim Süresi', value: (state.deliveryTimes.length > 0 ? (state.deliveryTimes.reduce((a,b) => a+b, 0) / state.deliveryTimes.length) : 0).toFixed(1) + ' sn', trend: '📊' },
+                { name: 'Toplam Çalışma Süresi', value: totalWorkTime.toFixed(1) + ' sn', trend: '⚙️' },
+                { name: 'Toplam Blokaj Süresi', value: totalBlockTime.toFixed(1) + ' sn', trend: totalBlockTime > 10 ? '❌' : '✅' },
+                { name: 'Toplam Açlık Süresi', value: totalStarveTime.toFixed(1) + ' sn', trend: totalStarveTime > 10 ? '⚠️' : '✅' },
+                { name: 'Toplam Arıza Süresi', value: totalFailureTime.toFixed(1) + ' sn', trend: totalFailureTime > 10 ? '🔧' : '✅' },
+                { name: 'Sistem Verimliliği', value: calculateEfficiency().toFixed(1) + '%', trend: calculateEfficiency() > 80 ? '🌟' : '📉' }
+            ];
+
+            const tbody = document.getElementById('resultsTable');
+            tbody.innerHTML = metrics.map(m => `
+                <tr class="border-b border-slate-800 hover:bg-slate-800 transition">
+                    <td class="py-3 px-4 text-slate-300">${m.name}</td>
+                    <td class="py-3 px-4 text-right font-bold text-cyan-400">${m.value}</td>
+                    <td class="py-3 px-4 text-right text-xl">${m.trend}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Update performance chart
+        function updatePerformanceChart() {
+            const canvas = document.getElementById('performanceChart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Clear canvas
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, width, height);
+
+            if (state.performanceHistory.length < 2) return;
+
+            // Calculate scale
+            const maxProduced = Math.max(...state.performanceHistory.map(p => p.produced), 10);
+            const xScale = width / 60; // 60 seconds
+            const yScale = (height - 40) / maxProduced;
+
+            // Draw grid
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 6; i++) {
+                const y = height - 20 - (i * (height - 40) / 6);
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+
+                // Y-axis labels
+                ctx.fillStyle = '#64748b';
+                ctx.font = '10px monospace';
+                ctx.fillText(Math.round(maxProduced * i / 6), 5, y - 5);
+            }
+
+            // Draw line chart
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            state.performanceHistory.forEach((point, index) => {
+                const x = index * xScale;
+                const y = height - 20 - (point.produced * yScale);
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Draw points
+            ctx.fillStyle = '#06b6d4';
+            state.performanceHistory.forEach((point, index) => {
+                const x = index * xScale;
+                const y = height - 20 - (point.produced * yScale);
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // X-axis label
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px monospace';
+            ctx.fillText('Zaman (saniye)', width - 100, height - 5);
+            ctx.fillText('Üretim', 5, 15);
         }
 
         // Control functions
@@ -421,6 +828,10 @@
 
             // Input generator (1 unit per second)
             intervals.input = setInterval(addInputItem, 1000 / state.speed);
+
+            // AI Insights update (every 3 seconds)
+            intervals.aiUpdate = setInterval(generateAIInsights, 3000);
+            generateAIInsights(); // Initial call
         }
 
         function pause() {
@@ -430,16 +841,24 @@
 
             clearInterval(intervals.main);
             clearInterval(intervals.input);
+            clearInterval(intervals.aiUpdate);
         }
 
         function reset() {
             pause();
             state.time = 0;
             state.totalProduced = 0;
+            state.totalFailures = 0;
+            state.deliveryTimes = [];
+            state.performanceHistory = [];
             initializeStations();
             renderProductionLine();
+            renderStationSettings();
             analyzeBottleneck();
             updateUI();
+
+            // Reset AI insights
+            document.getElementById('aiInsights').innerHTML = '<div class="text-slate-400 italic">Simülasyonu başlatın...</div>';
         }
 
         // Speed control
@@ -451,10 +870,12 @@
             if (state.running) {
                 clearInterval(intervals.main);
                 clearInterval(intervals.input);
+                clearInterval(intervals.aiUpdate);
 
                 const stepInterval = 100 / state.speed;
                 intervals.main = setInterval(simulationStep, stepInterval);
                 intervals.input = setInterval(addInputItem, 1000 / state.speed);
+                intervals.aiUpdate = setInterval(generateAIInsights, 3000);
             }
         });
 
