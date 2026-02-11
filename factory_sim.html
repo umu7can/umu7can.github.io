@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Üretim Hattı Darboğaz ve Verimlilik Analiz Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+        }
+        .working {
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes flow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .product-flow {
+            animation: flow 2s linear infinite;
+        }
+        .station-card {
+            transition: all 0.3s ease;
+        }
+        .station-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Üretim Hattı Darboğaz ve Verimlilik Analiz Paneli
+            </h1>
+            <p class="text-slate-400">Theory of Constraints & Little's Law Simülasyonu</p>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="bg-slate-800 rounded-lg p-6 mb-8 shadow-xl">
+            <div class="flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex gap-4">
+                    <button id="startBtn" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg font-semibold transition">
+                        <i class="fas fa-play mr-2"></i>Başlat
+                    </button>
+                    <button id="pauseBtn" class="bg-yellow-600 hover:bg-yellow-700 px-6 py-2 rounded-lg font-semibold transition" disabled>
+                        <i class="fas fa-pause mr-2"></i>Duraklat
+                    </button>
+                    <button id="resetBtn" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold transition">
+                        <i class="fas fa-redo mr-2"></i>Sıfırla
+                    </button>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <label class="text-sm">Hız:</label>
+                    <input type="range" id="speedControl" min="1" max="10" value="5" class="w-32">
+                    <span id="speedValue" class="text-sm">5x</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg p-6 shadow-xl">
+                <div class="text-sm text-blue-200 mb-1">Toplam Üretim</div>
+                <div id="totalProduced" class="text-3xl font-bold">0</div>
+                <div class="text-xs text-blue-200 mt-1">birim</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg p-6 shadow-xl">
+                <div class="text-sm text-purple-200 mb-1">Cycle Time</div>
+                <div id="cycleTime" class="text-3xl font-bold">0</div>
+                <div class="text-xs text-purple-200 mt-1">saniye</div>
+            </div>
+            <div class="bg-gradient-to-br from-orange-600 to-orange-800 rounded-lg p-6 shadow-xl">
+                <div class="text-sm text-orange-200 mb-1">Darboğaz İstasyon</div>
+                <div id="bottleneck" class="text-3xl font-bold">-</div>
+                <div class="text-xs text-orange-200 mt-1">en yavaş istasyon</div>
+            </div>
+            <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-lg p-6 shadow-xl">
+                <div class="text-sm text-green-200 mb-1">Verimlilik</div>
+                <div id="efficiency" class="text-3xl font-bold">0%</div>
+                <div class="text-xs text-green-200 mt-1">teorik maksimuma göre</div>
+            </div>
+        </div>
+
+        <!-- Production Line Visualization -->
+        <div class="bg-slate-800 rounded-lg p-8 mb-8 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6">Üretim Hattı - 5 Aşamalı Montaj</h2>
+            <div class="space-y-4">
+                <!-- Input Flow -->
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-slate-700 rounded-lg px-6 py-3">
+                        <div class="text-sm text-slate-400">Giriş Akışı</div>
+                        <div id="inputRate" class="text-xl font-bold text-green-400">1 birim/sn</div>
+                    </div>
+                </div>
+
+                <!-- Stations -->
+                <div id="productionLine" class="space-y-6">
+                    <!-- Stations will be generated here -->
+                </div>
+
+                <!-- Output -->
+                <div class="flex items-center justify-center mt-4">
+                    <div class="bg-slate-700 rounded-lg px-6 py-3">
+                        <div class="text-sm text-slate-400">Çıkış</div>
+                        <div id="outputRate" class="text-xl font-bold text-blue-400">0 birim/sn</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Station Settings -->
+        <div class="bg-slate-800 rounded-lg p-6 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6">İstasyon Ayarları</h2>
+            <div id="stationSettings" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Settings will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // Configuration
+        const CONFIG = {
+            stations: [
+                { id: 1, name: 'Hammadde Hazırlama', processingTime: 3, bufferSize: 5 },
+                { id: 2, name: 'Montaj 1', processingTime: 5, bufferSize: 3 },
+                { id: 3, name: 'Montaj 2', processingTime: 4, bufferSize: 4 },
+                { id: 4, name: 'Kalite Kontrol', processingTime: 6, bufferSize: 3 },
+                { id: 5, name: 'Paketleme', processingTime: 2, bufferSize: 5 }
+            ],
+            inputRate: 1 // 1 unit per second
+        };
+
+        // State
+        let state = {
+            running: false,
+            time: 0,
+            totalProduced: 0,
+            stations: [],
+            inputBuffer: [],
+            speed: 5
+        };
+
+        let intervals = {
+            main: null,
+            input: null
+        };
+
+        // Initialize stations
+        function initializeStations() {
+            state.stations = CONFIG.stations.map(config => ({
+                ...config,
+                buffer: [],
+                currentItem: null,
+                processTimeRemaining: 0,
+                status: 'idle', // idle, working, blocked, starved
+                totalProcessed: 0,
+                blockedTime: 0,
+                starvedTime: 0,
+                workingTime: 0
+            }));
+        }
+
+        // Render production line
+        function renderProductionLine() {
+            const container = document.getElementById('productionLine');
+            container.innerHTML = state.stations.map((station, index) => `
+                <div class="station-card bg-slate-700 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold">${station.name}</h3>
+                            <div class="text-sm text-slate-400">İstasyon ${station.id}</div>
+                        </div>
+                        <div id="status-${station.id}" class="px-4 py-2 rounded-lg font-semibold text-sm">
+                            Boşta
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <div class="text-xs text-slate-400">İşlem Süresi</div>
+                            <div class="text-xl font-bold text-blue-400">${station.processingTime}s</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">Buffer</div>
+                            <div class="text-xl font-bold" id="buffer-${station.id}">0/${station.bufferSize}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">İşlenen</div>
+                            <div class="text-xl font-bold text-green-400" id="processed-${station.id}">0</div>
+                        </div>
+                    </div>
+
+                    <div class="relative h-4 bg-slate-600 rounded-full overflow-hidden">
+                        <div id="progress-${station.id}" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all" style="width: 0%"></div>
+                    </div>
+
+                    <div class="mt-3 grid grid-cols-3 gap-2 text-xs">
+                        <div>
+                            <span class="text-slate-400">Çalışma:</span>
+                            <span id="work-time-${station.id}" class="text-green-400 ml-1">0s</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Blokaj:</span>
+                            <span id="block-time-${station.id}" class="text-red-400 ml-1">0s</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Açlık:</span>
+                            <span id="starve-time-${station.id}" class="text-yellow-400 ml-1">0s</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render station settings
+        function renderStationSettings() {
+            const container = document.getElementById('stationSettings');
+            container.innerHTML = state.stations.map(station => `
+                <div class="bg-slate-700 rounded-lg p-4">
+                    <h4 class="font-bold mb-3">${station.name}</h4>
+                    <div class="space-y-2">
+                        <div>
+                            <label class="text-xs text-slate-400">İşlem Süresi (sn)</label>
+                            <input type="number"
+                                   id="time-${station.id}"
+                                   value="${station.processingTime}"
+                                   min="1"
+                                   max="10"
+                                   class="w-full bg-slate-600 rounded px-3 py-2 mt-1"
+                                   onchange="updateStationTime(${station.id}, this.value)">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400">Buffer Boyutu</label>
+                            <input type="number"
+                                   id="buffer-size-${station.id}"
+                                   value="${station.bufferSize}"
+                                   min="1"
+                                   max="10"
+                                   class="w-full bg-slate-600 rounded px-3 py-2 mt-1"
+                                   onchange="updateBufferSize(${station.id}, this.value)">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update station time
+        window.updateStationTime = function(stationId, value) {
+            const station = state.stations.find(s => s.id === stationId);
+            if (station) {
+                station.processingTime = parseInt(value);
+                analyzeBottleneck();
+            }
+        };
+
+        // Update buffer size
+        window.updateBufferSize = function(stationId, value) {
+            const station = state.stations.find(s => s.id === stationId);
+            if (station) {
+                station.bufferSize = parseInt(value);
+            }
+        };
+
+        // Simulation step
+        function simulationStep() {
+            state.time += 0.1;
+
+            // Process each station
+            state.stations.forEach((station, index) => {
+                // If station is currently processing
+                if (station.currentItem !== null) {
+                    station.processTimeRemaining -= 0.1;
+
+                    if (station.processTimeRemaining <= 0) {
+                        // Item finished processing
+                        const nextStation = state.stations[index + 1];
+
+                        if (nextStation) {
+                            // Try to move to next station's buffer
+                            if (nextStation.buffer.length < nextStation.bufferSize) {
+                                nextStation.buffer.push(station.currentItem);
+                                station.currentItem = null;
+                                station.totalProcessed++;
+                            } else {
+                                // Next station's buffer is full - BLOCKED
+                                station.status = 'blocked';
+                                station.blockedTime += 0.1;
+                            }
+                        } else {
+                            // Last station - output completed item
+                            state.totalProduced++;
+                            station.currentItem = null;
+                            station.totalProcessed++;
+                        }
+                    } else {
+                        station.status = 'working';
+                        station.workingTime += 0.1;
+                    }
+                }
+
+                // Try to start processing next item
+                if (station.currentItem === null && station.buffer.length > 0) {
+                    station.currentItem = station.buffer.shift();
+                    station.processTimeRemaining = station.processingTime;
+                    station.status = 'working';
+                    station.workingTime += 0.1;
+                } else if (station.currentItem === null && station.buffer.length === 0) {
+                    station.status = 'starved';
+                    station.starvedTime += 0.1;
+                }
+            });
+
+            updateUI();
+        }
+
+        // Add input items (Little's Law)
+        function addInputItem() {
+            if (!state.running) return;
+
+            const firstStation = state.stations[0];
+            if (firstStation.buffer.length < firstStation.bufferSize) {
+                firstStation.buffer.push({ id: Date.now(), entryTime: state.time });
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            // Update analytics
+            document.getElementById('totalProduced').textContent = state.totalProduced;
+            document.getElementById('cycleTime').textContent = calculateCycleTime().toFixed(1);
+            document.getElementById('efficiency').textContent = calculateEfficiency().toFixed(1) + '%';
+
+            // Update output rate
+            const outputRate = state.time > 0 ? (state.totalProduced / state.time).toFixed(2) : '0.00';
+            document.getElementById('outputRate').textContent = `${outputRate} birim/sn`;
+
+            // Update each station
+            state.stations.forEach(station => {
+                // Status
+                const statusEl = document.getElementById(`status-${station.id}`);
+                let statusText = 'Boşta';
+                let statusClass = 'bg-slate-600 text-slate-300';
+
+                if (station.status === 'working') {
+                    statusText = 'Çalışıyor';
+                    statusClass = 'bg-green-600 text-white working';
+                } else if (station.status === 'blocked') {
+                    statusText = 'Blokaj';
+                    statusClass = 'bg-red-600 text-white';
+                } else if (station.status === 'starved') {
+                    statusText = 'Açlık';
+                    statusClass = 'bg-yellow-600 text-white';
+                }
+
+                statusEl.textContent = statusText;
+                statusEl.className = `px-4 py-2 rounded-lg font-semibold text-sm ${statusClass}`;
+
+                // Buffer
+                const bufferFill = station.buffer.length;
+                const bufferEl = document.getElementById(`buffer-${station.id}`);
+                bufferEl.textContent = `${bufferFill}/${station.bufferSize}`;
+                bufferEl.className = `text-xl font-bold ${
+                    bufferFill === station.bufferSize ? 'text-red-400' :
+                    bufferFill === 0 ? 'text-yellow-400' : 'text-green-400'
+                }`;
+
+                // Processed
+                document.getElementById(`processed-${station.id}`).textContent = station.totalProcessed;
+
+                // Progress bar
+                const progress = station.currentItem !== null ?
+                    ((station.processingTime - station.processTimeRemaining) / station.processingTime) * 100 : 0;
+                document.getElementById(`progress-${station.id}`).style.width = `${progress}%`;
+
+                // Times
+                document.getElementById(`work-time-${station.id}`).textContent = station.workingTime.toFixed(1) + 's';
+                document.getElementById(`block-time-${station.id}`).textContent = station.blockedTime.toFixed(1) + 's';
+                document.getElementById(`starve-time-${station.id}`).textContent = station.starvedTime.toFixed(1) + 's';
+            });
+        }
+
+        // Calculate cycle time
+        function calculateCycleTime() {
+            // Sum of all processing times
+            return state.stations.reduce((sum, s) => sum + s.processingTime, 0);
+        }
+
+        // Calculate efficiency
+        function calculateEfficiency() {
+            if (state.time === 0) return 0;
+
+            // Bottleneck determines theoretical maximum throughput
+            const bottleneck = Math.max(...state.stations.map(s => s.processingTime));
+            const theoreticalMax = state.time / bottleneck;
+
+            return (state.totalProduced / theoreticalMax) * 100;
+        }
+
+        // Analyze bottleneck (Theory of Constraints)
+        function analyzeBottleneck() {
+            const bottleneckStation = state.stations.reduce((max, station) =>
+                station.processingTime > max.processingTime ? station : max
+            );
+
+            document.getElementById('bottleneck').textContent = bottleneckStation.name;
+        }
+
+        // Control functions
+        function start() {
+            state.running = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+
+            // Main simulation loop
+            const stepInterval = 100 / state.speed; // Adjusted for speed
+            intervals.main = setInterval(simulationStep, stepInterval);
+
+            // Input generator (1 unit per second)
+            intervals.input = setInterval(addInputItem, 1000 / state.speed);
+        }
+
+        function pause() {
+            state.running = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+
+            clearInterval(intervals.main);
+            clearInterval(intervals.input);
+        }
+
+        function reset() {
+            pause();
+            state.time = 0;
+            state.totalProduced = 0;
+            initializeStations();
+            renderProductionLine();
+            analyzeBottleneck();
+            updateUI();
+        }
+
+        // Speed control
+        document.getElementById('speedControl').addEventListener('input', function(e) {
+            state.speed = parseInt(e.target.value);
+            document.getElementById('speedValue').textContent = state.speed + 'x';
+
+            // Restart intervals if running
+            if (state.running) {
+                clearInterval(intervals.main);
+                clearInterval(intervals.input);
+
+                const stepInterval = 100 / state.speed;
+                intervals.main = setInterval(simulationStep, stepInterval);
+                intervals.input = setInterval(addInputItem, 1000 / state.speed);
+            }
+        });
+
+        // Event listeners
+        document.getElementById('startBtn').addEventListener('click', start);
+        document.getElementById('pauseBtn').addEventListener('click', pause);
+        document.getElementById('resetBtn').addEventListener('click', reset);
+
+        // Initialize
+        initializeStations();
+        renderProductionLine();
+        renderStationSettings();
+        analyzeBottleneck();
+        updateUI();
+    </script>
+</body>
+</html>
